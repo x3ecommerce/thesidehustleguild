@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The Side Hustle Guild — community for ambitious people building real income. Every builder, every level. Monthly cash competitions judged on creativity, execution, and results.">
+<meta property="og:title" content="The Side Hustle Guild">
+<meta property="og:description" content="Community for ambitious people building real income. Every builder, every level.">
+<meta property="og:url" content="https://thesidehustleguild.com">
+<meta property="og:type" content="website">
+<title>The Side Hustle Guild — Every Builder, Every Level</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F8F4ED;
+    --slate: #27384A;
+    --amber: #E89B3B;
+    --sage: #A8C9A0;
+    --charcoal: #1E1E1E;
+    --charcoal-soft: #1E1E1E99;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.2; color: var(--slate); }
+  a { color: var(--slate); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav { padding: 24px 0; border-bottom: 1px solid rgba(39,56,74,0.08); }
+  nav .container { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--slate); text-decoration: none; }
+  .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--amber); margin-right: 10px; vertical-align: middle; transform: rotate(45deg); }
+  .nav-cta { background: var(--amber); color: var(--cream); padding: 10px 22px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 14px; }
+
+  /* HERO */
+  .hero { padding: 100px 0 80px; }
+  .hero h1 { font-size: clamp(40px, 6vw, 72px); margin-bottom: 24px; max-width: 850px; }
+  .hero h1 .accent { color: var(--amber); }
+  .hero p.lead { font-size: 20px; max-width: 640px; margin-bottom: 36px; color: var(--charcoal-soft); }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary { background: var(--slate); color: var(--cream); padding: 16px 32px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 16px; transition: background 0.2s; }
+  .btn-primary:hover { background: var(--charcoal); }
+  .btn-secondary { color: var(--slate); padding: 16px 24px; text-decoration: underline; font-weight: 500; font-size: 16px; }
+  .founder-badge { display: inline-block; background: var(--sage); color: var(--slate); padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+
+  /* SECTION */
+  section { padding: 80px 0; }
+  section h2 { font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px; }
+  section .lead { font-size: 18px; max-width: 640px; color: var(--charcoal-soft); margin-bottom: 48px; }
+
+  /* BENEFITS GRID */
+  .benefits { background: white; }
+  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  @media (max-width: 768px) { .benefits-grid { grid-template-columns: 1fr; } }
+  .benefit-block h3 { font-size: 22px; margin-bottom: 16px; }
+  .benefit-block ul { list-style: none; }
+  .benefit-block ul li { padding: 8px 0; padding-left: 28px; position: relative; }
+  .benefit-block ul li:before { content: "✓"; color: var(--amber); position: absolute; left: 0; font-weight: 700; }
+  .marketplace-card { background: var(--cream); border: 2px solid var(--slate); padding: 32px; border-radius: 6px; }
+  .marketplace-card h3 { color: var(--slate); margin-bottom: 12px; }
+  .marketplace-card .prize { color: var(--amber); font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; margin: 16px 0; }
+  .disclaimer-tiny { font-size: 12px; color: var(--charcoal-soft); margin-top: 16px; font-style: italic; }
+
+  /* HOW IT WORKS */
+  .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr 1fr; } }
+  .how-step { text-align: center; }
+  .how-step .num { font-family: 'Fraunces', serif; color: var(--amber); font-size: 14px; letter-spacing: 2px; margin-bottom: 8px; }
+  .how-step h4 { font-size: 18px; margin-bottom: 8px; }
+  .how-step p { color: var(--charcoal-soft); font-size: 14px; }
+
+  /* PRICING */
+  .pricing { background: var(--slate); color: var(--cream); }
+  .pricing h2 { color: var(--cream); }
+  .pricing .lead { color: rgba(248,244,237,0.8); }
+  .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 720px; margin: 0 auto; }
+  @media (max-width: 768px) { .pricing-grid { grid-template-columns: 1fr; } }
+  .price-card { background: var(--cream); color: var(--charcoal); padding: 40px 32px; border-radius: 8px; }
+  .price-card.featured { border: 3px solid var(--amber); position: relative; }
+  .price-card.featured:before { content: "FOUNDER PRICING — 50 SPOTS"; position: absolute; top: -14px; left: 24px; background: var(--amber); color: var(--cream); padding: 4px 14px; font-size: 11px; font-weight: 700; letter-spacing: 1px; border-radius: 100px; }
+  .price-card h3 { font-size: 24px; margin-bottom: 16px; color: var(--slate); }
+  .price-card .price { font-family: 'Fraunces', serif; font-size: 56px; font-weight: 700; color: var(--slate); line-height: 1; margin: 8px 0; }
+  .price-card .price small { font-size: 16px; font-weight: 400; color: var(--charcoal-soft); }
+  .price-card .locked { font-size: 12px; color: var(--amber); font-weight: 600; margin-bottom: 24px; }
+  .price-card ul { list-style: none; margin-bottom: 32px; }
+  .price-card ul li { padding: 6px 0 6px 24px; position: relative; font-size: 14px; }
+  .price-card ul li:before { content: "→"; color: var(--amber); position: absolute; left: 0; }
+
+  /* FOOTER */
+  footer { background: var(--charcoal); color: var(--cream); padding: 60px 0 30px; font-size: 14px; }
+  footer .container { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; }
+  @media (max-width: 768px) { footer .container { grid-template-columns: 1fr; } }
+  footer h4 { color: var(--cream); font-size: 14px; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; font-family: 'Manrope', sans-serif; font-weight: 600; }
+  footer ul { list-style: none; }
+  footer ul li { padding: 4px 0; }
+  footer a { color: rgba(248,244,237,0.7); text-decoration: none; }
+  footer a:hover { color: var(--amber); }
+  footer .footer-tagline { font-family: 'Fraunces', serif; color: var(--cream); font-size: 18px; margin-bottom: 12px; }
+  .footer-disclaimer { border-top: 1px solid rgba(248,244,237,0.1); padding-top: 24px; margin-top: 36px; font-size: 11px; color: rgba(248,244,237,0.5); font-style: italic; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><span class="logo-mark"></span>The Side Hustle Guild</a>
+    <a href="#join" class="nav-cta">Join the Guild</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <span class="founder-badge">Founder pricing live · 50 spots · $9/mo locked forever</span>
+    <h1>Build real income.<br><span class="accent">Every builder, every level.</span></h1>
+    <p class="lead">A paid community for ambitious people building side hustles in public. Community, education, templates, accountability, and monthly cash competitions judged on creativity, execution, and results.</p>
+    <div class="hero-ctas">
+      <a href="#join" class="btn-primary">Join the Guild — $9/mo</a>
+      <a href="#how-it-works" class="btn-secondary">How the Builders Marketplace works →</a>
+    </div>
+  </div>
+</section>
+
+<section class="benefits">
+  <div class="container">
+    <h2>What's inside</h2>
+    <p class="lead">$19/month gets you community, education, templates, accountability, networking, and entry to the Builders Marketplace. Cash competitions are a feature — not the reason to join.</p>
+    <div class="benefits-grid">
+      <div class="benefit-block">
+        <h3>Membership includes</h3>
+        <ul>
+          <li>Full Discord community access (60+ channels)</li>
+          <li>Education — weekly drops, on-demand library</li>
+          <li>Templates — every flagship product included (First $1,000 Engine, AI Side-Hustle Stack)</li>
+          <li>Accountability pods — 4-6 person groups, monthly resets</li>
+          <li>Niche tracks — Parents, Healthcare, 9-to-5ers, College, Veterans, Retirees</li>
+          <li>Live breakdowns — featured-winner videos every month</li>
+          <li>Weekly group strategy sessions</li>
+          <li>Builders Marketplace entry — included free with membership</li>
+        </ul>
+      </div>
+      <div class="marketplace-card">
+        <h3>The Builders Marketplace</h3>
+        <p>Monthly skill-based competition. Submit your Hustle Card, compete with members at your own tier (Rookie / Builder / Operator), win cash creator grants.</p>
+        <div class="prize">Cash prizes every month</div>
+        <p>8 categories. 7 spotlight awards (Best First Dollar, Most Improved, Best Story, Best Pivot, Best Comeback, Underdog of the Month, Community Favorite). Annual Hustler of the Year capstone.</p>
+        <p class="disclaimer-tiny">Skill-based competition. Member results not typical. The Side Hustle Guild does not guarantee any specific income or outcome. Educational community. No financial advice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works">
+  <div class="container">
+    <h2>How the Marketplace works</h2>
+    <p class="lead">Open entry — Side Hustle Guild members and free submitters both compete. Skill-based judging on creativity, execution, results, story, and innovation.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="num">01 / 04</div>
+        <h4>Submit</h4>
+        <p>Post a Hustle Card with your link, screenshots, and 3-5 step playbook.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">02 / 04</div>
+        <h4>Get Verified</h4>
+        <p>Earn the Verified Hustle badge by passing the authenticity check.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">03 / 04</div>
+        <h4>Compete</h4>
+        <p>Skill-based judging — story 25% / effort 20% / results 20% / innovation 20% / community 15%.</p>
+      </div>
+      <div class="how-step">
+        <div class="num">04 / 04</div>
+        <h4>Win Cash</h4>
+        <p>Monthly cash awards across categories and tiers, plus 7 spotlight awards.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="join" class="pricing">
+  <div class="container">
+    <h2>Join the Side Hustle Guild</h2>
+    <p class="lead">$19/month standard. $9/month founder pricing for the first 50 members — locked forever. No contract, cancel anytime.</p>
+    <div class="pricing-grid">
+      <div class="price-card featured">
+        <h3>Founder</h3>
+        <div class="price">$9<small>/mo</small></div>
+        <div class="locked">★ Locked forever — first 50 only</div>
+        <ul>
+          <li>Everything in Lab Member tier</li>
+          <li>Permanent Founder badge in Discord</li>
+          <li>First access to Operator tier when it launches</li>
+          <li>Permanent voting weight in monthly competitions</li>
+        </ul>
+        <a href="https://thesidehustleguild.com/join" class="btn-primary" style="display:block;text-align:center;">Claim Founder Pricing →</a>
+      </div>
+      <div class="price-card">
+        <h3>Lab Member</h3>
+        <div class="price">$19<small>/mo</small></div>
+        <div class="locked" style="visibility:hidden;">.</div>
+        <ul>
+          <li>Full Discord access (60+ channels)</li>
+          <li>All flagship templates + weekly drops</li>
+          <li>Accountability pods + niche tracks</li>
+          <li>Builders Marketplace entry</li>
+          <li>Weekly strategy sessions</li>
+        </ul>
+        <a href="https://thesidehustleguild.com/join" class="btn-primary" style="display:block;text-align:center;">Join the Lab →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div>
+      <div class="footer-tagline">The Side Hustle Guild</div>
+      <p>Every builder, every level.</p>
+      <p style="margin-top:12px;color:rgba(248,244,237,0.5);font-size:12px;">X3 E-Commerce LLC dba Side Hustle Guild</p>
+    </div>
+    <div>
+      <h4>The Lab</h4>
+      <ul>
+        <li><a href="/marketplace">Builders Marketplace</a></li>
+        <li><a href="/wins">Public Wins</a></li>
+        <li><a href="/affiliate">Affiliate Program</a></li>
+        <li><a href="/sponsors">Sponsorships</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/marketplace/rules">Contest Rules</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+    </div>
+    <div class="footer-disclaimer" style="grid-column: 1/-1;">
+      Member results not typical. The Side Hustle Guild is an educational community for ambitious builders. No financial advice. No income guarantees. Skill-based competition with cash awards funded by The Side Hustle Guild and our sponsors. © 2026 X3 E-Commerce LLC dba Side Hustle Guild.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
