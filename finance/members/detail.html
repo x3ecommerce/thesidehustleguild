@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Member · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('members', { title: 'Members', subtitle: 'Profile', body: '<div id="page-host"><div class="empty">Loading…</div></div>' });
+
+  const id = CFO.getParams().id;
+  if (!id) { document.getElementById('page-host').innerHTML = '<div class="err-banner">Missing ?id parameter.</div>'; return; }
+
+  let data;
+  try { data = await CFO.api('/api/finance/members/' + encodeURIComponent(id)); }
+  catch (e) { document.getElementById('page-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  const m = data.member;
+  const tierLabel = CFO.tierLabel(m.tier, m.founder_locked_rate);
+  const html =
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:8px;">' +
+      '<div><h1 class="page-title" style="margin:0;">' + CFO.escapeHtml(m.discord_id || ('#' + m.member_id)) + '</h1>' +
+      '<div class="page-sub" style="margin-bottom:0;">' +
+        '<span class="pill ' + CFO.tierPillClass(m.tier) + '">' + CFO.escapeHtml(tierLabel) + '</span> · ' +
+        '<span class="pill ' + (m.status === 'active' ? 'green' : 'red') + '">' + CFO.escapeHtml(m.status) + '</span>' +
+        (m.is_affiliate ? ' · <span class="pill amber">Affiliate · ' + (m.current_active_refs || 0) + ' refs</span>' : '') +
+      '</div></div>' +
+      '<div style="display:flex;gap:8px;"><a class="btn" href="/finance/members/">← All members</a>' +
+      (m.is_affiliate ? '<a class="btn primary" href="/finance/affiliates/detail.html?id=' + m.member_id + '">Affiliate view</a>' : '') +
+      '<button class="btn" onclick="window.print()">Print profile</button></div>' +
+    '</div>' +
+    '<div class="grid-2c-side">' +
+      '<div class="card"><h2>Profile</h2><dl class="detail-grid">' +
+        kv('Member ID', '#' + m.member_id) +
+        kv('Whop ID', '<span class="mono">' + CFO.escapeHtml(m.whop_id) + '</span>') +
+        kv('Discord ID', '<span class="mono">' + CFO.escapeHtml(m.discord_id || '—') + '</span>') +
+        kv('Email hash', '<span class="mono" style="font-size:10px;">' + CFO.escapeHtml(m.email_hash) + '</span>') +
+        kv('Signup date', CFO.escapeHtml(CFO.fmtDate(m.signup_date, { dateOnly: true }))) +
+        kv('Tier', tierLabel) +
+        kv('Status', m.status) +
+        kv('Country', (m.country_code || '—') + (m.state_code ? ' · ' + m.state_code : '') + (m.is_restricted_state ? ' (RESTRICTED)' : '')) +
+        kv('Payment method', m.payment_method || '—') +
+        kv('Stripe Connect', m.stripe_connect_id || '—') +
+        kv('Wise recipient', m.wise_recipient_id || '—') +
+        kv('Founder locked rate', m.founder_locked_rate ? 'Yes ($9 lifetime)' : 'No') +
+      '</dl></div>' +
+      '<div class="card"><h2>Lifetime stats</h2><dl class="detail-grid">' +
+        kv('Total paid', '<strong>' + CFO.escapeHtml(CFO.fmtMoney(data.total_paid_cents)) + '</strong>') +
+        kv('Transactions', CFO.fmtNum((data.transactions || []).length)) +
+        kv('Commissions earned', '<a href="#commissions">' + CFO.fmtNum((data.commissions || []).length) + '</a>') +
+        kv('Active referrals', CFO.fmtNum(m.current_active_refs || 0)) +
+        kv('Affiliate rate', m.current_rate_bps ? (m.current_rate_bps / 100) + '%' : '—') +
+        kv('W-9 / W-8BEN', (data.w9_forms || []).length ? (data.w9_forms[0].form_type + ' · ' + data.w9_forms[0].status) : '<span class="pill yellow">Missing</span>') +
+        kv('Discord roles (last)', (data.role_events || []).length ? CFO.escapeHtml(data.role_events[0].role_name + ' · ' + data.role_events[0].action) : '—') +
+      '</dl></div>' +
+    '</div>' +
+    section('Transactions', tableHtml(data.transactions, txnCols(), 'transactions')) +
+    (data.commissions && data.commissions.length ? section('Commissions earned <a id="commissions"></a>', tableHtml(data.commissions, commCols(), 'commissions')) : '') +
+    (data.referrals && data.referrals.length ? section('Referrals', tableHtml(data.referrals, refCols(), 'referrals')) : '') +
+    (data.role_events && data.role_events.length ? section('Discord role events', tableHtml(data.role_events, roleCols(), 'roles')) : '') +
+    (data.w9_forms && data.w9_forms.length ? section('Tax forms', tableHtml(data.w9_forms, w9Cols(), 'w9')) : '') +
+    (data.payouts && data.payouts.length ? section('Payouts', tableHtml(data.payouts, payCols(), 'payouts')) : '');
+
+  document.getElementById('page-host').innerHTML = html;
+  // Wire export buttons
+  ['transactions','commissions','referrals','roles','w9','payouts'].forEach(function (key) {
+    const slot = document.getElementById('exp-' + key);
+    if (!slot) return;
+    const rows = (key === 'transactions' ? data.transactions :
+                  key === 'commissions' ? data.commissions :
+                  key === 'referrals' ? data.referrals :
+                  key === 'roles' ? data.role_events :
+                  key === 'w9' ? data.w9_forms :
+                  key === 'payouts' ? data.payouts : []);
+    CFO.attachExports(slot,
+      function () { return rows; },
+      function () { return key === 'transactions' ? ['Txn ID','When','Type','Amount','Source','Source ID']
+        : key === 'commissions' ? ['ID','Status','Rate','Amount','Accrued','Paid']
+        : key === 'referrals' ? ['Member ID','Whop ID','Discord','Tier','Status','Signup']
+        : key === 'roles' ? ['Role','Action','Reason','At']
+        : key === 'w9' ? ['Form','Collected','Expires','Status']
+        : ['Payout ID','Type','Status','Amount','Executed']; },
+      function () { return key === 'transactions' ? [
+          function(r){return r.txn_id;}, function(r){return r.occurred_at;},
+          function(r){return r.type;}, function(r){return ((r.amount_cents||0)/100).toFixed(2);},
+          function(r){return r.source;}, function(r){return r.source_id||'';}
+        ] : key === 'commissions' ? [
+          function(r){return r.commission_id;}, function(r){return r.status;},
+          function(r){return (r.rate_bps||0)/100 + '%';}, function(r){return ((r.commission_cents||0)/100).toFixed(2);},
+          function(r){return r.accrued_at;}, function(r){return r.paid_at||'';}
+        ] : key === 'referrals' ? [
+          function(r){return r.member_id;}, function(r){return r.whop_id;}, function(r){return r.discord_id||'';},
+          function(r){return r.tier;}, function(r){return r.status;}, function(r){return r.signup_date;}
+        ] : key === 'roles' ? [
+          function(r){return r.role_name;}, function(r){return r.action;}, function(r){return r.reason||'';}, function(r){return r.occurred_at;}
+        ] : key === 'w9' ? [
+          function(r){return r.form_type;}, function(r){return r.collected_at;}, function(r){return r.expires_at;}, function(r){return r.status;}
+        ] : [
+          function(r){return r.payout_id;}, function(r){return r.type;}, function(r){return r.status;},
+          function(r){return ((r.amount_cents||0)/100).toFixed(2);}, function(r){return r.executed_at||'';}
+        ]; },
+      'shg-member-' + m.member_id + '-' + key);
+  });
+
+  function kv(k, v) { return '<dt>' + CFO.escapeHtml(k) + '</dt><dd>' + (v == null ? '—' : v) + '</dd>'; }
+  function section(title, body) {
+    const slot = 'exp-' + title.replace(/[^a-z0-9]/gi, '').toLowerCase();
+    return '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>' + title + '</strong><div class="exports" id="' + slot + '"></div></div>' + body + '</div>';
+  }
+  function tableHtml(rows, cols, key) {
+    if (!rows || !rows.length) return '<div class="empty">No records.</div>';
+    const head = '<thead><tr>' + cols.map(function (c) { return '<th' + (c.right ? ' style="text-align:right"' : '') + '>' + c.label + '</th>'; }).join('') + '</tr></thead>';
+    const body = '<tbody>' + rows.slice(0, 100).map(function (r) { return '<tr>' + cols.map(function (c) { return '<td' + (c.right ? ' class="amt"' : '') + '>' + c.render(r) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+    document.getElementById('exp-' + key); // ensure slot exists for export wiring
+    const tbl = '<table>' + head + body + '</table>';
+    return '<div style="overflow-x:auto;">' + tbl + '</div>' + (rows.length > 100 ? '<div class="tbl-foot">Showing first 100 of ' + rows.length + ' — export for full list.</div>' : '');
+  }
+  function txnCols() { return [
+    { label: 'When', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.occurred_at)); } },
+    { label: 'Type', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(CFO.txnTypeLabel(r.type)) + '</span>'; } },
+    { label: 'Amount', right: true, render: function (r) { return '<span class="' + (r.amount_cents >= 0 ? 'pos' : 'neg') + '">' + CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)) + '</span>'; } },
+    { label: 'Source', render: function (r) { return CFO.escapeHtml(r.source); } },
+    { label: 'Txn ID', render: function (r) { return '<a href="/finance/ledger/detail.html?id=' + r.txn_id + '" class="mono">' + CFO.escapeHtml(r.txn_id) + '</a>'; } }
+  ]; }
+  function commCols() { return [
+    { label: 'ID', render: function (r) { return '#' + r.commission_id; } },
+    { label: 'Status', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.status) + '</span>'; } },
+    { label: 'Rate', render: function (r) { return (r.rate_bps / 100) + '%'; } },
+    { label: 'Amount', right: true, render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.commission_cents)); } },
+    { label: 'Accrued', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.accrued_at)); } },
+    { label: 'Paid', render: function (r) { return CFO.escapeHtml(r.paid_at ? CFO.fmtDate(r.paid_at) : '—'); } },
+    { label: 'Base txn', render: function (r) { return '<a href="/finance/ledger/detail.html?id=' + r.base_charge_id + '" class="mono">' + CFO.escapeHtml(r.base_charge_id) + '</a>'; } }
+  ]; }
+  function refCols() { return [
+    { label: 'Member', render: function (r) { return '<a href="/finance/members/detail.html?id=' + r.member_id + '">' + CFO.escapeHtml(r.discord_id || ('#' + r.member_id)) + '</a>'; } },
+    { label: 'Tier', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.tier) + '</span>'; } },
+    { label: 'Status', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.status) + '</span>'; } },
+    { label: 'Signup', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.signup_date, { dateOnly: true })); } }
+  ]; }
+  function roleCols() { return [
+    { label: 'Role', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.role_name) + '</span>'; } },
+    { label: 'Action', render: function (r) { return CFO.escapeHtml(r.action); } },
+    { label: 'Reason', render: function (r) { return CFO.escapeHtml(r.reason || '—'); } },
+    { label: 'When', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.occurred_at)); } }
+  ]; }
+  function w9Cols() { return [
+    { label: 'Form', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.form_type) + '</span>'; } },
+    { label: 'Collected', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.collected_at, { dateOnly: true })); } },
+    { label: 'Expires', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.expires_at, { dateOnly: true })); } },
+    { label: 'Status', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.status) + '</span>'; } }
+  ]; }
+  function payCols() { return [
+    { label: 'Payout ID', render: function (r) { return '<span class="mono">' + CFO.escapeHtml(r.payout_id) + '</span>'; } },
+    { label: 'Type', render: function (r) { return CFO.escapeHtml(r.type); } },
+    { label: 'Status', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.status) + '</span>'; } },
+    { label: 'Amount', right: true, render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)); } },
+    { label: 'Executed', render: function (r) { return CFO.escapeHtml(r.executed_at ? CFO.fmtDate(r.executed_at) : '—'); } }
+  ]; }
+});
+</script>
+</html>

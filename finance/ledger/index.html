@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Ledger · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  const body =
+    '<h1 class="page-title">Ledger</h1>' +
+    '<div class="page-sub">Append-only transaction history. Hash-chained. Click any row for the full record + linked references.</div>' +
+    '<div class="kpi-strip" id="agg"></div>' +
+    '<div class="card" style="margin-bottom:20px;"><h2>Volume by day <span class="muted" style="font-weight:400" id="vol-meta"></span></h2><div class="chart-wrap"><canvas id="chart-vol"></canvas></div></div>' +
+    '<div class="tbl-wrap" id="tbl-wrap">' +
+      '<div class="tbl-toolbar">' +
+        '<div class="filters" id="left-filters">' +
+          '<div class="search"><span aria-hidden="true">⌕</span><input type="search" id="q" placeholder="Search ID, member, metadata… (/)" aria-label="Search" /></div>' +
+          '<select class="chip" id="type-sel" aria-label="Filter type"><option value="">All types</option></select>' +
+          '<select class="chip" id="src-sel" aria-label="Filter source"><option value="">All sources</option><option value="stripe">Stripe</option><option value="whop">Whop</option><option value="wise">Wise</option><option value="manual">Manual</option><option value="adjustment">Adjustment</option></select>' +
+          '<input type="date" id="d-start" aria-label="Start date" />' +
+          '<input type="date" id="d-end" aria-label="End date" />' +
+          '<span id="range-presets"></span>' +
+        '</div>' +
+        '<div class="exports" id="exports-slot"></div>' +
+      '</div>' +
+      '<div id="table-host"><div class="empty">Loading…</div></div>' +
+      '<div class="tbl-foot" id="tbl-foot"></div>' +
+    '</div>';
+  CFO.renderShell('ledger', { title: 'Finance', subtitle: 'Ledger', body: body });
+
+  CFO.txnTypes.forEach(function (t) {
+    const o = document.createElement('option'); o.value = t; o.textContent = CFO.txnTypeLabel(t);
+    document.getElementById('type-sel').appendChild(o);
+  });
+
+  let state = { page: 1, pageSize: 50, sort: 'occurred_at', dir: 'desc', preset: '30d' };
+  let lastData = null;
+  let chartVol = null;
+
+  // Hydrate from URL params
+  const params = CFO.getParams();
+  if (params.page) state.page = parseInt(params.page, 10) || 1;
+  if (params.sort) state.sort = params.sort;
+  if (params.dir) state.dir = params.dir;
+  if (params.preset) state.preset = params.preset;
+  document.getElementById('q').value = params.search || '';
+  document.getElementById('type-sel').value = params.type || '';
+  document.getElementById('src-sel').value = params.source || '';
+  document.getElementById('d-start').value = params.start ? params.start.slice(0, 10) : '';
+  document.getElementById('d-end').value = params.end ? params.end.slice(0, 10) : '';
+
+  // Range presets
+  const rp = CFO.rangePicker(state.preset, function (preset) {
+    state.preset = preset; state.page = 1;
+    const r = CFO.rangeFromPreset(preset);
+    document.getElementById('d-start').value = r.start ? r.start.slice(0, 10) : '';
+    document.getElementById('d-end').value = r.end ? r.end.slice(0, 10) : '';
+    sync();
+    load();
+  });
+  document.getElementById('range-presets').appendChild(rp);
+
+  let qTimer = null;
+  document.getElementById('q').addEventListener('input', function () {
+    clearTimeout(qTimer);
+    qTimer = setTimeout(function () { state.page = 1; sync(); load(); }, 250);
+  });
+  document.getElementById('type-sel').addEventListener('change', function () { state.page = 1; sync(); load(); });
+  document.getElementById('src-sel').addEventListener('change', function () { state.page = 1; sync(); load(); });
+  document.getElementById('d-start').addEventListener('change', function () { state.preset = 'custom'; state.page = 1; sync(); load(); });
+  document.getElementById('d-end').addEventListener('change', function () { state.preset = 'custom'; state.page = 1; sync(); load(); });
+
+  function sync() {
+    const ds = document.getElementById('d-start').value;
+    const de = document.getElementById('d-end').value;
+    CFO.setParams({
+      page: state.page, sort: state.sort, dir: state.dir, preset: state.preset,
+      search: document.getElementById('q').value || '',
+      type: document.getElementById('type-sel').value || '',
+      source: document.getElementById('src-sel').value || '',
+      start: ds ? ds + 'T00:00:00Z' : '',
+      end: de ? de + 'T23:59:59Z' : ''
+    }, { replace: true });
+  }
+
+  async function load() {
+    const params = CFO.getParams();
+    const qs = new URLSearchParams();
+    ['start','end','type','source','search'].forEach(function (k) { if (params[k]) qs.set(k, params[k]); });
+    qs.set('sort', state.sort); qs.set('dir', state.dir);
+    qs.set('page', state.page); qs.set('pageSize', state.pageSize);
+    try {
+      document.getElementById('table-host').innerHTML = '<div class="empty">Loading…</div>';
+      const data = await CFO.api('/api/finance/ledger?' + qs.toString());
+      lastData = data;
+      render(data);
+      CFO.setLastRefresh(new Date().toISOString());
+    } catch (e) {
+      document.getElementById('table-host').innerHTML = '<div class="err-banner">Failed: ' + CFO.escapeHtml(e.message) + '</div>';
+    }
+  }
+  window.cfoOnRefresh = load;
+
+  function render(data) {
+    // Aggregate KPIs
+    document.getElementById('agg').innerHTML =
+      kpi('Records (filtered)', CFO.fmtNum(data.aggregate.count || data.total)) +
+      kpi('Money in', CFO.fmtMoney(data.aggregate.in_cents, { compact: true })) +
+      kpi('Money out', CFO.fmtMoney(data.aggregate.out_cents, { compact: true })) +
+      kpi('Net', CFO.fmtMoney(data.aggregate.net_cents, { compact: true })) +
+      kpi('Page', state.page + ' / ' + Math.max(1, Math.ceil(data.total / state.pageSize)));
+
+    // Volume chart
+    document.getElementById('vol-meta').textContent = data.series.length + ' day buckets';
+    drawVol(data.series);
+
+    // Table
+    CFO.renderTable({
+      container: document.getElementById('table-host'),
+      sortBy: { key: state.sort, dir: state.dir },
+      onSort: function (key, dir) { state.sort = key; state.dir = dir; state.page = 1; sync(); load(); },
+      columns: [
+        { key: 'occurred_at', label: 'When', sortable: true, render: function (r) { return '<div>' + CFO.escapeHtml(CFO.fmtDate(r.occurred_at)) + '</div><div class="mono">' + CFO.escapeHtml(r.txn_id) + '</div>'; } },
+        { key: 'type', label: 'Type', sortable: true, render: function (r) { return '<span class="pill">' + CFO.escapeHtml(CFO.txnTypeLabel(r.type)) + '</span>'; } },
+        { key: 'amount_cents', label: 'Amount', sortable: true, align: 'right', render: function (r) { return '<span class="' + (r.amount_cents >= 0 ? 'pos' : 'neg') + '">' + CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)) + '</span>'; } },
+        { key: 'source', label: 'Source', sortable: true, render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.source) + '</span><div class="mono">' + CFO.escapeHtml(r.source_id || '') + '</div>'; } },
+        { key: 'member_id', label: 'Member', sortable: true, render: function (r) { return r.discord_id ? '<a href="/finance/members/detail.html?id=' + encodeURIComponent(r.member_id) + '">' + CFO.escapeHtml(r.discord_id) + '</a>' : (r.member_id ? '#' + r.member_id : '—'); } },
+        { key: 'hash', label: 'Hash', render: function (r) { return '<span class="mono" title="' + CFO.escapeHtml(r.hash) + '">' + CFO.escapeHtml((r.hash || '').slice(0, 10)) + '…</span>'; } }
+      ],
+      rows: data.rows,
+      rowClick: function (r) { window.location.href = '/finance/ledger/detail.html?id=' + encodeURIComponent(r.txn_id); },
+      emptyText: 'No transactions match your filters.'
+    });
+
+    // Pager
+    const foot = document.getElementById('tbl-foot');
+    CFO.renderPager(foot, state.page, data.total, state.pageSize, function (p) { state.page = p; sync(); load(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+    // Exports
+    const slot = document.getElementById('exports-slot');
+    slot.innerHTML = '';
+    CFO.attachExports(slot,
+      function () { return data.rows; },
+      function () { return ['Txn ID','When','Type','Amount (USD)','Currency','Source','Source ID','Member ID','Discord','Whop ID','Hash','Prev Hash','Metadata','Created at','Created by']; },
+      function () { return [
+        function(r){return r.txn_id;}, function(r){return r.occurred_at;},
+        function(r){return CFO.txnTypeLabel(r.type);}, function(r){return ((r.amount_cents||0)/100).toFixed(2);},
+        function(r){return r.currency;}, function(r){return r.source;},
+        function(r){return r.source_id||'';}, function(r){return r.member_id||'';},
+        function(r){return r.discord_id||'';}, function(r){return r.whop_id||'';},
+        function(r){return r.hash;}, function(r){return r.prev_hash;},
+        function(r){return r.metadata||'';}, function(r){return r.created_at;}, function(r){return r.created_by_agent;}
+      ]; },
+      'shg-ledger');
+  }
+
+  function drawVol(series) {
+    if (typeof Chart === 'undefined') { setTimeout(function () { drawVol(series); }, 100); return; }
+    if (chartVol) chartVol.destroy();
+    chartVol = new Chart(document.getElementById('chart-vol'), {
+      type: 'bar',
+      data: { labels: series.map(function (s) { return s.d; }),
+              datasets: [
+                { label: 'Money in', data: series.map(function (s) { return (s.in_cents || 0) / 100; }), backgroundColor: '#2f7a4f' },
+                { label: 'Money out', data: series.map(function (s) { return (s.out_cents || 0) / 100; }), backgroundColor: '#b34a3a' }
+              ] },
+      options: { responsive: true, maintainAspectRatio: false,
+        scales: { x: { stacked: true, ticks: { maxTicksLimit: 14 } }, y: { stacked: true, ticks: { callback: function (v) { return '$' + v.toLocaleString(); } } } },
+        plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+
+  function kpi(label, value, sub) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(label) + '</div><div class="value">' + CFO.escapeHtml(value) + '</div>' + (sub ? '<div class="sub">' + CFO.escapeHtml(sub) + '</div>' : '') + '</div>'; }
+
+  load();
+});
+</script>
+</html>

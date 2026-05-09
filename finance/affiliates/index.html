@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Affiliates · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  const body =
+    '<h1 class="page-title">Affiliates</h1>' +
+    '<div class="page-sub">Active referrers, milestone progress, accrual vs paid.</div>' +
+    '<div class="kpi-strip" id="kpi"></div>' +
+    '<div class="tbl-wrap" id="tbl-wrap">' +
+      '<div class="tbl-toolbar">' +
+        '<div class="filters">' +
+          '<div class="search"><span aria-hidden="true">⌕</span><input type="search" id="q" placeholder="Search whop / discord… (/)" aria-label="Search" /></div>' +
+        '</div>' +
+        '<div class="exports" id="exports-slot"></div>' +
+      '</div>' +
+      '<div id="table-host"><div class="empty">Loading…</div></div>' +
+      '<div class="tbl-foot" id="tbl-foot"></div>' +
+    '</div>';
+  CFO.renderShell('affiliates', { title: 'Finance', subtitle: 'Affiliates', body: body });
+
+  let state = { page: 1, pageSize: 50, sort: 'current_active_refs', dir: 'desc' };
+  const params = CFO.getParams();
+  if (params.page) state.page = parseInt(params.page, 10) || 1;
+  if (params.sort) state.sort = params.sort;
+  if (params.dir) state.dir = params.dir;
+  document.getElementById('q').value = params.search || '';
+  let qTimer = null;
+  document.getElementById('q').addEventListener('input', function () { clearTimeout(qTimer); qTimer = setTimeout(function () { state.page = 1; sync(); load(); }, 250); });
+
+  function sync() {
+    CFO.setParams({ page: state.page, sort: state.sort, dir: state.dir,
+      search: document.getElementById('q').value || '' }, { replace: true });
+  }
+
+  async function load() {
+    const p = CFO.getParams();
+    const qs = new URLSearchParams();
+    if (p.search) qs.set('search', p.search);
+    qs.set('sort', state.sort); qs.set('dir', state.dir);
+    qs.set('page', state.page); qs.set('pageSize', state.pageSize);
+    try {
+      document.getElementById('table-host').innerHTML = '<div class="empty">Loading…</div>';
+      const data = await CFO.api('/api/finance/affiliates?' + qs.toString());
+      render(data);
+      CFO.setLastRefresh(new Date().toISOString());
+    } catch (e) { document.getElementById('table-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; }
+  }
+  window.cfoOnRefresh = load;
+
+  function render(data) {
+    const t = data.totals || {};
+    const a = data.accrual || {};
+    document.getElementById('kpi').innerHTML =
+      kpi('Active affiliates', CFO.fmtNum(t.total_affiliates || 0)) +
+      kpi('Verified (5+)', CFO.fmtNum(t.verified || 0)) +
+      kpi('Tribe Council (50+)', CFO.fmtNum(t.council || 0)) +
+      kpi('Accrued', CFO.fmtMoney(a.accrued || 0, { compact: true })) +
+      kpi('Paid lifetime', CFO.fmtMoney(a.paid || 0, { compact: true }));
+
+    CFO.renderTable({
+      container: document.getElementById('table-host'),
+      sortBy: { key: state.sort, dir: state.dir },
+      onSort: function (k, d) { state.sort = k; state.dir = d; state.page = 1; sync(); load(); },
+      columns: [
+        { key: 'discord_id', label: 'Affiliate', render: function (r) { return '<div><strong>' + CFO.escapeHtml(r.discord_id || '—') + '</strong></div><div class="mono">' + CFO.escapeHtml(r.whop_id) + '</div>'; } },
+        { key: 'tier_label', label: 'Tier', render: function (r) {
+            const cls = r.tier_label === 'Guild Masthead' ? 'amber' : (r.tier_label === 'Tribe Council' ? 'sage' : (r.tier_label === 'Tribe Builder' ? 'slate' : ''));
+            return '<span class="pill ' + cls + '">' + CFO.escapeHtml(r.tier_label) + '</span>';
+        } },
+        { key: 'current_active_refs', label: 'Active refs', sortable: true, align: 'right', render: function (r) { return CFO.fmtNum(r.current_active_refs); } },
+        { key: 'total_refs', label: 'All-time refs', align: 'right', render: function (r) { return CFO.fmtNum(r.total_refs); } },
+        { key: 'current_rate_bps', label: 'Rate', render: function (r) { return r.current_rate_bps ? (r.current_rate_bps / 100) + '%' : '—'; } },
+        { key: 'accrued_cents', label: 'Accrued', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.accrued_cents)); } },
+        { key: 'paid_cents', label: 'Paid', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.paid_cents)); } },
+        { key: 'signup_date', label: 'Joined', sortable: true, render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.signup_date, { dateOnly: true })); } }
+      ],
+      rows: data.rows,
+      rowClick: function (r) { window.location.href = '/finance/affiliates/detail.html?id=' + r.member_id; },
+      emptyText: 'No affiliates found.'
+    });
+    CFO.renderPager(document.getElementById('tbl-foot'), state.page, data.total, state.pageSize, function (p) { state.page = p; sync(); load(); });
+
+    const slot = document.getElementById('exports-slot');
+    slot.innerHTML = '';
+    CFO.attachExports(slot,
+      function () { return data.rows; },
+      function () { return ['Member ID','Whop','Discord','Tier','Active refs','Total refs','Rate','Accrued (USD)','Paid (USD)','Joined']; },
+      function () { return [
+        function(r){return r.member_id;}, function(r){return r.whop_id;}, function(r){return r.discord_id||'';},
+        function(r){return r.tier_label;}, function(r){return r.current_active_refs;}, function(r){return r.total_refs;},
+        function(r){return r.current_rate_bps?(r.current_rate_bps/100)+'%':'';}, function(r){return ((r.accrued_cents||0)/100).toFixed(2);},
+        function(r){return ((r.paid_cents||0)/100).toFixed(2);}, function(r){return r.signup_date;}
+      ]; },
+      'shg-affiliates');
+  }
+  function kpi(k, v) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div></div>'; }
+
+  load();
+});
+</script>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Sponsors · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('sponsors', { title: 'Finance', subtitle: 'Sponsors', body:
+    '<h1 class="page-title">Sponsors & contracts</h1><div class="page-sub">Sponsor revenue, active contracts, expirations.</div>' +
+    '<div class="kpi-strip" id="kpi"></div>' +
+    '<div class="grid-2"><div class="card"><h2>Sponsor revenue (last 12 months)</h2><div class="chart-wrap"><canvas id="ch-monthly"></canvas></div></div>' +
+    '<div class="card"><h2>By sponsor</h2><div class="chart-wrap"><canvas id="ch-by-sponsor"></canvas></div></div></div>' +
+    '<div class="tbl-wrap"><div class="tbl-toolbar"><strong>Revenue by sponsor</strong><div class="exports" id="exp-spon"></div></div><div id="spon-tbl"></div></div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>Active contracts</strong><div class="exports" id="exp-active"></div></div><div id="active-tbl"></div></div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>Expiring within 60 days</strong><div class="exports" id="exp-exp"></div></div><div id="exp-tbl"></div></div>'
+  });
+
+  let data;
+  try { data = await CFO.api('/api/finance/sponsors'); }
+  catch (e) { document.getElementById('cfo-page').insertAdjacentHTML('afterbegin', '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'); return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  const t = data.totals || {};
+  document.getElementById('kpi').innerHTML =
+    kpi('YTD revenue', CFO.fmtMoney(t.ytd_cents, { compact: true })) +
+    kpi('Last 90 days', CFO.fmtMoney(t.last_90d_cents, { compact: true })) +
+    kpi('Lifetime', CFO.fmtMoney(t.lifetime_cents, { compact: true })) +
+    kpi('Active contracts', CFO.fmtNum(t.active_contracts)) +
+    kpi('Expiring soon', CFO.fmtNum(t.expiring_soon));
+
+  // By sponsor table
+  CFO.renderTable({
+    container: document.getElementById('spon-tbl'),
+    columns: [
+      { key: 'sponsor', label: 'Sponsor', render: function (r) { return '<strong>' + CFO.escapeHtml(r.sponsor || '(unspecified)') + '</strong>'; } },
+      { key: 'txn_count', label: 'Charges', align: 'right', render: function (r) { return CFO.fmtNum(r.txn_count); } },
+      { key: 'total_cents', label: 'Total', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.total_cents)); } },
+      { key: 'first_at', label: 'First', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.first_at, { dateOnly: true })); } },
+      { key: 'last_at', label: 'Last', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.last_at, { dateOnly: true })); } }
+    ],
+    rows: data.by_sponsor || [],
+    emptyText: 'No sponsor revenue yet.'
+  });
+  CFO.attachExports(document.getElementById('exp-spon'),
+    function () { return data.by_sponsor || []; },
+    function () { return ['Sponsor','Charges','Total (USD)','First','Last']; },
+    function () { return [function(r){return r.sponsor;},function(r){return r.txn_count;},function(r){return ((r.total_cents||0)/100).toFixed(2);},function(r){return r.first_at;},function(r){return r.last_at;}]; },
+    'shg-sponsor-revenue');
+
+  // Active contracts
+  CFO.renderTable({
+    container: document.getElementById('active-tbl'),
+    columns: [
+      { key: 'counterparty', label: 'Counterparty', render: function (r) { return '<strong>' + CFO.escapeHtml(r.counterparty) + '</strong>'; } },
+      { key: 'type', label: 'Type', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.type) + '</span>'; } },
+      { key: 'amount_cents', label: 'Value', align: 'right', render: function (r) { return r.amount_cents != null ? CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)) : '—'; } },
+      { key: 'effective_at', label: 'Effective', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.effective_at, { dateOnly: true })); } },
+      { key: 'expires_at', label: 'Expires', render: function (r) { return r.expires_at ? CFO.escapeHtml(CFO.fmtDate(r.expires_at, { dateOnly: true })) : '—'; } },
+      { key: 'box_url', label: 'Doc', render: function (r) { return r.box_url ? '<a href="' + CFO.escapeHtml(r.box_url) + '" target="_blank" rel="noopener">View</a>' : '—'; } }
+    ],
+    rows: data.contracts_active || [],
+    emptyText: 'No active sponsor contracts.'
+  });
+  CFO.attachExports(document.getElementById('exp-active'),
+    function () { return data.contracts_active || []; },
+    function () { return ['Counterparty','Type','Amount (USD)','Effective','Expires','Box URL']; },
+    function () { return [function(r){return r.counterparty;},function(r){return r.type;},function(r){return ((r.amount_cents||0)/100).toFixed(2);},function(r){return r.effective_at;},function(r){return r.expires_at||'';},function(r){return r.box_url||'';}]; },
+    'shg-contracts-active');
+
+  // Expiring
+  CFO.renderTable({
+    container: document.getElementById('exp-tbl'),
+    columns: [
+      { key: 'counterparty', label: 'Counterparty' },
+      { key: 'type', label: 'Type' },
+      { key: 'expires_at', label: 'Expires', render: function (r) { return '<strong style="color:var(--yellow)">' + CFO.escapeHtml(CFO.fmtDate(r.expires_at, { dateOnly: true })) + '</strong>'; } },
+      { key: 'amount_cents', label: 'Value', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)); } }
+    ],
+    rows: data.contracts_expiring || [],
+    emptyText: 'Nothing expiring within 60 days.'
+  });
+  CFO.attachExports(document.getElementById('exp-exp'),
+    function () { return data.contracts_expiring || []; },
+    function () { return ['Counterparty','Type','Expires','Amount (USD)']; },
+    function () { return [function(r){return r.counterparty;},function(r){return r.type;},function(r){return r.expires_at;},function(r){return ((r.amount_cents||0)/100).toFixed(2);}]; },
+    'shg-contracts-expiring');
+
+  // Charts
+  const drawCharts = function () {
+    if (typeof Chart === 'undefined') { setTimeout(drawCharts, 80); return; }
+    new Chart(document.getElementById('ch-monthly'), {
+      type: 'bar',
+      data: { labels: (data.monthly_revenue || []).map(function (r) { return r.m; }),
+              datasets: [{ label: 'Sponsor revenue', data: (data.monthly_revenue || []).map(function (r) { return (r.cents || 0) / 100; }), backgroundColor: '#E89B3B' }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: function (v) { return '$' + v; } } } } }
+    });
+    new Chart(document.getElementById('ch-by-sponsor'), {
+      type: 'bar',
+      data: { labels: (data.by_sponsor || []).slice(0, 10).map(function (r) { return r.sponsor; }),
+              datasets: [{ label: 'Total', data: (data.by_sponsor || []).slice(0, 10).map(function (r) { return (r.total_cents || 0) / 100; }), backgroundColor: '#27384A' }] },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { callback: function (v) { return '$' + v; } } } } }
+    });
+  };
+  drawCharts();
+
+  function kpi(k, v) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div></div>'; }
+});
+</script>
+</html>

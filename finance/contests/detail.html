@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Contest · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('contests', { title: 'Contests', subtitle: 'Detail', body: '<div id="page-host"><div class="empty">Loading…</div></div>' });
+  const id = CFO.getParams().id;
+  if (!id) { document.getElementById('page-host').innerHTML = '<div class="err-banner">Missing ?id parameter.</div>'; return; }
+  let data;
+  try { data = await CFO.api('/api/finance/contests/' + encodeURIComponent(id)); }
+  catch (e) { document.getElementById('page-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  const s = data.summary || {};
+  const html =
+    '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">' +
+      '<h1 class="page-title">Season ' + CFO.escapeHtml(data.season) + '</h1>' +
+      '<div><a class="btn" href="/finance/contests/">← All seasons</a> <button class="btn" onclick="window.print()">Print recap</button></div>' +
+    '</div>' +
+    '<div class="kpi-strip">' +
+      kpi('Sponsor revenue', CFO.fmtMoney(s.sponsor_revenue_cents, { compact: true })) +
+      kpi('Prize pool', CFO.fmtMoney(s.prize_pool_cents, { compact: true })) +
+      kpi('Net', CFO.fmtMoney(s.net_cents, { compact: true })) +
+      kpi('Prizes paid', CFO.fmtNum((data.prizes || []).length)) +
+      kpi('Sponsor records', CFO.fmtNum((data.sponsors || []).length)) +
+    '</div>' +
+    '<div class="tbl-wrap"><div class="tbl-toolbar"><strong>Prizes paid</strong><div class="exports" id="exp-pr"></div></div>' +
+      tableHtml(data.prizes, [
+        { label: 'When', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.occurred_at, { dateOnly: true })); } },
+        { label: 'Recipient', render: function (r) { return r.discord_id ? ('<a href="/finance/members/detail.html?id=' + r.member_id + '">' + CFO.escapeHtml(r.discord_id) + '</a>') : '—'; } },
+        { label: 'Award', render: function (r) { try { const meta = JSON.parse(r.metadata || '{}'); return CFO.escapeHtml(meta.award || '—'); } catch { return '—'; } } },
+        { label: 'Amount', right: true, render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)); } },
+        { label: 'Txn', render: function (r) { return '<a class="mono" href="/finance/ledger/detail.html?id=' + r.txn_id + '">' + CFO.escapeHtml(r.txn_id) + '</a>'; } }
+      ]) +
+    '</div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>Sponsor revenue</strong><div class="exports" id="exp-sp"></div></div>' +
+      tableHtml(data.sponsors, [
+        { label: 'When', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.occurred_at, { dateOnly: true })); } },
+        { label: 'Sponsor', render: function (r) { try { const meta = JSON.parse(r.metadata || '{}'); return CFO.escapeHtml(meta.sponsor || '—'); } catch { return '—'; } } },
+        { label: 'Amount', right: true, render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)); } },
+        { label: 'Source', render: function (r) { return CFO.escapeHtml(r.source); } },
+        { label: 'Txn', render: function (r) { return '<a class="mono" href="/finance/ledger/detail.html?id=' + r.txn_id + '">' + CFO.escapeHtml(r.txn_id) + '</a>'; } }
+      ]) +
+    '</div>';
+  document.getElementById('page-host').innerHTML = html;
+
+  CFO.attachExports(document.getElementById('exp-pr'),
+    function () { return data.prizes || []; },
+    function () { return ['When','Discord','Award','Amount (USD)','Txn ID']; },
+    function () { return [function(r){return r.occurred_at;},function(r){return r.discord_id||'';},function(r){try{return JSON.parse(r.metadata||'{}').award||'';}catch{return '';}},function(r){return ((r.amount_cents||0)/100).toFixed(2);},function(r){return r.txn_id;}]; },
+    'shg-contest-' + data.season + '-prizes');
+  CFO.attachExports(document.getElementById('exp-sp'),
+    function () { return data.sponsors || []; },
+    function () { return ['When','Sponsor','Amount (USD)','Source','Txn ID']; },
+    function () { return [function(r){return r.occurred_at;},function(r){try{return JSON.parse(r.metadata||'{}').sponsor||'';}catch{return '';}},function(r){return ((r.amount_cents||0)/100).toFixed(2);},function(r){return r.source;},function(r){return r.txn_id;}]; },
+    'shg-contest-' + data.season + '-sponsors');
+
+  function kpi(k, v) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div></div>'; }
+  function tableHtml(rows, cols) {
+    if (!rows || !rows.length) return '<div class="empty">No records.</div>';
+    return '<div style="overflow-x:auto"><table><thead><tr>' + cols.map(function (c) { return '<th' + (c.right ? ' style="text-align:right"' : '') + '>' + c.label + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      rows.map(function (r) { return '<tr>' + cols.map(function (c) { return '<td' + (c.right ? ' class="amt"' : '') + '>' + c.render(r) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>';
+  }
+});
+</script>
+</html>

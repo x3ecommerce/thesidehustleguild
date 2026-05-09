@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Approvals · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('approvals', { title: 'Finance', subtitle: 'Approvals queue', body:
+    '<h1 class="page-title">Approvals queue</h1><div class="page-sub">Anything waiting on the founder.</div>' +
+    '<div class="kpi-strip" id="kpi"></div>' +
+    '<div class="tbl-wrap"><div class="tbl-toolbar"><strong>Payouts &gt; $1,000 awaiting approval</strong><div class="exports" id="exp1"></div></div><div id="big-host"><div class="empty">Loading…</div></div></div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>All pending payouts</strong><div class="exports" id="exp2"></div></div><div id="all-host"></div></div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>Contracts awaiting founder signature</strong><div class="exports" id="exp3"></div></div><div id="con-host"></div></div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>W-9 / W-8BEN expiring within 60 days</strong><div class="exports" id="exp4"></div></div><div id="w9-host"></div></div>' +
+    '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>Open reconciliation drift</strong><div class="exports" id="exp5"></div></div><div id="drift-host"></div></div>'
+  });
+
+  let data;
+  try { data = await CFO.api('/api/finance/approvals'); }
+  catch (e) { document.getElementById('cfo-page').insertAdjacentHTML('afterbegin', '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'); return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  document.getElementById('kpi').innerHTML =
+    kpi('Big payouts', CFO.fmtNum(data.counts.big_payouts), '> $1,000 each') +
+    kpi('All pending', CFO.fmtNum(data.counts.all_pending), 'queued or pending') +
+    kpi('Contracts', CFO.fmtNum(data.counts.contracts), 'need founder sign') +
+    kpi('W-9 expiring', CFO.fmtNum(data.counts.w9_expiring), '60-day window') +
+    kpi('Drift active', CFO.fmtNum(data.counts.drift_active), 'unresolved');
+
+  CFO.renderTable({
+    container: document.getElementById('big-host'),
+    columns: [
+      { key: 'payout_id', label: 'Payout', render: function (r) { return '<span class="mono">' + CFO.escapeHtml(r.payout_id) + '</span>'; } },
+      { key: 'recipient', label: 'Recipient', render: function (r) { return r.discord_id ? CFO.escapeHtml(r.discord_id) : (r.recipient_external || '—'); } },
+      { key: 'type', label: 'Type', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.type) + '</span>'; } },
+      { key: 'amount_cents', label: 'Amount', align: 'right', render: function (r) { return '<strong>' + CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)) + '</strong>'; } },
+      { key: 'status', label: 'Status', render: function (r) { return '<span class="pill yellow">' + CFO.escapeHtml(r.status) + '</span>'; } },
+      { key: 'reason', label: 'Reason', render: function (r) { return CFO.escapeHtml(r.reason || '—'); } },
+      { key: 'evidence', label: 'Evidence', render: function (r) { return r.supporting_evidence_url ? '<a href="' + CFO.escapeHtml(r.supporting_evidence_url) + '" target="_blank" rel="noopener">View</a>' : '—'; } },
+      { key: 'created_at', label: 'Created', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.created_at)); } }
+    ],
+    rows: data.big_payouts || [], emptyText: 'Inbox zero on big payouts.'
+  });
+
+  CFO.renderTable({
+    container: document.getElementById('all-host'),
+    columns: [
+      { key: 'payout_id', label: 'Payout', render: function (r) { return '<span class="mono">' + CFO.escapeHtml(r.payout_id) + '</span>'; } },
+      { key: 'recipient', label: 'Recipient', render: function (r) { return r.discord_id ? CFO.escapeHtml(r.discord_id) : (r.recipient_external || '—'); } },
+      { key: 'type', label: 'Type' },
+      { key: 'amount_cents', label: 'Amount', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)); } },
+      { key: 'status', label: 'Status', render: function (r) { return '<span class="pill">' + CFO.escapeHtml(r.status) + '</span>'; } }
+    ],
+    rows: data.all_pending_payouts || [], emptyText: 'No pending payouts.'
+  });
+
+  CFO.renderTable({
+    container: document.getElementById('con-host'),
+    columns: [
+      { key: 'counterparty', label: 'Counterparty' },
+      { key: 'type', label: 'Type' },
+      { key: 'amount_cents', label: 'Value', align: 'right', render: function (r) { return r.amount_cents != null ? CFO.escapeHtml(CFO.fmtMoney(r.amount_cents)) : '—'; } },
+      { key: 'box_url', label: 'Doc', render: function (r) { return r.box_url ? '<a href="' + CFO.escapeHtml(r.box_url) + '" target="_blank" rel="noopener">View</a>' : '—'; } }
+    ],
+    rows: data.contracts_awaiting || [], emptyText: 'No contracts awaiting founder.'
+  });
+
+  CFO.renderTable({
+    container: document.getElementById('w9-host'),
+    columns: [
+      { key: 'discord_id', label: 'Member', render: function (r) { return r.discord_id ? CFO.escapeHtml(r.discord_id) : CFO.escapeHtml(r.whop_id); } },
+      { key: 'form_type', label: 'Form' },
+      { key: 'expires_at', label: 'Expires', render: function (r) { return '<strong style="color:var(--yellow)">' + CFO.escapeHtml(CFO.fmtDate(r.expires_at, { dateOnly: true })) + '</strong>'; } },
+      { key: 'status', label: 'Status' }
+    ],
+    rows: data.w9_expiring || [], emptyText: 'Nothing expiring within 60 days.'
+  });
+
+  CFO.renderTable({
+    container: document.getElementById('drift-host'),
+    columns: [
+      { key: 'run_id', label: 'Run', render: function (r) { return '<span class="mono">' + CFO.escapeHtml(r.run_id) + '</span>'; } },
+      { key: 'ran_at', label: 'When', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.ran_at)); } },
+      { key: 'status', label: 'Status', render: function (r) { return '<span class="pill red">' + CFO.escapeHtml(r.status) + '</span>'; } },
+      { key: 'drift_cents', label: 'Drift', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.drift_cents)); } },
+      { key: 'drift_pct', label: 'Pct', align: 'right', render: function (r) { return CFO.fmtPct(r.drift_pct, 2); } }
+    ],
+    rows: data.drift_active || [], emptyText: 'No active drift.'
+  });
+
+  // Exports
+  function attach(slotId, rows, headers, accessors, name) {
+    CFO.attachExports(document.getElementById(slotId), function () { return rows; }, function () { return headers; }, function () { return accessors; }, name);
+  }
+  attach('exp1', data.big_payouts, ['Payout','Recipient','Type','Amount (USD)','Status','Reason','Evidence','Created'],
+    [function(r){return r.payout_id;},function(r){return r.discord_id||r.recipient_external||'';},function(r){return r.type;},function(r){return ((r.amount_cents||0)/100).toFixed(2);},function(r){return r.status;},function(r){return r.reason||'';},function(r){return r.supporting_evidence_url||'';},function(r){return r.created_at;}],
+    'shg-approvals-big');
+  attach('exp2', data.all_pending_payouts, ['Payout','Recipient','Type','Amount (USD)','Status'],
+    [function(r){return r.payout_id;},function(r){return r.discord_id||r.recipient_external||'';},function(r){return r.type;},function(r){return ((r.amount_cents||0)/100).toFixed(2);},function(r){return r.status;}],
+    'shg-approvals-all');
+  attach('exp3', data.contracts_awaiting, ['Counterparty','Type','Value (USD)','Box URL'],
+    [function(r){return r.counterparty;},function(r){return r.type;},function(r){return ((r.amount_cents||0)/100).toFixed(2);},function(r){return r.box_url||'';}],
+    'shg-approvals-contracts');
+  attach('exp4', data.w9_expiring, ['Member','Form','Expires','Status'],
+    [function(r){return r.discord_id||r.whop_id;},function(r){return r.form_type;},function(r){return r.expires_at;},function(r){return r.status;}],
+    'shg-approvals-w9');
+  attach('exp5', data.drift_active, ['Run ID','When','Status','Drift (USD)','Pct'],
+    [function(r){return r.run_id;},function(r){return r.ran_at;},function(r){return r.status;},function(r){return ((r.drift_cents||0)/100).toFixed(2);},function(r){return r.drift_pct;}],
+    'shg-approvals-drift');
+
+  function kpi(k, v, sub) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div>' + (sub ? '<div class="sub">' + CFO.escapeHtml(sub) + '</div>' : '') + '</div>'; }
+});
+</script>
+</html>

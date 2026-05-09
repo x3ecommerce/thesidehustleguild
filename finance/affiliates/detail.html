@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Affiliate · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<style>
+  .progress { background: var(--cream-2); border-radius: 100px; height: 18px; overflow: hidden; position: relative; }
+  .progress > .bar { background: var(--amber); height: 100%; transition: width .4s; }
+  .progress > .label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--slate); letter-spacing: 0.5px; }
+  .milestone { display: grid; grid-template-columns: 100px 1fr 110px; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+  .milestone:last-child { border-bottom: 0; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('affiliates', { title: 'Affiliates', subtitle: 'Profile', body: '<div id="page-host"><div class="empty">Loading…</div></div>' });
+  const id = CFO.getParams().id;
+  if (!id) { document.getElementById('page-host').innerHTML = '<div class="err-banner">Missing ?id parameter.</div>'; return; }
+  let data;
+  try { data = await CFO.api('/api/finance/affiliates/' + encodeURIComponent(id)); }
+  catch (e) { document.getElementById('page-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  const m = data.member;
+  const sum = data.summary || {};
+  const milestones = data.milestone_progress || [];
+  const html =
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:8px;">' +
+      '<div><h1 class="page-title" style="margin:0;">' + CFO.escapeHtml(m.discord_id || ('#' + m.member_id)) + ' <span class="pill amber">Affiliate</span></h1>' +
+      '<div class="page-sub" style="margin-bottom:0;">' + CFO.fmtNum(m.current_active_refs || 0) + ' active refs · rate ' + (m.current_rate_bps ? (m.current_rate_bps / 100) + '%' : '—') + ' · ' + CFO.escapeHtml(m.status) + '</div></div>' +
+      '<div style="display:flex;gap:8px;"><a class="btn" href="/finance/affiliates/">← All affiliates</a>' +
+      '<a class="btn" href="/finance/members/detail.html?id=' + m.member_id + '">Member view</a>' +
+      '<button class="btn" onclick="window.print()">Print</button></div>' +
+    '</div>' +
+    '<div class="kpi-strip">' +
+      kpi('Active refs', CFO.fmtNum(m.current_active_refs || 0)) +
+      kpi('Total commissions', CFO.fmtNum(sum.total_commissions || 0)) +
+      kpi('Accrued', CFO.fmtMoney(sum.accrued || 0, { compact: true })) +
+      kpi('Paid', CFO.fmtMoney(sum.paid || 0, { compact: true })) +
+      kpi('Pending', CFO.fmtMoney(sum.pending || 0, { compact: true })) +
+    '</div>' +
+    '<div class="grid-2">' +
+      '<div class="card"><h2>Milestone progress</h2>' +
+        milestones.map(function (ms) {
+          const pct = Math.min(100, (m.current_active_refs || 0) / ms.milestone * 100);
+          return '<div class="milestone"><div><strong>' + ms.milestone + '+</strong> ' + CFO.escapeHtml(ms.label) + '</div>' +
+            '<div class="progress"><div class="bar" style="width:' + pct.toFixed(1) + '%"></div><div class="label">' + Math.min(m.current_active_refs || 0, ms.milestone) + ' / ' + ms.milestone + '</div></div>' +
+            '<div style="text-align:right;"><strong>' + CFO.fmtMoney(ms.bonus_cents) + '</strong> ' + (ms.reached ? '<span class="pill green">REACHED</span>' : '<span class="pill">future</span>') + '</div></div>';
+        }).join('') +
+      '</div>' +
+      '<div class="card"><h2>Accrual vs paid (monthly)</h2><div class="chart-wrap"><canvas id="ch-acc"></canvas></div></div>' +
+    '</div>' +
+    section('Referrals', refTable(data.referrals)) +
+    section('Commissions', commTable(data.commissions)) +
+    (data.payouts && data.payouts.length ? section('Payouts', payTable(data.payouts)) : '');
+  document.getElementById('page-host').innerHTML = html;
+
+  // Chart
+  const series = data.accrual_series || [];
+  const drawChart = function () {
+    if (typeof Chart === 'undefined') { setTimeout(drawChart, 80); return; }
+    new Chart(document.getElementById('ch-acc'), {
+      type: 'bar',
+      data: { labels: series.map(function (s) { return s.m; }),
+              datasets: [
+                { label: 'Accrued', data: series.map(function (s) { return (s.accrued || 0) / 100; }), backgroundColor: '#E89B3B' },
+                { label: 'Paid', data: series.map(function (s) { return (s.paid || 0) / 100; }), backgroundColor: '#27384A' }
+              ] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, ticks: { callback: function (v) { return '$' + v; } } } } }
+    });
+  };
+  drawChart();
+
+  // Wire export slots
+  ['referrals','commissions','payouts'].forEach(function (key) {
+    const slot = document.getElementById('exp-' + key);
+    if (!slot) return;
+    const rows = key === 'referrals' ? data.referrals : key === 'commissions' ? data.commissions : data.payouts;
+    CFO.attachExports(slot, function () { return rows; },
+      function () { return key === 'referrals' ? ['Member ID','Whop','Discord','Tier','Status','Signup']
+        : key === 'commissions' ? ['ID','Status','Rate','Amount','Accrued','Paid','Base txn']
+        : ['Payout ID','Type','Status','Amount','Executed']; },
+      function () { return key === 'referrals' ? [
+        function(r){return r.member_id;}, function(r){return r.whop_id;}, function(r){return r.discord_id||'';},
+        function(r){return r.tier;}, function(r){return r.status;}, function(r){return r.signup_date;}
+      ] : key === 'commissions' ? [
+        function(r){return r.commission_id;}, function(r){return r.status;}, function(r){return (r.rate_bps||0)/100+'%';},
+        function(r){return ((r.commission_cents||0)/100).toFixed(2);}, function(r){return r.accrued_at;},
+        function(r){return r.paid_at||'';}, function(r){return r.base_charge_id;}
+      ] : [
+        function(r){return r.payout_id;}, function(r){return r.type;}, function(r){return r.status;},
+        function(r){return ((r.amount_cents||0)/100).toFixed(2);}, function(r){return r.executed_at||'';}
+      ]; },
+      'shg-affiliate-' + m.member_id + '-' + key);
+  });
+
+  function kpi(k, v) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div></div>'; }
+  function section(title, body) {
+    const slot = 'exp-' + title.replace(/[^a-z0-9]/gi, '').toLowerCase();
+    return '<div class="tbl-wrap" style="margin-top:20px;"><div class="tbl-toolbar"><strong>' + title + '</strong><div class="exports" id="' + slot + '"></div></div>' + body + '</div>';
+  }
+  function refTable(rows) {
+    if (!rows || !rows.length) return '<div class="empty">No referrals yet.</div>';
+    return '<table><thead><tr><th>Member</th><th>Tier</th><th>Status</th><th>Signup</th></tr></thead><tbody>' +
+      rows.slice(0, 200).map(function (r) {
+        return '<tr><td><a href="/finance/members/detail.html?id=' + r.member_id + '">' + CFO.escapeHtml(r.discord_id || ('#' + r.member_id)) + '</a></td>' +
+          '<td><span class="pill">' + CFO.escapeHtml(r.tier) + '</span></td>' +
+          '<td><span class="pill ' + (r.status === 'active' ? 'green' : 'red') + '">' + CFO.escapeHtml(r.status) + '</span></td>' +
+          '<td>' + CFO.escapeHtml(CFO.fmtDate(r.signup_date, { dateOnly: true })) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  function commTable(rows) {
+    if (!rows || !rows.length) return '<div class="empty">No commissions yet.</div>';
+    return '<table><thead><tr><th>ID</th><th>Status</th><th>Rate</th><th style="text-align:right">Amount</th><th>Accrued</th><th>Base txn</th></tr></thead><tbody>' +
+      rows.slice(0, 200).map(function (c) {
+        return '<tr><td>#' + c.commission_id + '</td><td><span class="pill">' + CFO.escapeHtml(c.status) + '</span></td>' +
+          '<td>' + (c.rate_bps / 100) + '%</td><td class="amt">' + CFO.escapeHtml(CFO.fmtMoney(c.commission_cents)) + '</td>' +
+          '<td>' + CFO.escapeHtml(CFO.fmtDate(c.accrued_at)) + '</td>' +
+          '<td><a href="/finance/ledger/detail.html?id=' + c.base_charge_id + '" class="mono">' + CFO.escapeHtml(c.base_charge_id) + '</a></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  function payTable(rows) {
+    return '<table><thead><tr><th>Payout</th><th>Type</th><th>Status</th><th style="text-align:right">Amount</th><th>Executed</th></tr></thead><tbody>' +
+      rows.map(function (p) {
+        return '<tr><td class="mono">' + CFO.escapeHtml(p.payout_id) + '</td><td>' + CFO.escapeHtml(p.type) + '</td><td><span class="pill">' + CFO.escapeHtml(p.status) + '</span></td><td class="amt">' + CFO.escapeHtml(CFO.fmtMoney(p.amount_cents)) + '</td><td>' + CFO.escapeHtml(p.executed_at ? CFO.fmtDate(p.executed_at) : '—') + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+});
+</script>
+</html>

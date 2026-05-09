@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Contests · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('contests', { title: 'Finance', subtitle: 'Contests', body:
+    '<h1 class="page-title">Contests</h1><div class="page-sub">Per-season prize pools, sponsor revenue, and net P&amp;L.</div>' +
+    '<div class="tbl-wrap"><div class="tbl-toolbar"><strong>Seasons</strong><div class="exports" id="exp"></div></div><div id="tbl-host"><div class="empty">Loading…</div></div></div>'
+  });
+
+  let data;
+  try { data = await CFO.api('/api/finance/contests'); }
+  catch (e) { document.getElementById('cfo-page').insertAdjacentHTML('afterbegin', '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'); return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  CFO.renderTable({
+    container: document.getElementById('tbl-host'),
+    columns: [
+      { key: 'season', label: 'Season', render: function (r) { return '<strong>' + CFO.escapeHtml(r.season) + '</strong>'; } },
+      { key: 'txn_count', label: 'Records', align: 'right' },
+      { key: 'sponsor_cents', label: 'Sponsor revenue', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.sponsor_cents)); } },
+      { key: 'prizes_cents', label: 'Prize pool', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.prizes_cents)); } },
+      { key: 'net', label: 'Net', align: 'right', render: function (r) { const net = (r.sponsor_cents || 0) - (r.prizes_cents || 0); return '<span class="' + (net >= 0 ? 'pos' : 'neg') + '">' + CFO.escapeHtml(CFO.fmtMoney(net)) + '</span>'; } },
+      { key: 'first_at', label: 'First', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.first_at, { dateOnly: true })); } },
+      { key: 'last_at', label: 'Last', render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.last_at, { dateOnly: true })); } }
+    ],
+    rows: data.contests || [],
+    rowClick: function (r) { window.location.href = '/finance/contests/detail.html?id=' + encodeURIComponent(r.season); },
+    emptyText: 'No contests found yet.'
+  });
+  CFO.attachExports(document.getElementById('exp'),
+    function () { return data.contests || []; },
+    function () { return ['Season','Txns','Sponsor (USD)','Prizes (USD)','Net (USD)','First','Last']; },
+    function () { return [
+      function(r){return r.season;}, function(r){return r.txn_count;},
+      function(r){return ((r.sponsor_cents||0)/100).toFixed(2);}, function(r){return ((r.prizes_cents||0)/100).toFixed(2);},
+      function(r){return (((r.sponsor_cents||0)-(r.prizes_cents||0))/100).toFixed(2);},
+      function(r){return r.first_at;}, function(r){return r.last_at;}
+    ]; },
+    'shg-contests');
+});
+</script>
+</html>

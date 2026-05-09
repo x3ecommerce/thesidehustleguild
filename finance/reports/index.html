@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Reports · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  const now = new Date();
+  const yyyy = now.getUTCFullYear();
+  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+
+  CFO.renderShell('reports', { title: 'Finance', subtitle: 'Reports', body:
+    '<h1 class="page-title">Reports</h1><div class="page-sub">Pre-baked statements with full export. Print to PDF for archival.</div>' +
+    '<div class="grid-3">' +
+      '<div class="card"><h2>Monthly P&amp;L</h2><div class="muted">Income, expense, member movement, daily series.</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;align-items:center;">' +
+          '<input type="month" id="mo-pick" value="' + yyyy + '-' + mm + '" />' +
+          '<button class="btn primary" id="mo-go">Open</button>' +
+        '</div></div>' +
+      '<div class="card"><h2>Yearly summary</h2><div class="muted">12-month roll-up with trend.</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;align-items:center;">' +
+          '<input type="number" id="yr-pick" min="2024" max="2099" step="1" value="' + yyyy + '" />' +
+          '<button class="btn primary" id="yr-go">Open</button>' +
+        '</div></div>' +
+      '<div class="card"><h2>Audit binder</h2><div class="muted">ZIP of every table as CSV plus a README index.</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;align-items:center;">' +
+          '<button class="btn primary" id="binder-go">Generate ZIP</button>' +
+          '<span id="binder-status" class="mono" style="font-size:11px;color:var(--charcoal-soft);"></span>' +
+        '</div></div>' +
+    '</div>' +
+    '<div id="report-host" class="fade-in"></div>'
+  });
+
+  document.getElementById('mo-go').addEventListener('click', function () {
+    const v = document.getElementById('mo-pick').value;
+    if (v) loadMonthly(v);
+  });
+  document.getElementById('yr-go').addEventListener('click', function () {
+    const v = document.getElementById('yr-pick').value;
+    if (v) loadYearly(v);
+  });
+  document.getElementById('binder-go').addEventListener('click', generateBinder);
+
+  // Auto-load current month
+  loadMonthly(yyyy + '-' + mm);
+
+  async function loadMonthly(m) {
+    const host = document.getElementById('report-host');
+    host.innerHTML = '<div class="empty">Loading…</div>';
+    try {
+      const data = await CFO.api('/api/finance/reports/monthly?month=' + encodeURIComponent(m));
+      const t = data.totals || {};
+      const mem = data.member_movement || {};
+      const html =
+        '<div style="margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">' +
+          '<h2 style="font-family:Fraunces,serif;font-size:22px;">Monthly P&amp;L · ' + CFO.escapeHtml(data.month) + '</h2>' +
+          '<div><button class="btn" onclick="window.print()">Print as PDF</button></div></div>' +
+        '<div class="kpi-strip">' +
+          kpi('Gross in', CFO.fmtMoney(t.gross_in_cents)) +
+          kpi('Gross out', CFO.fmtMoney(t.gross_out_cents)) +
+          kpi('Net', CFO.fmtMoney(t.net_cents)) +
+          kpi('Transactions', CFO.fmtNum(t.txn_count)) +
+          kpi('Net members', String((mem.new_members || 0) - (mem.churned_members || 0)), '+' + (mem.new_members||0) + ' / -' + (mem.churned_members||0)) +
+        '</div>' +
+        '<div class="grid-2">' +
+          '<div class="card"><h2>Income by type</h2>' + tableRows(data.income_by_type, 'cents') + '</div>' +
+          '<div class="card"><h2>Expense by type</h2>' + tableRows(data.expense_by_type, 'cents', true) + '</div>' +
+        '</div>' +
+        '<div class="card" style="margin-top:20px;"><h2>Daily flows</h2><div class="chart-wrap"><canvas id="ch-mo"></canvas></div></div>';
+      host.innerHTML = html;
+      // Chart
+      drawDaily(data.daily_series || []);
+    } catch (e) { host.innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; }
+  }
+
+  async function loadYearly(y) {
+    const host = document.getElementById('report-host');
+    host.innerHTML = '<div class="empty">Loading…</div>';
+    try {
+      const data = await CFO.api('/api/finance/reports/yearly?year=' + encodeURIComponent(y));
+      const t = data.totals || {};
+      const html =
+        '<div style="margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">' +
+          '<h2 style="font-family:Fraunces,serif;font-size:22px;">Yearly summary · ' + CFO.escapeHtml(data.year) + '</h2>' +
+          '<div><button class="btn" onclick="window.print()">Print as PDF</button></div></div>' +
+        '<div class="kpi-strip">' +
+          kpi('Gross in', CFO.fmtMoney(t.gross_in_cents)) +
+          kpi('Gross out', CFO.fmtMoney(t.gross_out_cents)) +
+          kpi('Net', CFO.fmtMoney(t.net_cents)) +
+          kpi('Transactions', CFO.fmtNum(t.txn_count)) +
+        '</div>' +
+        '<div class="card"><h2>Monthly trend</h2><div class="chart-wrap"><canvas id="ch-yr"></canvas></div></div>' +
+        '<div class="grid-2" style="margin-top:20px;">' +
+          '<div class="card"><h2>Income by type</h2>' + tableRows(data.income_by_type, 'cents') + '</div>' +
+          '<div class="card"><h2>Expense by type</h2>' + tableRows(data.expense_by_type, 'cents', true) + '</div>' +
+        '</div>';
+      host.innerHTML = html;
+      drawMonthly(data.monthly_series || []);
+    } catch (e) { host.innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; }
+  }
+
+  function drawDaily(series) {
+    if (typeof Chart === 'undefined') { setTimeout(function(){drawDaily(series);}, 80); return; }
+    new Chart(document.getElementById('ch-mo'), {
+      type: 'bar',
+      data: { labels: series.map(function (s) { return s.d; }),
+              datasets: [
+                { label: 'In', data: series.map(function (s) { return (s.in_cents || 0) / 100; }), backgroundColor: '#2f7a4f' },
+                { label: 'Out', data: series.map(function (s) { return (s.out_cents || 0) / 100; }), backgroundColor: '#b34a3a' }
+              ] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: function (v) { return '$' + v; } } } } }
+    });
+  }
+  function drawMonthly(series) {
+    if (typeof Chart === 'undefined') { setTimeout(function(){drawMonthly(series);}, 80); return; }
+    new Chart(document.getElementById('ch-yr'), {
+      type: 'line',
+      data: { labels: series.map(function (s) { return s.m; }),
+              datasets: [
+                { label: 'In', data: series.map(function (s) { return (s.in_cents || 0) / 100; }), borderColor: '#2f7a4f', backgroundColor: 'rgba(47,122,79,0.15)', fill: true },
+                { label: 'Net', data: series.map(function (s) { return (s.net_cents || 0) / 100; }), borderColor: '#27384A', fill: false, borderWidth: 2, tension: 0.3 }
+              ] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { ticks: { callback: function (v) { return '$' + v; } } } } }
+    });
+  }
+
+  function tableRows(rows, key, neg) {
+    if (!rows || !rows.length) return '<div class="empty">None.</div>';
+    return '<table><thead><tr><th>Type</th><th>Count</th><th style="text-align:right">Amount</th></tr></thead><tbody>' +
+      rows.map(function (r) {
+        return '<tr><td><span class="pill">' + CFO.escapeHtml(CFO.txnTypeLabel(r.type)) + '</span></td><td>' + r.n + '</td><td class="amt ' + (neg ? 'neg' : 'pos') + '">' + CFO.escapeHtml(CFO.fmtMoney(r.cents)) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  function kpi(k, v, sub) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div>' + (sub ? '<div class="sub">' + CFO.escapeHtml(sub) + '</div>' : '') + '</div>'; }
+
+  async function generateBinder() {
+    const status = document.getElementById('binder-status');
+    status.textContent = 'loading JSZip…';
+    try {
+      const JSZip = await CFO.loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js', 'JSZip');
+      const zip = new JSZip();
+      // Pull each table via existing endpoints
+      const datasets = [
+        ['ledger', '/api/finance/ledger?pageSize=200&page=1', function (d) { return { rows: d.rows, total: d.total }; }],
+        ['members', '/api/finance/members?pageSize=200&page=1', function (d) { return { rows: d.rows, total: d.total }; }],
+        ['affiliates', '/api/finance/affiliates?pageSize=200&page=1', function (d) { return { rows: d.rows, total: d.total }; }],
+        ['sponsors', '/api/finance/sponsors', function (d) { return { rows: d.by_sponsor, contracts_active: d.contracts_active, contracts_expiring: d.contracts_expiring }; }],
+        ['contests', '/api/finance/contests', function (d) { return { rows: d.contests }; }],
+        ['audit', '/api/finance/audit?pageSize=200&page=1', function (d) { return { rows: d.rows, total: d.total }; }],
+        ['approvals', '/api/finance/approvals', function (d) { return d; }]
+      ];
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+      let readme = 'SHG Audit binder · ' + stamp + '\n\nContents:\n';
+      for (const [name, url, pick] of datasets) {
+        status.textContent = 'fetching ' + name + '…';
+        const data = await CFO.api(url);
+        const picked = pick(data);
+        // Save raw JSON for full fidelity
+        zip.file(name + '.json', JSON.stringify(picked, null, 2));
+        // For the main rows, also a CSV
+        const rows = picked.rows || [];
+        if (rows.length) {
+          const headers = Object.keys(rows[0]);
+          const csvHead = headers.map(csvCell).join(',');
+          const csvBody = rows.map(function (r) { return headers.map(function (h) { return csvCell(r[h]); }).join(','); }).join('\n');
+          zip.file(name + '.csv', csvHead + '\n' + csvBody + '\n');
+        }
+        readme += '- ' + name + '.json (raw)' + (rows.length ? ' + ' + name + '.csv (' + rows.length + ' rows)' : '') + '\n';
+      }
+      readme += '\nGenerated: ' + new Date().toISOString() + '\nDashboard: thesidehustleguild.com/finance/\n';
+      zip.file('README.txt', readme);
+      status.textContent = 'zipping…';
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'shg-audit-binder-' + stamp + '.zip';
+      document.body.appendChild(a); a.click(); a.remove();
+      status.textContent = 'done · ' + (blob.size / 1024).toFixed(1) + ' KB';
+    } catch (e) {
+      status.textContent = 'failed: ' + (e && e.message || e);
+    }
+  }
+  function csvCell(v) {
+    if (v == null) return '';
+    const s = String(v);
+    if (/[",\n\r]/.test(s)) return '"' + s.replaceAll('"', '""') + '"';
+    return s;
+  }
+});
+</script>
+</html>

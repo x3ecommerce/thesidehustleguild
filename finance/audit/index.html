@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Audit log · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<style>
+  .audit-row { cursor: pointer; }
+  .audit-detail { background: var(--cream-2); padding: 12px 16px; border-top: 1px solid var(--line); }
+  .audit-detail pre { background: white; padding: 10px; border-radius: 4px; font-size: 11px; overflow-x: auto; border: 1px solid var(--line); }
+</style>
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  CFO.renderShell('audit', { title: 'Finance', subtitle: 'Audit log', body:
+    '<h1 class="page-title">Audit log</h1><div class="page-sub">Append-only event chain. Click any row to expand the full record.</div>' +
+    '<div class="tbl-wrap"><div class="tbl-toolbar">' +
+      '<div class="filters">' +
+        '<div class="search"><span aria-hidden="true">⌕</span><input type="search" id="q" placeholder="Search target_id, action, metadata… (/)" aria-label="Search" /></div>' +
+        '<select class="chip" id="agent-sel"><option value="">All agents</option></select>' +
+        '<select class="chip" id="action-sel"><option value="">All actions</option></select>' +
+      '</div>' +
+      '<div class="exports" id="exp"></div>' +
+    '</div>' +
+    '<div id="tbl-host"><div class="empty">Loading…</div></div>' +
+    '<div class="tbl-foot" id="tbl-foot"></div></div>'
+  });
+
+  let state = { page: 1, pageSize: 50 };
+  const params = CFO.getParams();
+  if (params.page) state.page = parseInt(params.page, 10) || 1;
+  document.getElementById('q').value = params.search || '';
+  document.getElementById('agent-sel').value = params.agent || '';
+  document.getElementById('action-sel').value = params.action || '';
+
+  let qTimer = null;
+  document.getElementById('q').addEventListener('input', function () { clearTimeout(qTimer); qTimer = setTimeout(function () { state.page = 1; sync(); load(); }, 250); });
+  document.getElementById('agent-sel').addEventListener('change', function () { state.page = 1; sync(); load(); });
+  document.getElementById('action-sel').addEventListener('change', function () { state.page = 1; sync(); load(); });
+
+  function sync() {
+    CFO.setParams({ page: state.page,
+      search: document.getElementById('q').value || '',
+      agent: document.getElementById('agent-sel').value || '',
+      action: document.getElementById('action-sel').value || '' }, { replace: true });
+  }
+
+  async function load() {
+    const p = CFO.getParams();
+    const qs = new URLSearchParams();
+    ['search','agent','action'].forEach(function (k) { if (p[k]) qs.set(k, p[k]); });
+    qs.set('page', state.page); qs.set('pageSize', state.pageSize);
+    try {
+      document.getElementById('tbl-host').innerHTML = '<div class="empty">Loading…</div>';
+      const data = await CFO.api('/api/finance/audit?' + qs.toString());
+      render(data);
+      CFO.setLastRefresh(new Date().toISOString());
+    } catch (e) { document.getElementById('tbl-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; }
+  }
+  window.cfoOnRefresh = load;
+
+  function render(data) {
+    // Hydrate filter dropdowns once
+    if (!document.getElementById('agent-sel').dataset.populated) {
+      const aSel = document.getElementById('agent-sel');
+      (data.agents || []).forEach(function (a) { const o = document.createElement('option'); o.value = a.agent_id; o.textContent = a.agent_id + ' (' + a.n + ')'; aSel.appendChild(o); });
+      aSel.dataset.populated = '1';
+      const actSel = document.getElementById('action-sel');
+      (data.actions || []).forEach(function (a) { const o = document.createElement('option'); o.value = a.action; o.textContent = a.action + ' (' + a.n + ')'; actSel.appendChild(o); });
+      actSel.dataset.populated = '1';
+      const p = CFO.getParams();
+      aSel.value = p.agent || ''; actSel.value = p.action || '';
+    }
+
+    const host = document.getElementById('tbl-host');
+    if (!data.rows.length) { host.innerHTML = '<div class="empty">No audit records match your filters.</div>'; return; }
+    let html = '<table><thead><tr><th>Entry</th><th>When</th><th>Agent</th><th>Action</th><th>Target</th><th>After hash</th></tr></thead><tbody>';
+    data.rows.forEach(function (r) {
+      html += '<tr class="audit-row" data-id="' + r.entry_id + '">' +
+        '<td>#' + r.entry_id + '</td>' +
+        '<td>' + CFO.escapeHtml(CFO.fmtDate(r.occurred_at)) + '</td>' +
+        '<td><span class="pill">' + CFO.escapeHtml(r.agent_id) + '</span></td>' +
+        '<td>' + CFO.escapeHtml(r.action) + '</td>' +
+        '<td>' + (r.target_table ? '<span class="mono">' + CFO.escapeHtml(r.target_table + ' · ' + (r.target_id || '')) + '</span>' : '—') + '</td>' +
+        '<td class="mono">' + CFO.escapeHtml((r.after_state_hash || '').slice(0, 12)) + '…</td></tr>';
+      // Expansion row (hidden initially)
+      let prettyMeta = '';
+      if (r.metadata) { try { prettyMeta = JSON.stringify(JSON.parse(r.metadata), null, 2); } catch { prettyMeta = r.metadata; } }
+      html += '<tr class="audit-detail-row" data-for="' + r.entry_id + '" hidden><td colspan="6"><div class="audit-detail">' +
+        '<div><strong>Target:</strong> <span class="mono">' + CFO.escapeHtml(r.target_table + ' / ' + (r.target_id || '—')) + '</span></div>' +
+        '<div><strong>Before hash:</strong> <span class="mono">' + CFO.escapeHtml(r.before_state_hash || '—') + '</span></div>' +
+        '<div><strong>After hash:</strong> <span class="mono">' + CFO.escapeHtml(r.after_state_hash || '—') + '</span></div>' +
+        '<div><strong>Entry hash:</strong> <span class="mono">' + CFO.escapeHtml(r.entry_hash) + '</span></div>' +
+        '<div><strong>Prev hash:</strong> <span class="mono">' + CFO.escapeHtml(r.prev_entry_hash) + '</span></div>' +
+        (prettyMeta ? '<div style="margin-top:8px;"><strong>Metadata:</strong><pre>' + CFO.escapeHtml(prettyMeta) + '</pre></div>' : '') +
+        '</div></td></tr>';
+    });
+    html += '</tbody></table>';
+    host.innerHTML = '<div style="overflow-x:auto;">' + html + '</div>';
+    // Wire expansion
+    host.querySelectorAll('.audit-row').forEach(function (tr) {
+      tr.addEventListener('click', function () {
+        const id = tr.dataset.id;
+        const det = host.querySelector('.audit-detail-row[data-for="' + id + '"]');
+        if (det) det.hidden = !det.hidden;
+      });
+    });
+    CFO.renderPager(document.getElementById('tbl-foot'), state.page, data.total, state.pageSize, function (p) { state.page = p; sync(); load(); });
+
+    const slot = document.getElementById('exp');
+    slot.innerHTML = '';
+    CFO.attachExports(slot,
+      function () { return data.rows; },
+      function () { return ['Entry','When','Agent','Action','Target table','Target ID','Before hash','After hash','Entry hash','Prev hash','Metadata']; },
+      function () { return [
+        function(r){return r.entry_id;}, function(r){return r.occurred_at;}, function(r){return r.agent_id;},
+        function(r){return r.action;}, function(r){return r.target_table||'';}, function(r){return r.target_id||'';},
+        function(r){return r.before_state_hash||'';}, function(r){return r.after_state_hash||'';},
+        function(r){return r.entry_hash;}, function(r){return r.prev_entry_hash;}, function(r){return r.metadata||'';}
+      ]; },
+      'shg-audit-log');
+  }
+
+  load();
+});
+</script>
+</html>

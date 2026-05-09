@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Transaction · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', async function () {
+  CFO.renderShell('ledger', { title: 'Ledger', subtitle: 'Transaction', body: '<div id="page-host"><div class="empty">Loading…</div></div>' });
+
+  const id = CFO.getParams().id;
+  if (!id) { document.getElementById('page-host').innerHTML = '<div class="err-banner">Missing ?id parameter.</div>'; return; }
+
+  let data;
+  try { data = await CFO.api('/api/finance/ledger/' + encodeURIComponent(id)); }
+  catch (e) { document.getElementById('page-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; return; }
+  CFO.setLastRefresh(new Date().toISOString());
+
+  const t = data.transaction;
+  // Hash chain verification — recompute SHA-256 client-side
+  const payload = [t.txn_id, t.member_id == null ? '' : String(t.member_id), t.type, String(t.amount_cents), t.occurred_at, t.prev_hash].join('|');
+  const recomputed = await sha256Hex(payload);
+  const hashOk = recomputed === t.hash;
+  const prevLinkOk = !data.prev_transaction || data.prev_transaction.hash === t.prev_hash;
+
+  let metadataHtml = '';
+  if (t.metadata) {
+    try { metadataHtml = '<pre class="mono" style="white-space:pre-wrap;background:var(--cream-2);padding:10px;border-radius:4px;font-size:11px;">' + CFO.escapeHtml(JSON.stringify(JSON.parse(t.metadata), null, 2)) + '</pre>'; }
+    catch { metadataHtml = '<div class="mono">' + CFO.escapeHtml(t.metadata) + '</div>'; }
+  }
+
+  const verifyPill = hashOk
+    ? '<span class="pill green" title="Recomputed SHA-256 matches DB">VERIFIED</span>'
+    : '<span class="pill red" title="Hash mismatch — investigate immediately">HASH MISMATCH</span>';
+  const linkPill = prevLinkOk
+    ? '<span class="pill green">CHAIN OK</span>'
+    : '<span class="pill yellow">CHAIN BREAK</span>';
+
+  const html =
+    '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:8px;">' +
+      '<h1 class="page-title" style="margin:0;">Transaction <span class="mono" style="font-size:14px;">' + CFO.escapeHtml(t.txn_id) + '</span></h1>' +
+      '<div style="display:flex;gap:8px;"><a class="btn" href="/finance/ledger/">← Ledger</a>' +
+      '<button class="btn primary" onclick="window.print()">Print receipt (PDF)</button></div>' +
+    '</div>' +
+    '<div class="page-sub">' + verifyPill + ' · ' + linkPill + ' · Recomputed: <span class="mono">' + CFO.escapeHtml(recomputed.slice(0, 18)) + '…</span></div>' +
+    '<div class="grid-2">' +
+      '<div class="card"><h2>Record</h2><dl class="detail-grid">' +
+        kv('Txn ID', '<span class="mono">' + CFO.escapeHtml(t.txn_id) + '</span>') +
+        kv('Type', '<span class="pill">' + CFO.escapeHtml(CFO.txnTypeLabel(t.type)) + '</span>') +
+        kv('Amount', '<strong style="font-size:18px;color:' + (t.amount_cents >= 0 ? 'var(--green)' : 'var(--red)') + ';">' + CFO.escapeHtml(CFO.fmtMoney(t.amount_cents)) + ' ' + CFO.escapeHtml(t.currency) + '</strong>') +
+        kv('Occurred at', CFO.escapeHtml(CFO.fmtDate(t.occurred_at))) +
+        kv('Source', '<span class="pill">' + CFO.escapeHtml(t.source) + '</span> <span class="mono">' + CFO.escapeHtml(t.source_id || '—') + '</span>') +
+        kv('Member', t.member_id ? ('<a href="/finance/members/detail.html?id=' + t.member_id + '">' + CFO.escapeHtml(t.discord_id || ('#' + t.member_id)) + '</a>') : '—') +
+        kv('Member tier', t.tier ? CFO.escapeHtml(CFO.tierLabel(t.tier, t.founder_locked_rate)) : '—') +
+        kv('Whop ID', '<span class="mono">' + CFO.escapeHtml(t.whop_id || '—') + '</span>') +
+        kv('Created by agent', CFO.escapeHtml(t.created_by_agent || '—')) +
+        kv('Created at', CFO.escapeHtml(CFO.fmtDate(t.created_at))) +
+        kv('Policy version', t.policy_version_id || '—') +
+        kv('Supersedes', t.supersedes_txn_id ? '<a href="/finance/ledger/detail.html?id=' + t.supersedes_txn_id + '" class="mono">' + t.supersedes_txn_id + '</a>' : '—') +
+        kv('Supporting doc', t.supporting_doc_url ? '<a href="' + CFO.escapeHtml(t.supporting_doc_url) + '" rel="noopener" target="_blank">View</a>' : '—') +
+      '</dl></div>' +
+      '<div class="card"><h2>Hash chain</h2>' +
+      '<dl class="detail-grid">' +
+        kv('Stored hash', '<span class="mono" style="font-size:11px;">' + CFO.escapeHtml(t.hash) + '</span>') +
+        kv('Recomputed', '<span class="mono" style="font-size:11px;color:' + (hashOk ? 'var(--green)' : 'var(--red)') + ';">' + CFO.escapeHtml(recomputed) + '</span>') +
+        kv('Prev hash', '<span class="mono" style="font-size:11px;">' + CFO.escapeHtml(t.prev_hash) + '</span>') +
+        kv('Prev link', linkPill + (data.prev_transaction ? ' <a class="mono" href="/finance/ledger/detail.html?id=' + data.prev_transaction.txn_id + '">' + CFO.escapeHtml(data.prev_transaction.txn_id) + '</a>' : ' <em>(genesis)</em>')) +
+      '</dl>' +
+      '<h3 style="margin-top:14px;font-size:14px;">Metadata</h3>' + (metadataHtml || '<div class="empty">none</div>') +
+      '</div>' +
+    '</div>' +
+    '<div class="grid-2">' +
+      '<div class="card"><h2>Linked commissions <span class="muted" style="font-weight:400">' + (data.commissions || []).length + '</span></h2>' + linkedCommissions(data.commissions) + '</div>' +
+      '<div class="card"><h2>Linked payouts <span class="muted" style="font-weight:400">' + (data.payouts || []).length + '</span></h2>' + linkedPayouts(data.payouts) + '</div>' +
+    '</div>' +
+    '<div class="card"><h2>Audit log entries <span class="muted" style="font-weight:400">' + (data.audit || []).length + '</span></h2>' + auditEntries(data.audit) + '</div>';
+  document.getElementById('page-host').innerHTML = html;
+
+  function kv(k, v) { return '<dt>' + CFO.escapeHtml(k) + '</dt><dd>' + (v || '—') + '</dd>'; }
+});
+
+function linkedCommissions(rows) {
+  if (!rows || !rows.length) return '<div class="empty">No commissions tied to this transaction.</div>';
+  return '<table><thead><tr><th>Affiliate</th><th>Referred</th><th>Rate</th><th>Status</th><th style="text-align:right">Amount</th><th>Accrued</th><th>Paid</th></tr></thead><tbody>' +
+    rows.map(function (c) {
+      return '<tr><td><a href="/finance/affiliates/detail.html?id=' + c.affiliate_id + '">#' + c.affiliate_id + '</a></td>' +
+        '<td><a href="/finance/members/detail.html?id=' + c.referred_member_id + '">#' + c.referred_member_id + '</a></td>' +
+        '<td>' + (c.rate_bps / 100) + '%</td>' +
+        '<td><span class="pill">' + CFO.escapeHtml(c.status) + '</span></td>' +
+        '<td class="amt">' + CFO.escapeHtml(CFO.fmtMoney(c.commission_cents)) + '</td>' +
+        '<td>' + CFO.escapeHtml(CFO.fmtDate(c.accrued_at)) + '</td>' +
+        '<td>' + CFO.escapeHtml(c.paid_at ? CFO.fmtDate(c.paid_at) : '—') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function linkedPayouts(rows) {
+  if (!rows || !rows.length) return '<div class="empty">No payouts derived from this transaction.</div>';
+  return '<table><thead><tr><th>Payout ID</th><th>Type</th><th>Status</th><th style="text-align:right">Amount</th><th>Executed</th></tr></thead><tbody>' +
+    rows.map(function (p) {
+      return '<tr><td class="mono">' + CFO.escapeHtml(p.payout_id) + '</td><td>' + CFO.escapeHtml(p.type) + '</td><td><span class="pill">' + CFO.escapeHtml(p.status) + '</span></td><td class="amt">' + CFO.escapeHtml(CFO.fmtMoney(p.amount_cents)) + '</td><td>' + CFO.escapeHtml(p.executed_at ? CFO.fmtDate(p.executed_at) : '—') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function auditEntries(rows) {
+  if (!rows || !rows.length) return '<div class="empty">No audit entries reference this txn.</div>';
+  return '<table><thead><tr><th>Entry</th><th>Agent</th><th>Action</th><th>Occurred</th><th>Hash</th></tr></thead><tbody>' +
+    rows.map(function (a) {
+      return '<tr><td>#' + a.entry_id + '</td><td><span class="pill">' + CFO.escapeHtml(a.agent_id) + '</span></td><td>' + CFO.escapeHtml(a.action) + '</td><td>' + CFO.escapeHtml(CFO.fmtDate(a.occurred_at)) + '</td><td class="mono">' + CFO.escapeHtml((a.entry_hash || '').slice(0, 12)) + '…</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
+async function sha256Hex(input) {
+  const enc = new TextEncoder().encode(input);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+</script>
+</html>

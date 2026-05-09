@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Members · CFO Suite</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="stylesheet" href="/finance/assets/cfo.css">
+<script src="/finance/assets/cfo.js" defer></script>
+</head>
+<body></body>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  const body =
+    '<h1 class="page-title">Members</h1>' +
+    '<div class="page-sub">Master roster — search, filter, drill into any member.</div>' +
+    '<div class="kpi-strip" id="kpi"></div>' +
+    '<div class="tbl-wrap" id="tbl-wrap">' +
+      '<div class="tbl-toolbar">' +
+        '<div class="filters">' +
+          '<div class="search"><span aria-hidden="true">⌕</span><input type="search" id="q" placeholder="Search whop_id, discord_id, member_id… (/)" aria-label="Search" /></div>' +
+          '<select class="chip" id="tier-sel" aria-label="Filter tier">' +
+            '<option value="">All tiers</option>' +
+            '<option value="founders_circle">Founders Circle</option>' +
+            '<option value="founder_locked">Founder ($9 locked)</option>' +
+            '<option value="operator">Operator</option>' +
+            '<option value="builder">Lab Member</option>' +
+            '<option value="rookie">Rookie</option>' +
+            '<option value="affiliate_only">Affiliates only</option>' +
+          '</select>' +
+          '<select class="chip" id="status-sel" aria-label="Filter status">' +
+            '<option value="">All status</option>' +
+            '<option value="active" selected>Active</option><option value="churned">Churned</option><option value="refunded">Refunded</option><option value="banned">Banned</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="exports" id="exports-slot"></div>' +
+      '</div>' +
+      '<div id="table-host"><div class="empty">Loading…</div></div>' +
+      '<div class="tbl-foot" id="tbl-foot"></div>' +
+    '</div>';
+  CFO.renderShell('members', { title: 'Finance', subtitle: 'Members', body: body });
+
+  let state = { page: 1, pageSize: 50, sort: 'signup_date', dir: 'desc' };
+  const params = CFO.getParams();
+  if (params.page) state.page = parseInt(params.page, 10) || 1;
+  if (params.sort) state.sort = params.sort;
+  if (params.dir) state.dir = params.dir;
+  document.getElementById('q').value = params.search || '';
+  document.getElementById('tier-sel').value = params.tier || '';
+  document.getElementById('status-sel').value = params.status || 'active';
+
+  let qTimer = null;
+  document.getElementById('q').addEventListener('input', function () { clearTimeout(qTimer); qTimer = setTimeout(function () { state.page = 1; sync(); load(); }, 250); });
+  document.getElementById('tier-sel').addEventListener('change', function () { state.page = 1; sync(); load(); });
+  document.getElementById('status-sel').addEventListener('change', function () { state.page = 1; sync(); load(); });
+
+  function sync() {
+    CFO.setParams({ page: state.page, sort: state.sort, dir: state.dir,
+      search: document.getElementById('q').value || '',
+      tier: document.getElementById('tier-sel').value || '',
+      status: document.getElementById('status-sel').value || 'active' }, { replace: true });
+  }
+
+  async function load() {
+    const p = CFO.getParams();
+    const qs = new URLSearchParams();
+    ['search','tier','status'].forEach(function (k) { if (p[k]) qs.set(k, p[k]); });
+    qs.set('sort', state.sort); qs.set('dir', state.dir);
+    qs.set('page', state.page); qs.set('pageSize', state.pageSize);
+    try {
+      document.getElementById('table-host').innerHTML = '<div class="empty">Loading…</div>';
+      const data = await CFO.api('/api/finance/members?' + qs.toString());
+      render(data);
+      CFO.setLastRefresh(new Date().toISOString());
+    } catch (e) { document.getElementById('table-host').innerHTML = '<div class="err-banner">' + CFO.escapeHtml(e.message) + '</div>'; }
+  }
+  window.cfoOnRefresh = load;
+
+  function render(data) {
+    document.getElementById('kpi').innerHTML =
+      kpi('Records (filtered)', CFO.fmtNum(data.total)) +
+      kpi('Active total', CFO.fmtNum(sumTiers(data.tiers))) +
+      kpi('Founders Circle', CFO.fmtNum(byTier(data.tiers, 'founders_circle'))) +
+      kpi('Operators', CFO.fmtNum(byTier(data.tiers, 'operator'))) +
+      kpi('Lab Members', CFO.fmtNum(byTier(data.tiers, 'builder')));
+
+    CFO.renderTable({
+      container: document.getElementById('table-host'),
+      sortBy: { key: state.sort, dir: state.dir },
+      onSort: function (k, d) { state.sort = k; state.dir = d; state.page = 1; sync(); load(); },
+      columns: [
+        { key: 'discord_id', label: 'Member', render: function (r) { return '<div><strong>' + CFO.escapeHtml(r.discord_id || '—') + '</strong></div><div class="mono">' + CFO.escapeHtml(r.whop_id) + '</div>'; } },
+        { key: 'tier', label: 'Tier', sortable: true, render: function (r) { const cls = CFO.tierPillClass(r.tier); return '<span class="pill ' + cls + '">' + CFO.escapeHtml(CFO.tierLabel(r.tier, r.founder_locked_rate)) + '</span>'; } },
+        { key: 'status', label: 'Status', sortable: true, render: function (r) { return '<span class="pill ' + (r.status === 'active' ? 'green' : (r.status === 'churned' ? 'red' : 'yellow')) + '">' + CFO.escapeHtml(r.status) + '</span>'; } },
+        { key: 'is_affiliate', label: 'Affiliate', render: function (r) { return r.is_affiliate ? ('<span class="pill amber">Affiliate</span> <span class="mono">' + (r.current_active_refs || 0) + ' refs · ' + (r.current_rate_bps ? (r.current_rate_bps / 100) + '%' : '—') + '</span>') : '<span class="pill">No</span>'; } },
+        { key: 'signup_date', label: 'Signup', sortable: true, render: function (r) { return CFO.escapeHtml(CFO.fmtDate(r.signup_date, { dateOnly: true })); } },
+        { key: 'total_paid_cents', label: 'Total paid', align: 'right', render: function (r) { return CFO.escapeHtml(CFO.fmtMoney(r.total_paid_cents)); } },
+        { key: 'txn_count', label: 'Txns', align: 'right', render: function (r) { return CFO.fmtNum(r.txn_count); } }
+      ],
+      rows: data.rows,
+      rowClick: function (r) { window.location.href = '/finance/members/detail.html?id=' + r.member_id; },
+      emptyText: 'No members match your filters.'
+    });
+
+    CFO.renderPager(document.getElementById('tbl-foot'), state.page, data.total, state.pageSize, function (p) { state.page = p; sync(); load(); });
+
+    const slot = document.getElementById('exports-slot');
+    slot.innerHTML = '';
+    CFO.attachExports(slot,
+      function () { return data.rows; },
+      function () { return ['Member ID','Whop ID','Discord','Signup','Tier','Status','Affiliate','Active refs','Rate (bps)','Total paid (USD)','Txn count','Country']; },
+      function () { return [
+        function(r){return r.member_id;}, function(r){return r.whop_id;}, function(r){return r.discord_id||'';},
+        function(r){return r.signup_date;}, function(r){return CFO.tierLabel(r.tier, r.founder_locked_rate);},
+        function(r){return r.status;}, function(r){return r.is_affiliate?'yes':'no';},
+        function(r){return r.current_active_refs||0;}, function(r){return r.current_rate_bps||'';},
+        function(r){return ((r.total_paid_cents||0)/100).toFixed(2);},
+        function(r){return r.txn_count||0;}, function(r){return r.country_code||'';}
+      ]; },
+      'shg-members');
+  }
+
+  function kpi(k, v, sub) { return '<div class="kpi"><div class="label">' + CFO.escapeHtml(k) + '</div><div class="value">' + CFO.escapeHtml(String(v)) + '</div>' + (sub ? '<div class="sub">' + CFO.escapeHtml(sub) + '</div>' : '') + '</div>'; }
+  function sumTiers(tiers) { return (tiers || []).reduce(function (a, b) { return a + (b.n || 0); }, 0); }
+  function byTier(tiers, t) { return (tiers || []).reduce(function (a, b) { return b.tier === t ? a + (b.n || 0) : a; }, 0); }
+
+  load();
+});
+</script>
+</html>
