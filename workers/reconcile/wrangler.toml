@@ -1,0 +1,16 @@
+# Daily reconciliation Worker for The Side Hustle Guild Finance Department.
+# Runs at 07:00 UTC = 03:00 ET per Section 6 of 35_FINANCE_DEPARTMENT_OPERATING_DOC.
+# Phase 1: reconciles D1 totals against expected; writes reconciliation_runs +
+# audit_log. Phase 2 will add live Stripe + Whop API calls.
+
+name = "shg-reconcile"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shg-ledger"
+database_id = "9193c780-e7e7-4fc5-9d58-1a1dbe8c7042"
+
+[triggers]
+crons = ["0 7 * * *"]

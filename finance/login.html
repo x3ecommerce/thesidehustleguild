@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Finance — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F8F4ED;
+    --slate: #27384A;
+    --amber: #E89B3B;
+    --sage: #A8C9A0;
+    --charcoal: #1E1E1E;
+    --charcoal-soft: #1E1E1E99;
+    --line: rgba(39,56,74,0.08);
+    --line-strong: rgba(39,56,74,0.18);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--slate); }
+  .card {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 40px 36px;
+    border-radius: 8px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 1px 3px rgba(39,56,74,0.06);
+  }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--slate); margin-bottom: 6px; }
+  .logo-mark { display: inline-block; width: 12px; height: 12px; background: var(--amber); margin-right: 8px; vertical-align: middle; transform: rotate(45deg); }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  .lead { color: var(--charcoal-soft); font-size: 14px; margin-bottom: 28px; }
+  label { display: block; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--charcoal-soft); font-weight: 600; margin-bottom: 6px; }
+  input[type="password"] {
+    width: 100%;
+    border: 1px solid var(--line-strong);
+    background: var(--cream);
+    color: var(--slate);
+    font-family: inherit;
+    font-size: 16px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  input[type="password"]:focus { outline: 2px solid var(--amber); outline-offset: 1px; border-color: var(--amber); }
+  button {
+    width: 100%; background: var(--slate); color: var(--cream);
+    border: none; padding: 14px 20px; font-weight: 600; font-size: 15px;
+    font-family: inherit; border-radius: 4px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  button:hover { background: var(--charcoal); }
+  button:disabled { opacity: 0.6; cursor: progress; }
+  .err { color: #b34a3a; font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .footer-note { margin-top: 24px; font-size: 12px; color: var(--charcoal-soft); text-align: center; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo"><span class="logo-mark"></span>The Side Hustle Guild</div>
+  <h1>Finance</h1>
+  <p class="lead">Founder access only. Enter the dashboard password.</p>
+  <form id="login-form" autocomplete="off">
+    <label for="pw">Password</label>
+    <input id="pw" type="password" autocomplete="current-password" required autofocus>
+    <button type="submit" id="submit-btn">Open dashboard</button>
+    <div class="err" id="err" role="alert" aria-live="polite"></div>
+  </form>
+  <div class="footer-note">X3 E-Commerce LLC dba The Side Hustle Guild</div>
+</div>
+<script>
+  const form = document.getElementById("login-form");
+  const btn = document.getElementById("submit-btn");
+  const errBox = document.getElementById("err");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errBox.textContent = "";
+    btn.disabled = true;
+    btn.textContent = "Checking...";
+    try {
+      const res = await fetch("/api/finance/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: document.getElementById("pw").value })
+      });
+      if (res.ok) {
+        window.location.href = "/finance/";
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      errBox.textContent = data && data.error === "invalid_password"
+        ? "Wrong password."
+        : "Login failed. Try again.";
+    } catch {
+      errBox.textContent = "Network error. Try again.";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Open dashboard";
+    }
+  });
+</script>
+</body>
+</html>

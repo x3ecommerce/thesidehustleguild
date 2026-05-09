@@ -1,0 +1,8 @@
+# Exclude things from Cloudflare Pages deploy.
+workers/
+scripts/
+migrations/
+node_modules/
+.github/
+*.md
+README.md

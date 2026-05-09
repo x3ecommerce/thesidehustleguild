@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Finance — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F8F4ED;
+    --slate: #27384A;
+    --amber: #E89B3B;
+    --sage: #A8C9A0;
+    --charcoal: #1E1E1E;
+    --charcoal-soft: #1E1E1E99;
+    --line: rgba(39,56,74,0.08);
+    --line-strong: rgba(39,56,74,0.18);
+    --green: #2f7a4f;
+    --yellow: #c08a2b;
+    --red: #b34a3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Manrope', sans-serif; background: var(--cream); color: var(--charcoal); -webkit-font-smoothing: antialiased; line-height: 1.5; }
+  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--slate); line-height: 1.2; }
+  a { color: var(--slate); }
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+  nav.fin-nav { padding: 16px 0; border-bottom: 1px solid var(--line); background: var(--cream); position: sticky; top: 0; z-index: 50; }
+  nav.fin-nav .container { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--slate); text-decoration: none; }
+  .logo-mark { display: inline-block; width: 12px; height: 12px; background: var(--amber); margin-right: 8px; vertical-align: middle; transform: rotate(45deg); }
+  .nav-meta { font-size: 12px; color: var(--charcoal-soft); display: flex; align-items: center; gap: 16px; }
+  .nav-meta button { background: transparent; border: 1px solid var(--line-strong); color: var(--slate); padding: 6px 12px; border-radius: 4px; font-family: inherit; font-size: 12px; cursor: pointer; }
+  .nav-meta button:hover { background: var(--slate); color: var(--cream); border-color: var(--slate); }
+
+  .hero { padding: 32px 0 16px; }
+  .hero h1 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 6px; }
+  .hero .gen { font-size: 12px; color: var(--charcoal-soft); }
+
+  /* KPI strip */
+  .kpi-strip {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 16px 0 32px;
+  }
+  @media (max-width: 900px) { .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
+  .kpi {
+    background: white; border: 1px solid var(--line); padding: 16px; border-radius: 6px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .kpi .label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--charcoal-soft); font-weight: 600; }
+  .kpi .value { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: var(--slate); line-height: 1; }
+  .kpi .sub { font-size: 12px; color: var(--charcoal-soft); }
+  .kpi.health .value { font-size: 22px; }
+  .kpi.health.green .value { color: var(--green); }
+  .kpi.health.yellow .value { color: var(--yellow); }
+  .kpi.health.red .value { color: var(--red); }
+
+  /* Section grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: white; border: 1px solid var(--line); padding: 20px 22px; border-radius: 6px;
+  }
+  .card h2 { font-size: 18px; margin-bottom: 12px; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; border-bottom: 1px dashed var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .key { color: var(--charcoal-soft); }
+  .row .val { color: var(--slate); font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--charcoal-soft); padding: 8px 6px; border-bottom: 1px solid var(--line); font-weight: 600;
+  }
+  tbody td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.amt { font-variant-numeric: tabular-nums; text-align: right; }
+  td.amt.pos { color: var(--green); }
+  td.amt.neg { color: var(--red); }
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 11px;
+    background: var(--cream); border: 1px solid var(--line-strong); color: var(--slate);
+  }
+  .pill.amber { background: var(--amber); border-color: var(--amber); color: white; }
+  .pill.sage { background: var(--sage); border-color: var(--sage); color: var(--slate); }
+
+  .ticker {
+    background: var(--slate); color: var(--cream); padding: 18px 22px; border-radius: 6px; margin-bottom: 24px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  @media (max-width: 900px) { .ticker { grid-template-columns: 1fr 1fr; } }
+  .ticker .label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; }
+  .ticker .value { font-family: 'Fraunces', serif; font-size: 18px; }
+  .ticker .value.green { color: var(--sage); }
+  .ticker .value.yellow { color: #ffd07a; }
+  .ticker .value.red { color: #ff9a8a; }
+
+  .placeholder { padding: 24px; text-align: center; color: var(--charcoal-soft); font-size: 13px; font-style: italic; }
+  .empty { color: var(--charcoal-soft); font-size: 13px; padding: 12px 0; }
+  .err-banner { background: #fbeae3; color: var(--red); padding: 12px 16px; border-radius: 4px; border: 1px solid #f3c4b3; margin-bottom: 24px; }
+  .loading { text-align: center; padding: 60px 0; color: var(--charcoal-soft); font-size: 14px; }
+
+  .footer { padding: 32px 0 48px; font-size: 12px; color: var(--charcoal-soft); text-align: center; }
+</style>
+</head>
+<body>
+
+<nav class="fin-nav">
+  <div class="container">
+    <a href="/finance/" class="logo"><span class="logo-mark"></span>The Side Hustle Guild · Finance</a>
+    <div class="nav-meta">
+      <span id="gen-meta"></span>
+      <button id="refresh-btn" type="button">Refresh</button>
+      <button id="logout-btn" type="button">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>Morning brief</h1>
+    <div class="gen" id="gen-line">Loading…</div>
+  </div>
+</section>
+
+<main class="container" id="main">
+  <div class="loading" id="loading">Loading dashboard…</div>
+</main>
+
+<div class="footer container">X3 E-Commerce LLC dba The Side Hustle Guild · Section 4 ledger · Hash-chain audit-ready</div>
+
+<script>
+const fmtMoney = (cents) => {
+  const n = Number(cents || 0) / 100;
+  const sign = n < 0 ? "-$" : "$";
+  return sign + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+const fmtMoneyShort = (cents) => {
+  const n = Math.round(Number(cents || 0) / 100);
+  const sign = n < 0 ? "-$" : "$";
+  return sign + Math.abs(n).toLocaleString("en-US");
+};
+const fmtDate = (iso) => {
+  if (!iso) return "—";
+  try { return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); }
+  catch { return iso; }
+};
+const fmtRelTime = (iso) => {
+  if (!iso) return "—";
+  const ms = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return m + "m ago";
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + "h ago";
+  return Math.floor(h / 24) + "d ago";
+};
+
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+async function loadDashboard() {
+  const main = document.getElementById("main");
+  const loading = document.getElementById("loading");
+  loading.style.display = "block";
+
+  let data;
+  try {
+    const res = await fetch("/api/finance/dashboard", { credentials: "same-origin" });
+    if (res.status === 401) { window.location.href = "/finance/login.html"; return; }
+    if (!res.ok) {
+      main.innerHTML = '<div class="err-banner">Server error loading dashboard. Status ' + res.status + '.</div>';
+      return;
+    }
+    data = await res.json();
+  } catch (e) {
+    main.innerHTML = '<div class="err-banner">Network error. Check connection.</div>';
+    return;
+  }
+  loading.style.display = "none";
+  render(data);
+}
+
+function memberLabel(row) {
+  if (row.discord_id) return "@" + row.discord_id;
+  if (row.whop_id) return row.whop_id;
+  if (row.member_id) return "member " + row.member_id;
+  if (row.recipient_external) return row.recipient_external;
+  return "—";
+}
+
+function render(d) {
+  const main = document.getElementById("main");
+  document.getElementById("gen-meta").textContent = "Generated " + fmtRelTime(d.generated_at);
+  document.getElementById("gen-line").textContent = "Generated " + fmtDate(d.generated_at) + " UTC";
+
+  const k = d.kpi || {};
+  const healthClass = (k.audit_health || "GREEN").toLowerCase();
+  const healthIcon = k.audit_health === "GREEN" ? "✓ GREEN" : k.audit_health === "YELLOW" ? "⚠ YELLOW" : "✗ RED";
+
+  const kpiHtml = `
+    <div class="kpi-strip">
+      <div class="kpi">
+        <span class="label">MRR (trailing 30d)</span>
+        <span class="value">${fmtMoneyShort(k.mrr_cents)}</span>
+        <span class="sub">subscription rev</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Members today</span>
+        <span class="value">${k.members_today_net >= 0 ? "+" : ""}${k.members_today_net || 0}</span>
+        <span class="sub">${k.members_today_new || 0} new · ${k.members_today_churned || 0} churn</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Churn this month</span>
+        <span class="value">${(k.churn_pct || 0).toFixed(1)}%</span>
+        <span class="sub">target &lt; 3%</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Cash position</span>
+        <span class="value">${fmtMoneyShort(k.cash_cents)}</span>
+        <span class="sub">running ledger total</span>
+      </div>
+      <div class="kpi health ${healthClass}">
+        <span class="label">Audit health</span>
+        <span class="value">${healthIcon}</span>
+        <span class="sub">${d.audit_ticker.last_reconciliation_status || "no run"}</span>
+      </div>
+    </div>`;
+
+  const at = d.audit_ticker || {};
+  const tickerHtml = `
+    <div class="ticker">
+      <div>
+        <div class="label">Last reconciliation</div>
+        <div class="value ${(at.last_reconciliation_status === "clean") ? "green" : "yellow"}">${fmtDate(at.last_reconciliation_at)}</div>
+      </div>
+      <div>
+        <div class="label">Drift</div>
+        <div class="value">${fmtMoney(at.last_drift_cents)} ${at.last_drift_pct != null ? "(" + Number(at.last_drift_pct).toFixed(2) + "%)" : ""}</div>
+      </div>
+      <div>
+        <div class="label">Open audit items</div>
+        <div class="value ${at.open_audit_items > 0 ? "yellow" : "green"}">${at.open_audit_items || 0}</div>
+      </div>
+      <div>
+        <div class="label">Status</div>
+        <div class="value ${healthClass}">${k.audit_health || "GREEN"}</div>
+      </div>
+    </div>`;
+
+  // Income / expense
+  const inc = d.income || {}, exp = d.expense || {};
+  const incomeHtml = `
+    <div class="card">
+      <h2>Income</h2>
+      <div class="row"><span class="key">New revenue today</span><span class="val">${fmtMoney(inc.today_cents)}</span></div>
+      <div class="row"><span class="key">Last 7 days</span><span class="val">${fmtMoney(inc.last_7_days_cents)}</span></div>
+      <div class="row"><span class="key">Last 30 days</span><span class="val">${fmtMoney(inc.last_30_days_cents)}</span></div>
+      <div class="row"><span class="key">Sponsor revenue this quarter</span><span class="val">${fmtMoney(inc.sponsor_quarter_cents)}</span></div>
+    </div>`;
+  const expenseHtml = `
+    <div class="card">
+      <h2>Expense</h2>
+      <div class="row"><span class="key">Commissions paid today</span><span class="val">${fmtMoney(exp.commissions_today_cents)}</span></div>
+      <div class="row"><span class="key">Milestone bonuses pending</span><span class="val">${fmtMoney(exp.milestone_pending_cents)}</span></div>
+      <div class="row"><span class="key">Contest prizes pending</span><span class="val">${fmtMoney(exp.contest_pending_cents)}</span></div>
+      <div class="row"><span class="key">Vendor invoices outstanding</span><span class="val">${fmtMoney(exp.vendor_outstanding_cents)}</span></div>
+    </div>`;
+
+  // Affiliate health
+  const ah = d.affiliate_health || {};
+  const top = (ah.top_10 || []).map((r, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(memberLabel(r))}</td>
+      <td>${r.current_active_refs || 0}</td>
+      <td><span class="pill ${r.tier_label && r.tier_label.includes("Council") ? "amber" : "sage"}">${escapeHtml(r.tier_label || "")}</span></td>
+    </tr>`).join("");
+  const affiliateHtml = `
+    <div class="card">
+      <h2>Affiliate health</h2>
+      ${top ? `<table>
+        <thead><tr><th>#</th><th>Affiliate</th><th>Active refs</th><th>Tier</th></tr></thead>
+        <tbody>${top}</tbody>
+      </table>` : '<div class="empty">No active affiliates yet.</div>'}
+      <div style="margin-top:14px;font-size:13px;color:var(--charcoal-soft)">
+        Tribe Council seats: ${ah.council_seats_filled || 0} of ${ah.council_seats_total || 6}
+        · Mastheads: ${ah.mastheads || 0}
+        · Within 5 refs of next tier: ${ah.near_next_tier || 0}
+      </div>
+    </div>`;
+
+  // Approvals queue
+  const aq = d.approvals_queue || {};
+  const payouts = (aq.payouts || []).map(p => `
+    <tr>
+      <td><span class="pill amber">${escapeHtml(p.type || "")}</span></td>
+      <td class="amt">${fmtMoney(p.amount_cents)}</td>
+      <td>${escapeHtml(memberLabel(p))}</td>
+      <td>${escapeHtml(p.reason || "")}</td>
+    </tr>`).join("");
+  const contracts = (aq.contracts || []).map(c => `
+    <tr>
+      <td><span class="pill">${escapeHtml(c.type || "")}</span></td>
+      <td>${escapeHtml(c.counterparty || "")}</td>
+      <td class="amt">${c.amount_cents != null ? fmtMoney(c.amount_cents) : "—"}</td>
+      <td>${c.box_url ? `<a href="${escapeHtml(c.box_url)}" target="_blank" rel="noopener">PDF</a>` : "—"}</td>
+    </tr>`).join("");
+  const approvalsHtml = `
+    <div class="card" style="margin-bottom:24px">
+      <h2>Approvals queue (founder action)</h2>
+      ${payouts ? `<h4 style="font-size:13px;margin:12px 0 8px;color:var(--slate)">Payouts &gt; $1K</h4>
+        <table><thead><tr><th>Type</th><th class="amt">Amount</th><th>Recipient</th><th>Reason</th></tr></thead>
+        <tbody>${payouts}</tbody></table>` : '<div class="empty">No payouts &gt; $1K awaiting approval.</div>'}
+      ${contracts ? `<h4 style="font-size:13px;margin:18px 0 8px;color:var(--slate)">Contracts to sign</h4>
+        <table><thead><tr><th>Type</th><th>Counterparty</th><th class="amt">Value</th><th>Document</th></tr></thead>
+        <tbody>${contracts}</tbody></table>` : '<div class="empty" style="margin-top:8px">No contracts awaiting founder signature.</div>'}
+    </div>`;
+
+  // Forecast (placeholder)
+  const fc = d.forecast || {};
+  const forecastHtml = `
+    <div class="card" style="margin-bottom:24px">
+      <h2>Forecast</h2>
+      <div class="placeholder">${escapeHtml(fc.message || "FP&A Agent V2 — coming soon")}</div>
+    </div>`;
+
+  // Recent ledger
+  const ledger = (d.recent_ledger || []).map(t => {
+    const cents = Number(t.amount_cents || 0);
+    const cls = cents >= 0 ? "pos" : "neg";
+    const sign = cents >= 0 ? "+" : "−";
+    return `<tr>
+      <td>${fmtDate(t.occurred_at)}</td>
+      <td><span class="pill">${escapeHtml(t.type || "")}</span></td>
+      <td class="amt ${cls}">${sign}${fmtMoney(Math.abs(cents))}</td>
+      <td>${escapeHtml(memberLabel(t))}</td>
+      <td><span class="pill">${escapeHtml(t.source || "")}</span></td>
+      <td style="font-family:monospace;font-size:11px;color:var(--charcoal-soft)">${escapeHtml(t.txn_id || "")}</td>
+    </tr>`;
+  }).join("");
+  const ledgerHtml = `
+    <div class="card" style="margin-bottom:48px">
+      <h2>Recent ledger entries</h2>
+      ${ledger ? `<table>
+        <thead><tr><th>When</th><th>Type</th><th class="amt">Amount</th><th>Member</th><th>Source</th><th>Txn ID</th></tr></thead>
+        <tbody>${ledger}</tbody>
+      </table>` : '<div class="empty">No transactions yet. Webhooks will populate this once Stripe and Whop fire.</div>'}
+    </div>`;
+
+  main.innerHTML = kpiHtml + tickerHtml +
+    `<div class="grid-2">${incomeHtml}${expenseHtml}</div>` +
+    `<div class="grid-2">${affiliateHtml}${approvalsHtml}</div>` +
+    forecastHtml + ledgerHtml;
+}
+
+document.getElementById("refresh-btn").addEventListener("click", loadDashboard);
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  await fetch("/api/finance/logout", { method: "POST", credentials: "same-origin" }).catch(() => {});
+  window.location.href = "/finance/login.html";
+});
+
+loadDashboard();
+</script>
+</body>
+</html>
