@@ -35,10 +35,13 @@
 
   /* NAV */
   nav { padding: 24px 0; border-bottom: 1px solid rgba(39,56,74,0.08); }
-  nav .container { display: flex; justify-content: space-between; align-items: center; }
+  nav .container { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--slate); text-decoration: none; }
   .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--amber); margin-right: 10px; vertical-align: middle; transform: rotate(45deg); }
-  .nav-cta { background: var(--amber); color: var(--cream); padding: 10px 22px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 14px; }
+  .nav-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .nav-links a { text-decoration: none; font-weight: 500; font-size: 15px; color: var(--charcoal-soft); }
+  .nav-links a:hover { color: var(--amber); }
+  .nav-cta { background: var(--amber); color: var(--cream) !important; padding: 10px 22px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 14px; }
 
   /* HERO */
   .hero { padding: 100px 0 80px; }
@@ -112,7 +115,12 @@
 <nav>
   <div class="container">
     <a href="/" class="logo"><span class="logo-mark"></span>The Side Hustle Guild</a>
-    <a href="#join" class="nav-cta">Join the Guild</a>
+    <div class="nav-links">
+      <a href="/submissions">Submissions</a>
+      <a href="/affiliate">Affiliate</a>
+      <a href="/sponsors">Sponsors</a>
+      <a href="#join" class="nav-cta">Join the Guild</a>
+    </div>
   </div>
 </nav>
 
