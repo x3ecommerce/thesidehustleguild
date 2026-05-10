@@ -80,7 +80,7 @@ jobs:
           set -euo pipefail
           for a in ${{ steps.pick.outputs.list }}; do
             echo "→ shg-${a}.joshuakovarik.workers.dev/run"
-            HTTP=$(curl -sS -o /tmp/body -w "%{http_code}" -X POST \
+            HTTP=$(curl -sS -A "SHG-cron/1.0 (github-actions)" -o /tmp/body -w "%{http_code}" -X POST \
               -H "Authorization: Bearer $AGENT_RUN_TOKEN" \
               "https://shg-${a}.joshuakovarik.workers.dev/run" || echo "000")
             echo "  status: $HTTP"
