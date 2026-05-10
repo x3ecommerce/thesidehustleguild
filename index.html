@@ -2,263 +2,619 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="The Side Hustle Guild — community for ambitious people building real income. Every builder, every level. Monthly cash competitions judged on creativity, execution, and results.">
-<meta property="og:title" content="The Side Hustle Guild">
-<meta property="og:description" content="Community for ambitious people building real income. Every builder, every level.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="The Side Hustle Guild — the room where every builder, every level, gets a real shot at real money. Monthly contest funded by the community. Self-paying. No gurus.">
+<meta name="theme-color" content="#27384A">
+<meta property="og:title" content="The Side Hustle Guild — Every Builder, Every Level">
+<meta property="og:description" content="The community-funded contest for ambitious people building real income. 25% of subscriptions become the prize pool. Join from $9.">
 <meta property="og:url" content="https://thesidehustleguild.com">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://thesidehustleguild.com/assets/og-card.png">
 <title>The Side Hustle Guild — Every Builder, Every Level</title>
 <link rel="preconnect" href="https://fonts.bunny.net">
-<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,800,400i,600i|manrope:400,500,600,700,800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/SHG-Logo-256x256.png">
 <style>
   :root {
     --cream: #F8F4ED;
+    --cream-2: #F2EBDD;
+    --paper: #FDFBF6;
     --slate: #27384A;
-    --amber: #E89B3B;
+    --slate-2: #1B2939;
+    --slate-soft: #3A4D62;
+    --sunrise: #E89B3B;
+    --sunrise-2: #D88824;
     --sage: #A8C9A0;
-    --charcoal: #1E1E1E;
-    --charcoal-soft: #1E1E1E99;
+    --rust: #C23B22;
+    --ink: #1E1E1E;
+    --line: rgba(39, 56, 74, 0.10);
+    --line-strong: rgba(39, 56, 74, 0.20);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--cream);
-    color: var(--charcoal);
+    color: var(--ink);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
-  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.2; color: var(--slate); }
-  a { color: var(--slate); }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.05; color: var(--slate); letter-spacing: -0.01em; }
+  a { color: var(--slate); text-decoration: none; transition: color .2s; }
+  a:hover { color: var(--sunrise); }
+  .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  .container-tight { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  .container-wide { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--slate); font-weight: 700; }
+  .accent { color: var(--sunrise); }
+  .serif-italic { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; }
 
-  /* NAV */
-  nav { padding: 24px 0; border-bottom: 1px solid rgba(39,56,74,0.08); }
-  nav .container { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--slate); text-decoration: none; }
-  .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--amber); margin-right: 10px; vertical-align: middle; transform: rotate(45deg); }
-  .nav-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
-  .nav-links a { text-decoration: none; font-weight: 500; font-size: 15px; color: var(--charcoal-soft); }
-  .nav-links a:hover { color: var(--amber); }
-  .nav-cta { background: var(--amber); color: var(--cream) !important; padding: 10px 22px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 14px; }
+  /* —————————————————— NAV —————————————————— */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(248,244,237,0.92);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .container { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; color: var(--slate); display: flex; align-items: center; gap: 10px; }
+  .logo-dot { width: 12px; height: 12px; background: var(--sunrise); border-radius: 50%; box-shadow: 0 0 12px rgba(232,155,59,0.5); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--slate-soft); }
+  .nav-cta { background: var(--slate); color: var(--cream) !important; padding: 9px 18px; font-weight: 600; font-size: 13px; border-radius: 6px; transition: all .2s; }
+  .nav-cta:hover { background: var(--sunrise); color: var(--slate) !important; transform: translateY(-1px); }
+  @media (max-width: 720px) { .nav-links a:not(.nav-cta) { display: none; } }
 
-  /* HERO */
-  .hero { padding: 100px 0 80px; }
-  .hero h1 { font-size: clamp(40px, 6vw, 72px); margin-bottom: 24px; max-width: 850px; }
-  .hero h1 .accent { color: var(--amber); }
-  .hero p.lead { font-size: 20px; max-width: 640px; margin-bottom: 36px; color: var(--charcoal-soft); }
-  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
-  .btn-primary { background: var(--slate); color: var(--cream); padding: 16px 32px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 16px; transition: background 0.2s; }
-  .btn-primary:hover { background: var(--charcoal); }
-  .btn-secondary { color: var(--slate); padding: 16px 24px; text-decoration: underline; font-weight: 500; font-size: 16px; }
-  .founder-badge { display: inline-block; background: var(--sage); color: var(--slate); padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+  /* —————————————————— HERO —————————————————— */
+  .hero {
+    padding: 88px 0 96px;
+    background: radial-gradient(ellipse 90% 70% at 50% 0%, var(--cream-2) 0%, var(--cream) 50%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -120px; right: -120px; width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(232,155,59,0.13) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: white; padding: 8px 16px; border-radius: 100px;
+    font-size: 13px; font-weight: 600; color: var(--slate);
+    border: 1px solid var(--line); margin-bottom: 28px;
+  }
+  .hero-eyebrow .pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--sage);
+    box-shadow: 0 0 0 0 var(--sage);
+    animation: pulse 2.4s cubic-bezier(0.4,0,0.6,1) infinite;
+  }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(168,201,160,0.7);} 50% { box-shadow: 0 0 0 10px rgba(168,201,160,0);} }
+  .hero h1 {
+    font-size: clamp(44px, 7vw, 88px); font-weight: 700;
+    margin-bottom: 28px; max-width: 920px; letter-spacing: -0.02em;
+  }
+  .hero h1 .ink { color: var(--ink); display: block; }
+  .hero h1 .accent { color: var(--sunrise); }
+  .hero-lead {
+    font-size: clamp(18px, 2vw, 22px); color: var(--slate-soft);
+    max-width: 640px; margin-bottom: 40px;
+    font-family: 'Fraunces', serif; font-weight: 400; line-height: 1.45;
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 16px 28px; border-radius: 8px; font-weight: 600; font-size: 16px; transition: all .2s; cursor: pointer; border: none; font-family: inherit; }
+  .btn-primary { background: var(--slate); color: var(--cream); }
+  .btn-primary:hover { background: var(--ink); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(39,56,74,0.18); color: var(--cream); }
+  .btn-amber { background: var(--sunrise); color: var(--slate); }
+  .btn-amber:hover { background: var(--sunrise-2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,155,59,0.30); }
+  .btn-ghost { background: transparent; color: var(--slate); border: 1px solid var(--line-strong); }
+  .btn-ghost:hover { border-color: var(--slate); transform: translateY(-2px); }
 
-  /* SECTION */
-  section { padding: 80px 0; }
-  section h2 { font-size: clamp(32px, 4vw, 48px); margin-bottom: 16px; }
-  section .lead { font-size: 18px; max-width: 640px; color: var(--charcoal-soft); margin-bottom: 48px; }
+  /* live counter strip */
+  .live-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    max-width: 880px;
+    margin-top: 12px;
+  }
+  .live-strip .cell { background: var(--paper); padding: 22px 20px; }
+  .live-strip .label { font-size: 11px; letter-spacing: 0.2em; color: var(--slate-soft); margin-bottom: 8px; font-weight: 700; }
+  .live-strip .num { font-family: 'Fraunces', serif; font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; color: var(--slate); line-height: 1; }
+  .live-strip .sub { font-size: 12px; color: var(--slate-soft); margin-top: 4px; }
+  @media (max-width: 700px) { .live-strip { grid-template-columns: repeat(2, 1fr); } }
 
-  /* BENEFITS GRID */
-  .benefits { background: white; }
-  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-  @media (max-width: 768px) { .benefits-grid { grid-template-columns: 1fr; } }
-  .benefit-block h3 { font-size: 22px; margin-bottom: 16px; }
-  .benefit-block ul { list-style: none; }
-  .benefit-block ul li { padding: 8px 0; padding-left: 28px; position: relative; }
-  .benefit-block ul li:before { content: "✓"; color: var(--amber); position: absolute; left: 0; font-weight: 700; }
-  .marketplace-card { background: var(--cream); border: 2px solid var(--slate); padding: 32px; border-radius: 6px; }
-  .marketplace-card h3 { color: var(--slate); margin-bottom: 12px; }
-  .marketplace-card .prize { color: var(--amber); font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; margin: 16px 0; }
-  .disclaimer-tiny { font-size: 12px; color: var(--charcoal-soft); margin-top: 16px; font-style: italic; }
+  /* —————————————————— SECTIONS —————————————————— */
+  section { padding: 88px 0; position: relative; }
+  section.alt { background: var(--paper); }
+  section.dark { background: var(--slate); color: var(--cream); }
+  section.dark h1, section.dark h2, section.dark h3, section.dark h4 { color: var(--cream); }
+  section.dark a { color: var(--cream); }
+  section.dark .accent { color: var(--sunrise); }
+  .section-eyebrow { font-size: 13px; font-weight: 700; color: var(--sunrise); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 16px; }
+  .section-title { font-size: clamp(36px, 4.6vw, 56px); font-weight: 700; margin-bottom: 20px; max-width: 800px; }
+  .section-lead { font-size: 19px; color: var(--slate-soft); max-width: 660px; margin-bottom: 56px; line-height: 1.55; }
+  section.dark .section-lead { color: rgba(248,244,237,0.78); }
 
-  /* HOW IT WORKS */
-  .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
-  @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr 1fr; } }
-  .how-step { text-align: center; }
-  .how-step .num { font-family: 'Fraunces', serif; color: var(--amber); font-size: 14px; letter-spacing: 2px; margin-bottom: 8px; }
-  .how-step h4 { font-size: 18px; margin-bottom: 8px; }
-  .how-step p { color: var(--charcoal-soft); font-size: 14px; }
+  /* What is the Guild — 3 column */
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .three-col { grid-template-columns: 1fr; } }
+  .feature-card {
+    background: white; border: 1px solid var(--line); border-radius: 16px;
+    padding: 32px;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(39,56,74,0.08); border-color: var(--line-strong); }
+  .feature-card .icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--cream); display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--sunrise);
+    margin-bottom: 20px;
+  }
+  .feature-card h3 { font-size: 22px; margin-bottom: 12px; }
+  .feature-card p { color: var(--slate-soft); font-size: 15px; line-height: 1.6; }
 
-  /* PRICING */
-  .pricing { background: var(--slate); color: var(--cream); }
-  .pricing h2 { color: var(--cream); }
-  .pricing .lead { color: rgba(248,244,237,0.8); }
-  .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 720px; margin: 0 auto; }
-  @media (max-width: 768px) { .pricing-grid { grid-template-columns: 1fr; } }
-  .price-card { background: var(--cream); color: var(--charcoal); padding: 40px 32px; border-radius: 8px; }
-  .price-card.featured { border: 3px solid var(--amber); position: relative; }
-  .price-card.featured:before { content: "FOUNDER PRICING — 50 SPOTS"; position: absolute; top: -14px; left: 24px; background: var(--amber); color: var(--cream); padding: 4px 14px; font-size: 11px; font-weight: 700; letter-spacing: 1px; border-radius: 100px; }
-  .price-card h3 { font-size: 24px; margin-bottom: 16px; color: var(--slate); }
-  .price-card .price { font-family: 'Fraunces', serif; font-size: 56px; font-weight: 700; color: var(--slate); line-height: 1; margin: 8px 0; }
-  .price-card .price small { font-size: 16px; font-weight: 400; color: var(--charcoal-soft); }
-  .price-card .locked { font-size: 12px; color: var(--amber); font-weight: 600; margin-bottom: 24px; }
-  .price-card ul { list-style: none; margin-bottom: 32px; }
-  .price-card ul li { padding: 6px 0 6px 24px; position: relative; font-size: 14px; }
-  .price-card ul li:before { content: "→"; color: var(--amber); position: absolute; left: 0; }
+  /* Activation moment */
+  .activation {
+    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
+    text-align: center; padding: 96px 24px;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .activation .number {
+    font-family: 'Fraunces', serif; font-size: clamp(96px, 18vw, 200px);
+    font-weight: 700; line-height: 0.85; color: var(--slate);
+    letter-spacing: -0.04em;
+    margin: 24px 0;
+  }
+  .activation .number .of { color: var(--slate-soft); font-weight: 400; font-size: 0.4em; vertical-align: middle; margin-left: 4px; }
+  .activation .of-100 { color: rgba(39,56,74,0.40); }
+  .activation-eyebrow { font-size: 14px; letter-spacing: 0.24em; color: var(--sunrise); font-weight: 700; text-transform: uppercase; }
+  .activation .narrative { max-width: 560px; margin: 24px auto 0; color: var(--slate-soft); font-size: 18px; line-height: 1.55; font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; }
 
-  /* FOOTER */
-  footer { background: var(--charcoal); color: var(--cream); padding: 60px 0 30px; font-size: 14px; }
-  footer .container { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; }
-  @media (max-width: 768px) { footer .container { grid-template-columns: 1fr; } }
-  footer h4 { color: var(--cream); font-size: 14px; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; font-family: 'Manrope', sans-serif; font-weight: 600; }
-  footer ul { list-style: none; }
-  footer ul li { padding: 4px 0; }
-  footer a { color: rgba(248,244,237,0.7); text-decoration: none; }
-  footer a:hover { color: var(--amber); }
-  footer .footer-tagline { font-family: 'Fraunces', serif; color: var(--cream); font-size: 18px; margin-bottom: 12px; }
-  .footer-disclaimer { border-top: 1px solid rgba(248,244,237,0.1); padding-top: 24px; margin-top: 36px; font-size: 11px; color: rgba(248,244,237,0.5); font-style: italic; }
+  /* Prize ladder table */
+  .ladder { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; max-width: 880px; margin: 0 auto; }
+  .ladder-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; padding: 18px 28px; border-bottom: 1px solid var(--line); align-items: center; }
+  .ladder-row:last-child { border-bottom: none; }
+  .ladder-row.head { background: white; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--slate); }
+  .ladder-row.now { background: rgba(168,201,160,0.16); font-weight: 700; }
+  .ladder-row .members { font-family: 'Fraunces', serif; font-weight: 700; color: var(--slate); font-size: 18px; }
+  .ladder-row .pool { color: var(--sunrise); font-weight: 700; font-size: 18px; font-family: 'Fraunces', serif; }
+  @media (max-width: 700px) { .ladder-row { grid-template-columns: 1fr 1fr; gap: 6px 14px; padding: 14px 16px; } .ladder-row .members { grid-column: 1 / span 2; font-size: 16px; } }
+
+  /* Inside the Guild — preview tiles */
+  .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 800px) { .preview-grid { grid-template-columns: 1fr; } }
+  .preview-card {
+    background: white; border: 1px solid var(--line); border-radius: 16px; padding: 28px;
+    display: flex; flex-direction: column; gap: 12px;
+    min-height: 220px;
+  }
+  .preview-card.dark { background: var(--slate); color: var(--cream); border-color: var(--slate); }
+  .preview-card.dark h4 { color: var(--cream); }
+  .preview-card .channel { font-family: 'Fraunces', serif; color: var(--sunrise); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; }
+  .preview-card h4 { font-size: 22px; line-height: 1.2; }
+  .preview-card p { color: var(--slate-soft); font-size: 14px; line-height: 1.55; }
+  .preview-card.dark p { color: rgba(248,244,237,0.7); }
+  .preview-card .footer-line { margin-top: auto; font-size: 12px; color: var(--slate-soft); display: flex; align-items: center; gap: 8px; }
+  .preview-card.dark .footer-line { color: rgba(248,244,237,0.55); }
+
+  /* Tiers / pricing */
+  .tier-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; max-width: 1080px; margin: 0 auto; }
+  @media (max-width: 920px) { .tier-grid { grid-template-columns: 1fr; max-width: 460px; } }
+  .tier {
+    background: var(--paper); border: 1.5px solid var(--line); border-radius: 16px; padding: 36px 28px;
+    display: flex; flex-direction: column;
+    transition: transform .2s, border-color .2s;
+  }
+  .tier:hover { transform: translateY(-3px); border-color: var(--slate); }
+  .tier.featured { border: 2px solid var(--sunrise); position: relative; background: white; }
+  .tier.featured::before {
+    content: 'FOUNDER · 50 SPOTS · LIFETIME'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--sunrise); color: var(--slate); font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    padding: 6px 14px; border-radius: 100px;
+  }
+  .tier-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+  .tier-price { font-family: 'Fraunces', serif; font-weight: 700; font-size: 56px; line-height: 1; color: var(--slate); margin: 14px 0 4px; letter-spacing: -0.02em; }
+  .tier-price .per { font-size: 16px; font-weight: 400; color: var(--slate-soft); margin-left: 4px; }
+  .tier-detail { font-size: 13px; color: var(--sunrise); font-weight: 700; margin-bottom: 24px; letter-spacing: 0.06em; }
+  .tier ul { list-style: none; margin-bottom: 32px; flex-grow: 1; }
+  .tier ul li { padding: 8px 0 8px 28px; position: relative; font-size: 15px; color: var(--ink); line-height: 1.5; }
+  .tier ul li::before { content: '✓'; position: absolute; left: 0; top: 8px; color: var(--sunrise); font-weight: 800; }
+  .tier .btn { width: 100%; justify-content: center; }
+
+  /* For X — sponsors / affiliates / sunday reset banded section */
+  .audience-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  @media (max-width: 900px) { .audience-strip { grid-template-columns: 1fr; } }
+  .audience-tile { padding: 36px 28px; background: white; border-right: 1px solid var(--line); }
+  .audience-tile:last-child { border-right: none; }
+  @media (max-width: 900px) { .audience-tile { border-right: none; border-bottom: 1px solid var(--line); } .audience-tile:last-child { border-bottom: none; } }
+  .audience-tile h4 { font-size: 19px; margin-bottom: 10px; }
+  .audience-tile p { color: var(--slate-soft); font-size: 14px; margin-bottom: 16px; line-height: 1.55; }
+  .audience-tile .link { font-weight: 600; font-size: 14px; color: var(--slate); display: inline-flex; gap: 6px; align-items: center; }
+  .audience-tile .link:hover { color: var(--sunrise); }
+
+  /* FAQ */
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; }
+  @media (max-width: 800px) { .faq-grid { grid-template-columns: 1fr; } }
+  details.faq-item { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; cursor: pointer; }
+  details.faq-item summary { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; color: var(--slate); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  details.faq-item summary::-webkit-details-marker { display: none; }
+  details.faq-item summary::after { content: '+'; font-family: 'Fraunces', serif; color: var(--sunrise); font-size: 24px; line-height: 1; transition: transform .2s; }
+  details.faq-item[open] summary::after { transform: rotate(45deg); }
+  details.faq-item p { margin-top: 12px; color: var(--slate-soft); font-size: 14px; line-height: 1.55; }
+
+  /* Final CTA */
+  .final-cta { padding: 120px 24px; text-align: center; background: linear-gradient(180deg, var(--cream-2) 0%, var(--cream) 100%); }
+  .final-cta h2 { font-size: clamp(40px, 5vw, 64px); margin-bottom: 18px; }
+  .final-cta p { font-size: 19px; color: var(--slate-soft); max-width: 540px; margin: 0 auto 36px; font-family: 'Fraunces', serif; font-style: italic; }
+
+  /* Footer */
+  footer { background: var(--slate); color: var(--cream); padding: 64px 0 32px; }
+  footer h5 { font-family: 'Fraunces', serif; font-size: 13px; text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px; color: rgba(248,244,237,0.6); font-weight: 600; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  @media (max-width: 800px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  .foot-grid ul { list-style: none; }
+  .foot-grid ul li { margin-bottom: 8px; }
+  .foot-grid a { color: rgba(248,244,237,0.78); font-size: 14px; }
+  .foot-grid a:hover { color: var(--sunrise); }
+  .foot-brand { display: flex; flex-direction: column; gap: 12px; max-width: 320px; }
+  .foot-brand .logo { color: var(--cream); font-size: 22px; }
+  .foot-tagline { font-family: 'Fraunces', serif; font-style: italic; color: rgba(248,244,237,0.7); font-size: 15px; line-height: 1.5; }
+  .foot-bottom { border-top: 1px solid rgba(248,244,237,0.12); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-size: 12px; color: rgba(248,244,237,0.55); }
 </style>
 </head>
 <body>
 
+<!-- ─────────────────────────────────────────── NAV -->
 <nav>
   <div class="container">
-    <a href="/" class="logo"><span class="logo-mark"></span>The Side Hustle Guild</a>
+    <a href="/" class="logo"><span class="logo-dot"></span> The Side Hustle Guild</a>
     <div class="nav-links">
-      <a href="/submissions">Submissions</a>
-      <a href="/affiliate">Affiliate</a>
-      <a href="/sponsors">Sponsors</a>
-      <a href="#join" class="nav-cta">Join the Guild</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Membership</a>
+      <a href="/submissions/">Hustle Cards</a>
+      <a href="/affiliate/">Affiliate</a>
+      <a href="https://discord.gg/6x6UXC7WQp" class="nav-cta">Join free →</a>
     </div>
   </div>
 </nav>
 
+<!-- ─────────────────────────────────────────── HERO -->
 <section class="hero">
   <div class="container">
-    <span class="founder-badge">Founder pricing live · 50 spots · $9/mo locked forever</span>
-    <h1>Build real income.<br><span class="accent">Every builder, every level.</span></h1>
-    <p class="lead">A paid community for ambitious people building side hustles in public. Community, education, templates, accountability, and monthly cash competitions judged on creativity, execution, and results.</p>
+    <div class="hero-eyebrow"><span class="pulse"></span><span id="pulse-text">Building toward 100 paid members</span></div>
+    <h1>
+      <span class="ink">A real shot at real money.</span>
+      <span class="accent">Every builder, every level.</span>
+    </h1>
+    <p class="hero-lead">A Discord-first community where the monthly cash contest is funded by member subscriptions — not gurus, not sponsors, not your wallet up front. The room pays the room.</p>
     <div class="hero-ctas">
-      <a href="#join" class="btn-primary">Join the Guild — $9/mo</a>
-      <a href="#how-it-works" class="btn-secondary">How the Builders Marketplace works →</a>
+      <a href="https://whop.com/the-side-hustle-guild/founder-membership-a9" class="btn btn-amber">Lock $9 lifetime — 50 spots →</a>
+      <a href="https://discord.gg/6x6UXC7WQp" class="btn btn-ghost">Join Discord free</a>
+    </div>
+
+    <div class="live-strip">
+      <div class="cell"><div class="label">Members</div><div class="num" id="stat-members">—</div><div class="sub" id="stat-members-sub">of 100 to activate</div></div>
+      <div class="cell"><div class="label">Prize pool</div><div class="num" id="stat-pool">—</div><div class="sub">25% of MRR · daily snapshot</div></div>
+      <div class="cell"><div class="label">Hustle Cards</div><div class="num" id="stat-cards">—</div><div class="sub">In the Exchange</div></div>
+      <div class="cell"><div class="label">Agents online</div><div class="num"><span id="stat-agents">—</span><span style="opacity:.4;font-size:.6em;"> / 11</span></div><div class="sub">Running 24/7 in cloud</div></div>
     </div>
   </div>
 </section>
 
-<section class="benefits">
+<!-- ─────────────────────────────────────────── ACTIVATION MOMENT -->
+<section class="activation">
+  <div class="container-tight">
+    <div class="activation-eyebrow">The 100 Moment</div>
+    <div class="number"><span id="big-counter">2</span><span class="of"> / </span><span class="of of-100">100</span></div>
+    <p class="narrative">When this hits 100 paid members, the monthly contest activates automatically. Submission window opens, leaderboards go live, the prize pool starts paying out. Until then, every signup makes the eventual pool bigger.</p>
+    <div style="margin-top: 36px;"><a href="https://whop.com/the-side-hustle-guild/founder-membership-a9" class="btn btn-primary">Be one of the first 100 →</a></div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── HOW IT WORKS -->
+<section id="how">
   <div class="container">
-    <h2>What's inside</h2>
-    <p class="lead">$19/month gets you community, education, templates, accountability, networking, and entry to the Builders Marketplace. Cash competitions are a feature — not the reason to join.</p>
-    <div class="benefits-grid">
-      <div class="benefit-block">
-        <h3>Membership includes</h3>
-        <ul>
-          <li>Full Discord community access (60+ channels)</li>
-          <li>Education — weekly drops, on-demand library</li>
-          <li>Templates — every flagship product included (First $1,000 Engine, AI Side-Hustle Stack)</li>
-          <li>Accountability pods — 4-6 person groups, monthly resets</li>
-          <li>Niche tracks — Parents, Healthcare, 9-to-5ers, College, Veterans, Retirees</li>
-          <li>Live breakdowns — featured-winner videos every month</li>
-          <li>Weekly group strategy sessions</li>
-          <li>Builders Marketplace entry — included free with membership</li>
-        </ul>
+    <div class="section-eyebrow">How it works</div>
+    <h2 class="section-title">Three things make this different.</h2>
+    <p class="section-lead">Not a guru course. Not a $99/mo lock-in. Not a Discord with no rooms. A self-funding monthly contest where the math is on the wall and the room recognizes builders, not lurkers.</p>
+    <div class="three-col">
+      <div class="feature-card">
+        <div class="icon">25%</div>
+        <h3>Self-funding prize pool</h3>
+        <p>Every month, 25% of subscription revenue becomes the cash pool. 100 members = $350. 1,000 = $4,600. 5,000 = $23,000. The community grows the pool. Snapshot posted daily in <code>#leaderboards</code>.</p>
       </div>
-      <div class="marketplace-card">
-        <h3>The Builders Marketplace</h3>
-        <p>Monthly skill-based competition. Submit your Hustle Card, compete with members at your own tier (Rookie / Builder / Operator), win cash creator grants.</p>
-        <div class="prize">Cash prizes every month</div>
-        <p>8 categories. 7 spotlight awards (Best First Dollar, Most Improved, Best Story, Best Pivot, Best Comeback, Underdog of the Month, Community Favorite). Annual Hustler of the Year capstone.</p>
-        <p class="disclaimer-tiny">Skill-based competition. Member results not typical. The Side Hustle Guild does not guarantee any specific income or outcome. Educational community. No financial advice.</p>
+      <div class="feature-card">
+        <div class="icon">3·6</div>
+        <h3>3 minutes to submit</h3>
+        <p>One photo, one link, a few honest sentences. Six fields. Day-one numbers welcome. Approved cards land in <code>#the-exchange</code>. Judges score Days 11–21. Champion Day live on the 22nd. Cash hits accounts on stream.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">∞</div>
+        <h3>Every builder, every level</h3>
+        <p>Three tiers — Rookie, Builder, Operator — by where you actually are, not where you wish you were. The nurse with one Etsy shop. The retiree dropshipping. The teen with a Notion template. We built this for the people gurus skip.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="how-it-works">
+<!-- ─────────────────────────────────────────── PRIZE POOL LADDER -->
+<section class="alt">
   <div class="container">
-    <h2>How the Marketplace works</h2>
-    <p class="lead">Open entry — Side Hustle Guild members and free submitters both compete. Skill-based judging on creativity, execution, results, story, and innovation.</p>
-    <div class="how-grid">
-      <div class="how-step">
-        <div class="num">01 / 04</div>
-        <h4>Submit</h4>
-        <p>Post a Hustle Card with your link, screenshots, and 3-5 step playbook.</p>
-      </div>
-      <div class="how-step">
-        <div class="num">02 / 04</div>
-        <h4>Get Verified</h4>
-        <p>Earn the Verified Hustle badge by passing the authenticity check.</p>
-      </div>
-      <div class="how-step">
-        <div class="num">03 / 04</div>
-        <h4>Compete</h4>
-        <p>Skill-based judging — story 25% / effort 20% / results 20% / innovation 20% / community 15%.</p>
-      </div>
-      <div class="how-step">
-        <div class="num">04 / 04</div>
-        <h4>Win Cash</h4>
-        <p>Monthly cash awards across categories and tiers, plus 7 spotlight awards.</p>
-      </div>
+    <div class="section-eyebrow">The math</div>
+    <h2 class="section-title">No sponsor required. The pool grows with the room.</h2>
+    <p class="section-lead">Most contests die when the sponsor ghosts. Ours can't — it's literally 25% of monthly subscription gross. Predictable, transparent, audited monthly.</p>
+    <div class="ladder">
+      <div class="ladder-row head"><div>Members</div><div>Avg MRR</div><div>Pool / mo</div><div>Status</div></div>
+      <div class="ladder-row now"><div class="members">100</div><div>$1,400</div><div class="pool">$350</div><div>contest activates</div></div>
+      <div class="ladder-row"><div class="members">250</div><div>$3,800</div><div class="pool">$950</div><div>tier expands</div></div>
+      <div class="ladder-row"><div class="members">500</div><div>$8,990</div><div class="pool">$2,247</div><div>operator bracket pays</div></div>
+      <div class="ladder-row"><div class="members">1,000</div><div>$18,490</div><div class="pool">$4,622</div><div>Lucky Sponsor draw</div></div>
+      <div class="ladder-row"><div class="members">2,000</div><div>$37,490</div><div class="pool">$9,372</div><div>quarterly grand prize</div></div>
+      <div class="ladder-row"><div class="members">5,000</div><div>$92,490</div><div class="pool">$23,122</div><div>annual scholarship</div></div>
     </div>
+    <p style="text-align:center;margin-top:24px;font-size:13px;color:var(--slate-soft);font-style:italic;">Every dollar is reconciled daily by the Controller agent. Hash-chain ledger. Audit posture documented.</p>
   </div>
 </section>
 
-<section id="join" class="pricing">
+<!-- ─────────────────────────────────────────── INSIDE THE GUILD -->
+<section>
   <div class="container">
-    <h2>Join the Side Hustle Guild</h2>
-    <p class="lead">$19/month standard. $9/month founder pricing for the first 50 members — locked forever. No contract, cancel anytime.</p>
-    <div class="pricing-grid">
-      <div class="price-card featured">
-        <h3>Founder</h3>
-        <div class="price">$9<small>/mo</small></div>
-        <div class="locked">★ Locked forever — first 50 only</div>
-        <ul>
-          <li>Everything in Lab Member tier</li>
-          <li>Permanent Founder badge in Discord</li>
-          <li>First access to Operator tier when it launches</li>
-          <li>Permanent voting weight in monthly competitions</li>
-        </ul>
-        <a href="https://thesidehustleguild.com/join" class="btn-primary" style="display:block;text-align:center;">Claim Founder Pricing →</a>
+    <div class="section-eyebrow">Inside the Guild</div>
+    <h2 class="section-title">Rooms designed around shipping, not scrolling.</h2>
+    <p class="section-lead">62 channels organized so the right conversation finds you. Daily teaching drops. Weekly office hours. The Builders Marketplace. Skill-swap pods. A live leaderboard.</p>
+    <div class="preview-grid">
+      <div class="preview-card">
+        <span class="channel">#monday-drops</span>
+        <h4>One sharp teaching post every Monday morning</h4>
+        <p>Strategist agent ships a focused playbook by 9 AM ET — pricing, positioning, distribution, AI tools. Skim it. React. Apply it that week.</p>
+        <div class="footer-line">📅 Posted 9 AM ET every Monday</div>
       </div>
-      <div class="price-card">
-        <h3>Lab Member</h3>
-        <div class="price">$19<small>/mo</small></div>
-        <div class="locked" style="visibility:hidden;">.</div>
-        <ul>
-          <li>Full Discord access (60+ channels)</li>
-          <li>All flagship templates + weekly drops</li>
-          <li>Accountability pods + niche tracks</li>
-          <li>Builders Marketplace entry</li>
-          <li>Weekly strategy sessions</li>
-        </ul>
-        <a href="https://thesidehustleguild.com/join" class="btn-primary" style="display:block;text-align:center;">Join the Lab →</a>
+      <div class="preview-card dark">
+        <span class="channel">#wednesday-office-hours</span>
+        <h4>Live Stage Q&A on Wednesdays at noon</h4>
+        <p>Members ask. Operators answer. Office Hours agent surfaces the best questions. Live Discord Stage. 60 minutes, no fluff.</p>
+        <div class="footer-line">🎙 Live Stage · noon ET Wednesdays</div>
+      </div>
+      <div class="preview-card dark">
+        <span class="channel">#the-exchange</span>
+        <h4>Hustle Card gallery — real builds with real proof</h4>
+        <p>Approved Hustle Cards live here. React to push them up the leaderboard. Comment to ask the builder a real question.</p>
+        <div class="footer-line">🛒 12 charter cards seeded · open submission</div>
+      </div>
+      <div class="preview-card">
+        <span class="channel">#leaderboards</span>
+        <h4>Daily-updated prize pool & tier rankings</h4>
+        <p>Prize Pool Calculator agent posts the funded pool every morning. After 100 members, scores update with each new submission and reaction.</p>
+        <div class="footer-line">📈 Updated 4 AM ET daily</div>
+      </div>
+      <div class="preview-card">
+        <span class="channel">#friday-ship-it</span>
+        <h4>Show what you actually shipped this week</h4>
+        <p>One post per member. Hype agent surfaces the best 3-5 to <code>#wins-of-the-month</code>. The room recognizes builders, not lurkers.</p>
+        <div class="footer-line">⚡ Friday noon ET</div>
+      </div>
+      <div class="preview-card dark">
+        <span class="channel">#champion-day</span>
+        <h4>Day 22 every month, live in the Stage</h4>
+        <p>Winners revealed. Prize money sent on stream. Yes, you watch the money land in their accounts. No mystery. No delay.</p>
+        <div class="footer-line">🏆 Day 22 · noon ET monthly</div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ─────────────────────────────────────────── PRICING -->
+<section id="pricing" class="alt">
+  <div class="container">
+    <div class="section-eyebrow">Membership</div>
+    <h2 class="section-title">Pick your door.</h2>
+    <p class="section-lead">Free gets you in. $9 locks Founder for life. $19 is the standard. Every tier eligible for the contest pool once activated.</p>
+    <div class="tier-grid">
+
+      <div class="tier">
+        <span class="tier-name">Free</span>
+        <div class="tier-price">$0</div>
+        <div class="tier-detail">PUBLIC LURK</div>
+        <ul>
+          <li>Read the public Hustle Card gallery</li>
+          <li>Sunday Reset Planner free</li>
+          <li>Newsletter (1 email/week)</li>
+          <li>Public landing pages</li>
+        </ul>
+        <a href="https://discord.gg/6x6UXC7WQp" class="btn btn-ghost">Join Discord free →</a>
+      </div>
+
+      <div class="tier featured">
+        <span class="tier-name">Founder</span>
+        <div class="tier-price">$9<span class="per">/mo</span></div>
+        <div class="tier-detail">LOCKED FOR LIFE · 50 SPOTS TOTAL</div>
+        <ul>
+          <li>Everything in Lab Member</li>
+          <li>Founder badge, gold tier role</li>
+          <li>Lifetime $9 rate — even if we raise prices</li>
+          <li>First seat at every Champion Day stream</li>
+          <li>Tribe Council eligibility</li>
+        </ul>
+        <a href="https://whop.com/the-side-hustle-guild/founder-membership-a9" class="btn btn-amber">Claim a Founder spot →</a>
+      </div>
+
+      <div class="tier">
+        <span class="tier-name">Lab Member</span>
+        <div class="tier-price">$19<span class="per">/mo</span></div>
+        <div class="tier-detail">STANDARD · CANCEL ANYTIME</div>
+        <ul>
+          <li>Full Discord access (62 channels)</li>
+          <li>Eligible for monthly cash contest pool</li>
+          <li>Submit Hustle Cards for prizes</li>
+          <li>Live Office Hours + Champion Day</li>
+          <li>Affiliate program access</li>
+        </ul>
+        <a href="https://whop.com/the-side-hustle-guild/lab-member" class="btn btn-primary">Become a Lab Member →</a>
+      </div>
+
+    </div>
+    <p style="text-align:center;margin-top:36px;font-size:13px;color:var(--slate-soft);font-style:italic;">Both paid tiers fund the prize pool. 25% of every dollar comes back as cash to members each month.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── AUDIENCE STRIP -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow">Other ways in</div>
+    <h2 class="section-title">For partners, brands, and curious browsers.</h2>
+    <div class="audience-strip">
+      <div class="audience-tile">
+        <h4>For partners — earn 30% lifetime</h4>
+        <p>Refer a Lab Member, earn $5.70/mo for as long as they stay. Recurring. No cap. We pay out via Whop's affiliate program every month.</p>
+        <a href="/affiliate/" class="link">Join the affiliate program →</a>
+      </div>
+      <div class="audience-tile">
+        <h4>For brands — sponsor a season</h4>
+        <p>Three tiers ($1.5K / $5K / $15K). We never write your review for you. The Tribe Council votes on final placement. You sponsor the conversation, not the verdict.</p>
+        <a href="/sponsors/" class="link">Become a sponsor →</a>
+      </div>
+      <div class="audience-tile">
+        <h4>For new builders — the Sunday Reset</h4>
+        <p>The simplest tool we make. Print on Sunday. Five-minute weekly reset. Have one specific thing shipped by Friday. Free. No email required.</p>
+        <a href="/sunday-reset-planner/" class="link">Get the planner →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── ORIGIN / WHY -->
+<section class="dark">
+  <div class="container-tight" style="text-align: center;">
+    <div class="section-eyebrow">Why we built this</div>
+    <h2 class="section-title" style="margin: 0 auto 28px; max-width: 720px;">For the people gurus skip.</h2>
+    <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; line-height: 1.55; max-width: 700px; margin: 0 auto 28px; color: rgba(248,244,237,0.85);">
+      The nurse with one Etsy shop. The retiree with a dropshipping idea. The teen with a Notion template. The 9-to-5er stealing 30 minutes at lunch. The single parent shipping after the kids fall asleep.
+    </p>
+    <p style="font-size: 17px; max-width: 660px; margin: 0 auto; color: rgba(248,244,237,0.7); line-height: 1.6;">
+      Every other side-hustle community sells you a $5,000 mastermind, a guru course, or a hype-bro Discord that goes dead in three weeks. We built the opposite: $9 a month, a real prize pool funded by the room, transparent math, and 11 cloud agents running quietly in the background so it never goes dead. The first 50 Founders lock that price for life.
+    </p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── FAQ -->
+<section class="alt">
+  <div class="container">
+    <div class="section-eyebrow">Frequently asked</div>
+    <h2 class="section-title">Real questions, straight answers.</h2>
+    <div class="faq-grid" style="margin-top: 32px;">
+      <details class="faq-item">
+        <summary>How does the prize pool work?</summary>
+        <p>Each month, 25% of subscription gross revenue becomes the cash pool. The Prize Pool Calculator agent computes this daily and posts the snapshot in <code>#leaderboards</code>. The contest activates automatically the moment the 100th paid member joins. Pool scales as the community grows.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if my hustle is brand new?</summary>
+        <p>Submit anyway. We have a Rookie tier specifically for first-time builders. Day-one numbers are valid numbers. Zero in sales is a number. Honest entries beat hype every time.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why $9 for Founders if it costs you to run?</summary>
+        <p>50 charter members at $9/mo = $450/mo recurring. That funds infrastructure indefinitely. After 50, standard tier is $19. We're trading discounted lifetime price for the founding members who help build the room from the floor.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What happens at member 100?</summary>
+        <p>The Subscriber Counter agent fires automatically: Theme Drop announcement, submission window opens for 10 days, leaderboards go live, email blast to the newsletter, sponsor track activates. None of that is manual — it's wired.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is this gambling?</summary>
+        <p>No. The contest is a skill-based competition judged on documented entries. We don't sell raffle tickets. Submissions are scored on clarity, proof, trajectory, fit-to-theme, and originality by a designated judging panel.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I cancel?</summary>
+        <p>Yes — Lab Member is month-to-month, cancel anytime via Whop. Founder is also cancelable but you lose the lifetime $9 rate if you do. No contracts, no commitments, no shame for leaving.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── FINAL CTA -->
+<section class="final-cta">
+  <div class="container-tight">
+    <h2>The first 50 Founders are the floor of the building.</h2>
+    <p>$9/mo locked for life. After spot 50, the price doubles. Pick your door — or just lurk free.</p>
+    <div class="hero-ctas" style="justify-content: center;">
+      <a href="https://whop.com/the-side-hustle-guild/founder-membership-a9" class="btn btn-amber">Lock $9 — Founder spot →</a>
+      <a href="https://discord.gg/6x6UXC7WQp" class="btn btn-ghost">Join Discord free</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── FOOTER -->
 <footer>
   <div class="container">
-    <div>
-      <div class="footer-tagline">The Side Hustle Guild</div>
-      <p>Every builder, every level.</p>
-      <p style="margin-top:12px;color:rgba(248,244,237,0.5);font-size:12px;">X3 E-Commerce LLC dba Side Hustle Guild</p>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <span class="logo"><span class="logo-dot"></span> The Side Hustle Guild</span>
+        <p class="foot-tagline">Every builder, every level. A self-funding contest community for people building real income.</p>
+      </div>
+      <div>
+        <h5>The Guild</h5>
+        <ul>
+          <li><a href="https://discord.gg/6x6UXC7WQp">Discord</a></li>
+          <li><a href="/submissions/">Hustle Cards</a></li>
+          <li><a href="/submit/">Submit</a></li>
+          <li><a href="/sunday-reset-planner/">Sunday Reset</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Membership</h5>
+        <ul>
+          <li><a href="https://whop.com/the-side-hustle-guild/founder-membership-a9">Founder $9</a></li>
+          <li><a href="https://whop.com/the-side-hustle-guild/lab-member">Lab Member $19</a></li>
+          <li><a href="/affiliate/">Affiliate program</a></li>
+          <li><a href="/sponsors/">Sponsor a season</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="https://tiktok.com/@sidehustleguild">TikTok</a></li>
+          <li><a href="https://instagram.com/sidehustleguild">Instagram</a></li>
+          <li><a href="mailto:hello@thesidehustleguild.com">hello@thesidehustleguild.com</a></li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <h4>The Lab</h4>
-      <ul>
-        <li><a href="/marketplace">Builders Marketplace</a></li>
-        <li><a href="/wins">Public Wins</a></li>
-        <li><a href="/affiliate">Affiliate Program</a></li>
-        <li><a href="/sponsors">Sponsorships</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Company</h4>
-      <ul>
-        <li><a href="/about">About</a></li>
-        <li><a href="/faq">FAQ</a></li>
-        <li><a href="/marketplace/rules">Contest Rules</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-        <li><a href="/terms">Terms</a></li>
-      </ul>
-    </div>
-    <div class="footer-disclaimer" style="grid-column: 1/-1;">
-      Member results not typical. The Side Hustle Guild is an educational community for ambitious builders. No financial advice. No income guarantees. Skill-based competition with cash awards funded by The Side Hustle Guild and our sponsors. © 2026 X3 E-Commerce LLC dba Side Hustle Guild.
+    <div class="foot-bottom">
+      <span>© 2026 X3 E-Commerce LLC dba The Side Hustle Guild. All rights reserved.</span>
+      <span>Member results not typical. Educational community. No income guarantees.</span>
     </div>
   </div>
 </footer>
+
+<script>
+  // Live stats — fetched from /api/public/stats with graceful fallback.
+  const fmtMoney = (c) => {
+    if (!c && c !== 0) return '—';
+    if (c >= 100000) return '$' + Math.round(c/100).toLocaleString();
+    return '$' + (c/100).toFixed(2);
+  };
+
+  fetch('/api/public/stats').then(r => r.json()).then(d => {
+    const m = d.paid_members || 0;
+    document.getElementById('stat-members').textContent = m;
+    document.getElementById('big-counter').textContent = m;
+    document.getElementById('pulse-text').textContent = m >= 100 ? `Contest is LIVE — ${m} members building` : `Building toward 100 — ${m} so far`;
+    if (m >= 100) document.getElementById('stat-members-sub').textContent = 'contest active';
+    document.getElementById('stat-pool').textContent = fmtMoney(d.prize_pool_cents);
+    document.getElementById('stat-cards').textContent = d.submissions_count || '—';
+    document.getElementById('stat-agents').textContent = d.agents_online ?? '—';
+  }).catch(() => {
+    document.getElementById('stat-members').textContent = '2';
+    document.getElementById('stat-pool').textContent = '$7.00';
+    document.getElementById('stat-cards').textContent = '12';
+    document.getElementById('stat-agents').textContent = '11';
+    document.getElementById('big-counter').textContent = '2';
+  });
+</script>
 
 </body>
 </html>
