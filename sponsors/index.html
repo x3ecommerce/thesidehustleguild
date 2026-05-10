@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sponsor a Contest — The Side Hustle Guild</title>
+<meta name="description" content="Sponsor a monthly Builders Marketplace contest. Three tiers from $1,500 to $15,000. Reach a focused audience of paying side-hustle builders actively shipping work. Brand attached to a real cash-prize competition, not a banner ad.">
+<meta property="og:title" content="Sponsor a Contest — The Side Hustle Guild">
+<meta property="og:description" content="Brand attached to a real monthly cash-prize competition. Three sponsorship tiers, defined deliverables, anti-conflict guarantee.">
+<meta property="og:url" content="https://thesidehustleguild.com/sponsors">
+<link href="https://fonts.bunny.net/css?family=fraunces:600,700|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F8F4ED;
+  --slate: #27384A;
+  --slate-soft: #3A4D62;
+  --sunrise: #E89B3B;
+  --sunrise-soft: #F2B561;
+  --sage: #A8C9A0;
+  --charcoal: #1E1E1E;
+  --line: rgba(39, 56, 74, 0.10);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Manrope', sans-serif; font-weight: 400; font-size: 17px; line-height: 1.55;
+  color: var(--charcoal); background: var(--cream);
+}
+h1, h2, h3, h4 {
+  font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.15;
+  color: var(--slate); letter-spacing: -0.01em;
+}
+h1 { font-size: clamp(2.5rem, 6vw, 4.25rem); }
+h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); margin-bottom: 16px; }
+h3 { font-size: clamp(1.25rem, 2vw, 1.5rem); margin-bottom: 8px; }
+p { margin-bottom: 12px; }
+strong { font-weight: 600; color: var(--slate); }
+a { color: var(--slate); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--sunrise); }
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.narrow { max-width: 780px; }
+
+.site-header {
+  padding: 20px 0; border-bottom: 1px solid var(--line); background: var(--cream);
+  position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px);
+}
+.site-header .container { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--slate); text-decoration: none; }
+.logo:hover { color: var(--sunrise); }
+.nav { display: flex; gap: 28px; align-items: center; }
+.nav a { font-size: 15px; font-weight: 500; text-decoration: none; color: var(--slate-soft); }
+.nav a:hover { color: var(--sunrise); }
+.nav-cta {
+  background: var(--slate); color: var(--cream) !important;
+  padding: 10px 20px; border-radius: 6px; font-weight: 600;
+}
+.nav-cta:hover { background: var(--sunrise); color: var(--slate) !important; }
+
+.hero { padding: 84px 0 56px; border-bottom: 1px solid var(--line); }
+.eyebrow {
+  display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--sunrise); margin-bottom: 20px;
+}
+.hero p.lede {
+  font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+  color: var(--slate-soft); max-width: 720px; margin-top: 24px; margin-bottom: 32px;
+}
+.hero-cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.btn {
+  display: inline-block; padding: 14px 28px; border-radius: 8px; font-weight: 600;
+  font-size: 16px; text-decoration: none; transition: transform 0.15s ease, background 0.2s ease;
+  border: 1px solid transparent;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--sunrise); color: var(--slate); }
+.btn-primary:hover { background: var(--sunrise-soft); color: var(--slate); }
+.btn-ghost { background: transparent; color: var(--slate); border-color: var(--slate); }
+.btn-ghost:hover { background: var(--slate); color: var(--cream); }
+
+.section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+.section h2 + p.section-lede {
+  font-size: 1.0625rem; color: var(--slate-soft); max-width: 680px; margin-bottom: 36px;
+}
+
+.audience-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px; margin-top: 32px; max-width: 720px;
+}
+.audience-stat {
+  background: white; border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px;
+}
+.audience-stat-num {
+  font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600;
+  color: var(--sunrise); line-height: 1;
+}
+.audience-stat-label { font-size: 13px; color: var(--slate-soft); margin-top: 6px; font-weight: 500; }
+
+.tier-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px; margin-top: 40px;
+}
+.tier-card {
+  background: white; border: 1px solid var(--line); border-radius: 12px;
+  padding: 32px 28px; position: relative; transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.tier-card:hover { border-color: var(--sunrise); transform: translateY(-2px); }
+.tier-card.local { border-top: 4px solid var(--sage); }
+.tier-card.theme { border-top: 4px solid var(--sunrise); }
+.tier-card.title { border-top: 4px solid var(--slate); }
+.tier-card.title .tier-recommend {
+  position: absolute; top: -12px; right: 24px;
+  background: var(--slate); color: var(--cream);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 12px;
+}
+.tier-name {
+  font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 600;
+  color: var(--slate); margin-bottom: 6px;
+}
+.tier-tagline { font-size: 14px; color: var(--slate-soft); margin-bottom: 18px; }
+.tier-price {
+  font-family: 'Fraunces', serif; font-size: 42px; font-weight: 600;
+  color: var(--sunrise); line-height: 1;
+}
+.tier-price-note { font-size: 12px; color: var(--slate-soft); margin-top: 4px; margin-bottom: 24px; }
+.tier-perks {
+  list-style: none; font-size: 14.5px; color: var(--slate-soft);
+  padding-top: 20px; border-top: 1px solid var(--line);
+}
+.tier-perks li { padding: 8px 0 8px 22px; position: relative; line-height: 1.45; }
+.tier-perks li::before {
+  content: '✓'; position: absolute; left: 0; color: var(--sunrise);
+  font-weight: 700; font-size: 16px;
+}
+
+.guarantee-callout {
+  background: var(--slate); color: var(--cream); border-radius: 12px;
+  padding: 36px 40px; margin-top: 48px;
+}
+.guarantee-callout h3 { color: var(--cream); margin-bottom: 16px; font-size: 1.5rem; }
+.guarantee-callout p { color: rgba(248, 244, 237, 0.85); margin-bottom: 12px; }
+.guarantee-callout strong { color: var(--sunrise); }
+
+.process-steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px; margin-top: 40px; counter-reset: step;
+}
+.process-step {
+  background: white; border: 1px solid var(--line); border-radius: 10px;
+  padding: 24px; counter-increment: step;
+}
+.process-step::before {
+  content: counter(step); font-family: 'Fraunces', serif; font-size: 36px;
+  font-weight: 600; color: var(--sunrise); display: block; line-height: 1; margin-bottom: 10px;
+}
+.process-step h4 { margin-bottom: 8px; }
+.process-step p { color: var(--slate-soft); font-size: 15px; margin-bottom: 0; }
+
+.faq { margin-top: 36px; }
+.faq-item { border-bottom: 1px solid var(--line); padding: 22px 0; }
+.faq-item:first-child { border-top: 1px solid var(--line); }
+.faq-q {
+  font-family: 'Fraunces', serif; font-size: 1.125rem; font-weight: 600;
+  color: var(--slate); margin-bottom: 8px;
+}
+.faq-a { color: var(--slate-soft); font-size: 15px; }
+
+.final-cta {
+  text-align: center; padding: 96px 24px; background: var(--slate);
+  color: var(--cream); border-bottom: 1px solid var(--line);
+}
+.final-cta h2 { color: var(--cream); }
+.final-cta p { color: rgba(248, 244, 237, 0.8); max-width: 580px; margin: 18px auto 32px; }
+.final-cta .btn-primary { font-size: 18px; padding: 16px 36px; }
+
+footer { padding: 56px 0 80px; background: var(--cream); }
+footer p { font-size: 13px; color: var(--slate-soft); max-width: 720px; }
+.legal { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--slate-soft); line-height: 1.7; }
+.legal strong { color: var(--slate); }
+.footer-links { display: flex; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+.footer-links a { font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="/" class="logo">The Side Hustle Guild</a>
+    <nav class="nav">
+      <a href="/submissions">Submissions</a>
+      <a href="/affiliate">Affiliate</a>
+      <a href="/sponsors">Sponsors</a>
+      <a href="https://whop.com/the-side-hustle-guild/lab-member" class="nav-cta">Join</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Sponsor a Contest</span>
+    <h1>Put your brand inside a real monthly cash-prize competition.</h1>
+    <p class="lede">The Builders Marketplace is a monthly skill-based contest inside the Side Hustle Guild. Members compete on craft for cash prizes across three tiers. As a sponsor, your brand is attached to the prize itself, the trailer, and the winner reveal. Not a banner ad. Not a placement. The contest, with you on it.</p>
+    <div class="hero-cta-row">
+      <a href="https://tally.so/r/Ekvxjr" class="btn btn-primary">Apply to Sponsor</a>
+      <a href="#tiers" class="btn btn-ghost">See the tiers</a>
+    </div>
+    <div class="audience-grid">
+      <div class="audience-stat">
+        <div class="audience-stat-num">Paid only</div>
+        <div class="audience-stat-label">Every member is a paying subscriber. No tire kickers.</div>
+      </div>
+      <div class="audience-stat">
+        <div class="audience-stat-num">Active</div>
+        <div class="audience-stat-label">Members ship work weekly to compete in the contest.</div>
+      </div>
+      <div class="audience-stat">
+        <div class="audience-stat-num">High-intent</div>
+        <div class="audience-stat-label">Building real income, looking for tools that work.</div>
+      </div>
+      <div class="audience-stat">
+        <div class="audience-stat-num">Inclusive</div>
+        <div class="audience-stat-label">Rookies through Operators. Real range of audiences.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tiers">
+  <div class="container">
+    <h2>Three sponsorship tiers</h2>
+    <p class="section-lede">Every tier is one month, one contest, defined deliverables. No long-term contracts. No surprise renewals. Pay once, get the season.</p>
+
+    <div class="tier-grid">
+
+      <div class="tier-card local">
+        <div class="tier-name">Local Sponsor</div>
+        <div class="tier-tagline">Get your name in the room.</div>
+        <div class="tier-price">$1,500</div>
+        <div class="tier-price-note">one month, all-inclusive</div>
+        <ul class="tier-perks">
+          <li>Logo + 2-line blurb on the monthly theme post</li>
+          <li>Mention in the season trailer (15-sec brand card)</li>
+          <li>Linked logo on the public Submissions browser for the season</li>
+          <li>Brand mention in the Champion Day announcement</li>
+          <li>Full season metrics report (impressions, clicks, member sentiment)</li>
+        </ul>
+      </div>
+
+      <div class="tier-card theme">
+        <div class="tier-name">Theme Sponsor</div>
+        <div class="tier-tagline">Pick the theme. Power the month.</div>
+        <div class="tier-price">$5,000</div>
+        <div class="tier-price-note">one month, all-inclusive</div>
+        <ul class="tier-perks">
+          <li>Everything in Local Sponsor, plus:</li>
+          <li>Co-branding on the monthly theme name (e.g. "Beat the Blank Page, sponsored by [Brand]")</li>
+          <li>30-second brand-led segment in the season trailer</li>
+          <li>Pinned sponsor announcement in the Discord with link to your offer</li>
+          <li>One Wednesday Office Hours co-host slot — your team answers questions live</li>
+          <li>Featured "From our sponsor" drop in the Monday Drops series during the season</li>
+          <li>10% of the sponsor revenue allocated to Tribe Council (members literally voted to accept you)</li>
+        </ul>
+      </div>
+
+      <div class="tier-card title">
+        <div class="tier-recommend">Recommended</div>
+        <div class="tier-name">Title Sponsor</div>
+        <div class="tier-tagline">Be the season.</div>
+        <div class="tier-price">$15,000</div>
+        <div class="tier-price-note">one month, all-inclusive</div>
+        <ul class="tier-perks">
+          <li>Everything in Theme Sponsor, plus:</li>
+          <li>Title-card placement: "The [Brand] Builders Marketplace — [Theme]"</li>
+          <li>One judging seat for the season — your team votes on the winners</li>
+          <li>Branded "[Brand] Grand Prize" naming on the top cash award</li>
+          <li>Exclusive Member-only offer hosted in the Discord (drop a discount, free trial, etc.)</li>
+          <li>30-min strategy call with the Guild operations team to plan the season together</li>
+          <li>Right of first refusal on the same theme next year</li>
+          <li>20% of the sponsor revenue allocated to Tribe Council</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="guarantee-callout">
+      <h3>The anti-conflict guarantee</h3>
+      <p>The Tribe Council — six elected members of the Guild — votes on every inbound sponsor before we accept the deal. If they reject you, we don't take your money.</p>
+      <p>That's the design. <strong>Sponsors who get accepted are sponsors the audience already wants in the room.</strong> Members aren't being sold to; they helped pick the brands they want around them.</p>
+      <p>Result: higher conversion than a typical sponsor placement, and zero tone risk to your brand.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background: white;">
+  <div class="container">
+    <h2>How it works</h2>
+    <p class="section-lede">From inquiry to live placement: about 14 days. Everything is documented and signed before any money moves.</p>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <h4>Apply</h4>
+        <p>Fill out the sponsorship inquiry form. Tell us about your brand, your audience, what you'd want out of a season. Takes about 5 minutes.</p>
+      </div>
+      <div class="process-step">
+        <h4>Discovery call</h4>
+        <p>30 minutes with the Guild ops team. We talk through which tier fits, which theme month aligns with your launch calendar, what success looks like.</p>
+      </div>
+      <div class="process-step">
+        <h4>Council vote</h4>
+        <p>Your application goes to the Tribe Council for an async 7-day vote. If 4 of 6 approve, we move forward.</p>
+      </div>
+      <div class="process-step">
+        <h4>Contract + payment</h4>
+        <p>One-month sponsorship agreement, signed via DocuSign. Payment via Stripe invoice. You only pay after the council approves.</p>
+      </div>
+      <div class="process-step">
+        <h4>Onboarding</h4>
+        <p>Logo, copy, trailer assets, offer details collected. We build out your placements and loop you in for review before they go live.</p>
+      </div>
+      <div class="process-step">
+        <h4>Live season</h4>
+        <p>Day 1 theme drop with your branding. The season runs for 28 days. You get a live channel inside the Guild for real-time questions during the month.</p>
+      </div>
+      <div class="process-step">
+        <h4>Recap report</h4>
+        <p>Day 30: a full report. Impressions, clicks, member sentiment quotes, top entries, winners, performance vs benchmarks. Honest numbers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container narrow">
+    <h2>FAQ</h2>
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">Why is this different from a typical sponsorship?</div>
+        <div class="faq-a">Most sponsorships are placement-based: your logo lives somewhere on a creator's content for a month, and you hope the audience cares. Builders Marketplace sponsorships are <strong>structurally embedded</strong>: members are competing for a prize you're funding. That changes the dynamic from "sponsor to be ignored" to "sponsor to be remembered." Plus, the Tribe Council vote means the audience is pre-disposed to like you before you ever show up.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What kinds of brands do well here?</div>
+        <div class="faq-a">Tools, platforms, services, and educational products that genuinely help side-hustle builders ship work. Notion templates, AI tools, design software, hosting platforms, payment processors, course platforms, accounting tools, freelance marketplaces. Brands targeting "ambitious people building income" do well. Brands targeting "consumers who want to spend money on lifestyle goods" don't fit.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I pick which month I sponsor?</div>
+        <div class="faq-a">Yes. The 12-month theme calendar is locked, so you can match a sponsorship to a theme that fits your audience. Reach out at least 60 days before the month you're targeting; some popular themes book out.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What does the Tribe Council vote actually evaluate?</div>
+        <div class="faq-a">Three things: (1) is the brand a fit for the audience, (2) is there a real offer or value for members beyond a logo, (3) is there any conflict with the Guild's mission. Brands rarely get rejected if they're a clean fit. The vote exists more to protect the Guild's tone than to gate-keep aggressively.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do you guarantee a number of impressions or conversions?</div>
+        <div class="faq-a">No. We share honest historic benchmarks and projected metrics, but we don't guarantee outcomes — that's how creator-economy sponsorships are run by people you should not trust. We DO guarantee deliverables (logo placement, trailer mention, sponsor channel, judging seat at the relevant tiers) and we DO send a full recap with actual numbers within 7 days of season close.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What happens to the sponsor revenue?</div>
+        <div class="faq-a">Local Sponsor: 100% to the Guild (covers contest costs + admin). Theme Sponsor: 90% Guild, 10% to a profit pool split among the 6-member Tribe Council. Title Sponsor: 80% Guild, 20% to the Council pool. The Council members are explicitly aligned with you signing — they earn a small share of what you pay. That's intentional alignment.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is there an exclusivity option?</div>
+        <div class="faq-a">Title Sponsor includes right of first refusal on the same theme month next year. Within a single season, only one Title Sponsor and at most two Theme Sponsors are accepted. Local Sponsor can have up to four per month.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Who do I talk to?</div>
+        <div class="faq-a">The signup form routes to the Guild ops team. We respond within 24 hours on weekdays.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="container narrow">
+    <h2>Ready to be on the prize?</h2>
+    <p>The signup form takes about 5 minutes. Discovery call within a week. If we're a fit, you could be on the next theme drop.</p>
+    <a href="https://tally.so/r/Ekvxjr" class="btn btn-primary">Apply to Sponsor →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>The Side Hustle Guild</strong> is a community for ambitious people building real income. The Builders Marketplace is a monthly skill-based competition operated by the Guild. Operated by X3 E-Commerce LLC dba Side Hustle Guild.</p>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/submissions">Submissions</a>
+      <a href="/affiliate">Affiliate</a>
+      <a href="/sponsors">Sponsors</a>
+      <a href="https://whop.com/the-side-hustle-guild/lab-member">Join</a>
+    </div>
+    <div class="legal">
+      <p><strong>Sponsorship terms:</strong> All sponsorships are governed by a one-month written agreement. Deliverables are listed by tier on this page and confirmed in contract. Performance metrics are reported in good faith using actual platform data; the Guild does not guarantee specific impression, click, or conversion outcomes. The Tribe Council's sponsor vote is binding; rejected applications are not invoiced.</p>
+      <p style="margin-top: 12px;"><strong>Educational community.</strong> The Side Hustle Guild does not provide financial, legal, or tax advice. Membership is a community access subscription, not a financial product. Sponsorships are advertising placements, not endorsements.</p>
+      <p style="margin-top: 12px;">© 2026 X3 E-Commerce LLC dba Side Hustle Guild. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
