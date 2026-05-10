@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Your Hustle Card — The Side Hustle Guild</title>
+<meta name="description" content="3 simple steps. About 3 minutes. Submit your hustle to the Builders Marketplace and get on the leaderboard.">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,400i|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F8F4ED;
+    --slate: #27384A;
+    --sunrise: #E89B3B;
+    --sage: #A8C9A0;
+    --charcoal: #1E1E1E;
+    --line: rgba(39, 56, 74, 0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--cream); color: var(--charcoal); font-family: 'Manrope', sans-serif; line-height: 1.55; }
+
+  header.topbar {
+    max-width: 980px; margin: 0 auto; padding: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .brand { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--slate); text-decoration: none; }
+  .brand .dot { color: var(--sunrise); }
+  .nav-links a { color: var(--slate); text-decoration: none; font-size: 14px; margin-left: 24px; }
+  .nav-links a:hover { color: var(--sunrise); }
+
+  .hero { max-width: 780px; margin: 24px auto 16px; padding: 0 24px; text-align: center; }
+  .stamp { font-size: 12px; color: var(--slate); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px; }
+  h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 52px; color: var(--slate); letter-spacing: -0.01em; line-height: 1.05; margin-bottom: 20px; }
+  .subhead { font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--charcoal); margin-bottom: 8px; }
+  .meta { color: rgba(39, 56, 74, 0.7); font-size: 15px; }
+
+  .steps { max-width: 780px; margin: 56px auto 32px; padding: 0 24px; }
+  .step {
+    display: grid; grid-template-columns: 80px 1fr; gap: 28px;
+    background: white; border: 1px solid var(--line); border-radius: 16px;
+    padding: 28px; margin-bottom: 20px; align-items: start;
+  }
+  .step-num {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--sunrise); color: var(--slate);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700;
+  }
+  .step h3 { font-family: 'Fraunces', serif; font-size: 24px; color: var(--slate); margin-bottom: 8px; font-weight: 600; }
+  .step p { color: var(--charcoal); margin-bottom: 8px; }
+  .step .ex { font-family: 'Fraunces', serif; font-style: italic; color: rgba(39, 56, 74, 0.7); font-size: 14px; }
+
+  .cta-block {
+    max-width: 780px; margin: 40px auto; padding: 0 24px; text-align: center;
+  }
+  .cta-button {
+    display: inline-block;
+    background: var(--sunrise); color: var(--slate);
+    font-family: 'Manrope', sans-serif; font-size: 19px; font-weight: 700;
+    padding: 20px 44px; border-radius: 12px;
+    text-decoration: none; box-shadow: 0 4px 16px rgba(232, 155, 59, 0.30);
+    transition: all 0.15s;
+  }
+  .cta-button:hover { background: #F2B561; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232, 155, 59, 0.40); }
+  .cta-time { display: block; margin-top: 16px; color: rgba(39, 56, 74, 0.65); font-size: 14px; }
+
+  .what-next {
+    max-width: 780px; margin: 48px auto 0; padding: 32px 24px;
+    background: white; border: 1px solid var(--line); border-radius: 16px;
+  }
+  .what-next h2 { font-family: 'Fraunces', serif; font-size: 24px; color: var(--slate); margin-bottom: 16px; font-weight: 600; }
+  .what-next ol { padding-left: 24px; }
+  .what-next ol li { margin-bottom: 12px; }
+  .what-next ol li b { color: var(--slate); }
+
+  .faq { max-width: 780px; margin: 32px auto 64px; padding: 0 24px; }
+  .faq h2 { font-family: 'Fraunces', serif; font-size: 28px; color: var(--slate); margin-bottom: 20px; font-weight: 600; }
+  .faq-item { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; }
+  .faq-item h4 { font-family: 'Fraunces', serif; font-size: 17px; color: var(--slate); margin-bottom: 6px; font-weight: 600; }
+  .faq-item p { font-size: 15px; color: var(--charcoal); }
+
+  footer { text-align: center; padding: 48px 24px 32px; color: rgba(39, 56, 74, 0.6); font-size: 13px; }
+  footer .fr { font-family: 'Fraunces', serif; font-style: italic; margin-bottom: 6px; }
+
+  @media (max-width: 700px) {
+    h1 { font-size: 36px; }
+    .step { grid-template-columns: 1fr; padding: 22px; }
+    .step-num { width: 52px; height: 52px; font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="/" class="brand">The Side Hustle Guild<span class="dot"> ●</span></a>
+  <nav class="nav-links">
+    <a href="/submissions/">Browse Hustle Cards</a>
+    <a href="/affiliate/">Affiliate</a>
+    <a href="/sponsors/">Sponsors</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <p class="stamp">The Builders Marketplace</p>
+  <h1>Submit Your Hustle Card</h1>
+  <p class="subhead">3 simple steps. About 3 minutes. Real shot at the prize pool.</p>
+</section>
+
+<section class="steps">
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div>
+      <h3>Take one photo of your hustle</h3>
+      <p>Anything visual works: a product shot, a screenshot of your Etsy shop, your TikTok thumbnail, a banner, the homepage of your site. Doesn't have to be pretty. Has to exist.</p>
+      <p class="ex">If you don't have one, take a screenshot of whatever your hustle lives on right now. That's your photo.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div>
+      <h3>Copy the link to your hustle</h3>
+      <p>Where does your hustle live online? Your Etsy shop URL, your website, your Gumroad page, your TikTok profile, your Shopify store. Whatever's public.</p>
+      <p class="ex">No public link yet? A Google Drive folder or Notion page works too. Judges just need to see the thing exists.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div>
+      <h3>Click the button below and fill in 6 fields</h3>
+      <p>Name. Email. One-line description. Your link. Upload your photo. 2–4 sentences on what you've made and what's next. Pick your tier (Rookie / Builder / Operator). Done.</p>
+      <p class="ex">If you're at day one with $0, say so. Honesty wins. We score effort and trajectory, not just dollars.</p>
+    </div>
+  </div>
+
+</section>
+
+<section class="cta-block">
+  <a href="https://tally.so/r/D4AJpb" class="cta-button" target="_blank" rel="noopener">Submit My Hustle Card →</a>
+  <span class="cta-time">~3 minutes · 6 fields · Mobile-friendly</span>
+</section>
+
+<section class="what-next">
+  <h2>What happens after you submit</h2>
+  <ol>
+    <li><b>You'll get a confirmation email</b> within 60 seconds with your submission ID.</li>
+    <li><b>The Submission Coach Agent</b> may DM you on Discord with one or two clarifying questions if your card needs polish.</li>
+    <li><b>Judges score it</b> during the scoring window (Days 11–21 of the contest cycle). 5-point scale: clarity, proof, trajectory, fit-to-theme, originality.</li>
+    <li><b>Approved cards land in <a href="/submissions/">the public Hustle Card gallery</a></b> and get featured in the Discord <code>#the-exchange</code> forum.</li>
+    <li><b>Winners announced on Champion Day</b> (Day 22 of each month, live in the Strategy Hour Stage). Prizes hit accounts on stream.</li>
+  </ol>
+</section>
+
+<section class="faq">
+  <h2>Frequently asked</h2>
+
+  <div class="faq-item">
+    <h4>Do I have to be a paid member to submit?</h4>
+    <p>You have to be in the Discord. Free tier can submit a Hustle Card to the gallery. Paid members (Founder $9 lifetime / Lab Member $19/mo) are eligible for the cash prize pool.</p>
+  </div>
+
+  <div class="faq-item">
+    <h4>What if my hustle is brand new?</h4>
+    <p>Submit anyway. We have a Rookie tier specifically for first-time builders. Day-one numbers are valid numbers.</p>
+  </div>
+
+  <div class="faq-item">
+    <h4>Can I submit more than one hustle?</h4>
+    <p>Yes — but each one gets its own card and counts as a separate submission. Limit is 3 per contest cycle to keep judging fair.</p>
+  </div>
+
+  <div class="faq-item">
+    <h4>What if I don't have a photo?</h4>
+    <p>Take a screenshot of whatever your hustle lives on right now — your shop dashboard, your Notion page, your sketch on paper. The photo is for context, not a beauty contest.</p>
+  </div>
+
+  <div class="faq-item">
+    <h4>How big is the prize pool?</h4>
+    <p>The pool is funded by member subscriptions: 25% of monthly subscription gross MRR. It scales as the community grows. At 100 members ≈ $350/month total. At 1,000 ≈ $4,600/month. Live snapshot in Discord <code>#leaderboards</code>. The contest activates the moment we hit 100 paid members.</p>
+  </div>
+
+  <div class="faq-item">
+    <h4>What if judges decide I'm in the wrong tier?</h4>
+    <p>They reclassify and your submission stays. No penalty for guessing wrong. Just submit honestly.</p>
+  </div>
+
+</section>
+
+<footer>
+  <p class="fr">The Side Hustle Guild — every builder, every level</p>
+  <p>Member results not typical. Educational community. We don't guarantee any specific income or outcome.</p>
+  <p style="margin-top:8px;"><a href="/submissions/" style="color: var(--slate);">Browse approved Hustle Cards</a> · <a href="/" style="color: var(--slate);">Home</a></p>
+</footer>
+
+</body>
+</html>
