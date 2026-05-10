@@ -175,7 +175,7 @@ function welcomeEmailText(firstName) {
 Thanks for joining the Side Hustle Guild newsletter. As promised:
 
 → Download the Sunday Reset Planner (PDF):
-  https://thesidehustleguild.com/sunday-reset-planner.pdf
+  https://thesidehustleguild.com/sunday-reset-planner/
 
 It's a one-pager built for the Guild's free tier. Print it Sunday morning, fill it out in 5 minutes, and you'll start your week with one specific thing to ship by Friday. Simplest tool we've made, the one we get the most thank-you replies about.
 
@@ -218,7 +218,7 @@ function welcomeEmailHtml(firstName) {
 <p style="margin: 0 0 16px;">Thanks for joining the Side Hustle Guild newsletter. As promised:</p>
 
 <p style="margin: 24px 0;">
-  <a href="https://thesidehustleguild.com/sunday-reset-planner.pdf"
+  <a href="https://thesidehustleguild.com/sunday-reset-planner/"
      style="background: #E89B3B; color: #27384A; padding: 14px 28px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block;">
     Download — The Sunday Reset Planner (PDF) →
   </a>
