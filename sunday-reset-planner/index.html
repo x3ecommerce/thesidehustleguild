@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sunday Reset — The Side Hustle Guild</title>
+<meta name="description" content="A 1-page Sunday reset for ambitious people building real income. Fill it out in 5 minutes. Have one specific thing shipped by Friday.">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700,400i|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F8F4ED;
+    --slate: #27384A;
+    --slate-soft: #3A4D62;
+    --sunrise: #E89B3B;
+    --sage: #A8C9A0;
+    --charcoal: #1E1E1E;
+    --line: rgba(39, 56, 74, 0.30);
+    --line-soft: rgba(39, 56, 74, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .controls {
+    max-width: 8.5in;
+    margin: 24px auto 12px;
+    padding: 0 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .controls .home-link {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--slate);
+    text-decoration: none;
+  }
+  .controls .home-link:hover { color: var(--sunrise); }
+  .controls .actions { display: flex; gap: 8px; }
+  .btn-print {
+    background: var(--sunrise);
+    color: var(--slate);
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+  }
+  .btn-print:hover { background: #F2B561; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--slate);
+    border: 1px solid var(--slate);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+  }
+  .btn-secondary:hover { background: var(--slate); color: var(--cream); }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 16px auto 48px;
+    padding: 0.75in;
+    background: var(--cream);
+    color: var(--charcoal);
+    box-shadow: 0 4px 24px rgba(39, 56, 74, 0.10);
+    border: 1px solid var(--line-soft);
+    position: relative;
+  }
+
+  .page::before {
+    content: '■';
+    position: absolute;
+    top: 0.6in;
+    right: 0.6in;
+    color: var(--sunrise);
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 36px;
+    color: var(--slate);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+  }
+  .brand-stamp {
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    color: var(--slate);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 18px;
+  }
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--line);
+    margin: 14px 0;
+  }
+  .week-of {
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    color: var(--slate-soft);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .week-of-line {
+    flex: 1;
+    border-bottom: 1px solid var(--slate);
+  }
+
+  .section-h {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 8px;
+    margin-top: 22px;
+  }
+  .section-h:first-of-type { margin-top: 0; }
+  .section-h-rule {
+    border-top: 1px solid var(--slate);
+    width: 30px;
+    margin-bottom: 14px;
+  }
+  .helper {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--slate-soft);
+    margin-top: 6px;
+  }
+
+  .one-thing-box {
+    border: 1px solid var(--slate);
+    border-radius: 4px;
+    height: 0.85in;
+    margin-bottom: 6px;
+  }
+
+  .day-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .checkbox {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--slate);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .day-label {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--sunrise);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    min-width: 36px;
+    flex-shrink: 0;
+  }
+  .day-prompt {
+    flex: 1;
+    color: var(--charcoal);
+  }
+  .day-prompt-line {
+    border-bottom: 1px solid var(--line);
+    height: 18px;
+    margin-top: 4px;
+  }
+
+  .friday-eval {
+    margin-top: 8px;
+    margin-bottom: 14px;
+  }
+  .yesno-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    color: var(--charcoal);
+  }
+  .yesno-item { display: flex; align-items: center; gap: 8px; }
+  .blank-line {
+    border-bottom: 1px solid var(--line);
+    height: 16px;
+    margin-bottom: 8px;
+  }
+
+  .anchor-block {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+    margin: 18px 0 14px;
+  }
+  .anchor-h {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 8px;
+  }
+  .anchor-body {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--charcoal);
+    line-height: 1.55;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 14px;
+    color: var(--slate);
+  }
+  .footer-url {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .footer-tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  .disclaimer {
+    font-family: 'Manrope', sans-serif;
+    font-style: italic;
+    font-size: 8.5px;
+    color: rgba(39, 56, 74, 0.55);
+    line-height: 1.5;
+  }
+
+  /* PRINT STYLES — when "Save as PDF" or printing */
+  @media print {
+    @page {
+      size: letter;
+      margin: 0;
+    }
+    body { background: white !important; }
+    .controls { display: none !important; }
+    .page {
+      box-shadow: none !important;
+      border: none !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      width: auto;
+      max-width: 100%;
+      padding: 24px;
+      min-height: auto;
+    }
+    .title { font-size: 28px; }
+    .subtitle { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <a href="/" class="home-link">The Side Hustle Guild</a>
+  <div class="actions">
+    <a href="/" class="btn-secondary">← Home</a>
+    <button class="btn-print" onclick="window.print()">Print / Save as PDF →</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <h1 class="title">THE SUNDAY RESET</h1>
+  <p class="subtitle">for ambitious people building real income</p>
+  <p class="brand-stamp">The Side Hustle Guild</p>
+
+  <hr class="divider">
+
+  <div class="week-of">
+    <span>Week of:</span>
+    <span class="week-of-line"></span>
+  </div>
+
+  <h2 class="section-h">The one thing I'll ship this week</h2>
+  <div class="section-h-rule"></div>
+  <div class="one-thing-box"></div>
+  <p class="helper">Specific. Visible. Shippable. "List one item on Mercari" beats "make progress on side hustle."</p>
+
+  <h2 class="section-h">The 5-day push</h2>
+  <div class="section-h-rule"></div>
+
+  <div class="day-row">
+    <span class="checkbox"></span>
+    <span class="day-label">Mon</span>
+    <div class="day-prompt">
+      The smallest first step:
+      <div class="day-prompt-line"></div>
+    </div>
+  </div>
+
+  <div class="day-row">
+    <span class="checkbox"></span>
+    <span class="day-label">Tue</span>
+    <div class="day-prompt">
+      What I'll build / write / design today:
+      <div class="day-prompt-line"></div>
+    </div>
+  </div>
+
+  <div class="day-row">
+    <span class="checkbox"></span>
+    <span class="day-label">Wed</span>
+    <div class="day-prompt">
+      The thing I'll do that scares me:
+      <div class="day-prompt-line"></div>
+    </div>
+  </div>
+
+  <div class="day-row">
+    <span class="checkbox"></span>
+    <span class="day-label">Thu</span>
+    <div class="day-prompt">
+      Who I'll tell about it:
+      <div class="day-prompt-line"></div>
+    </div>
+  </div>
+
+  <div class="day-row">
+    <span class="checkbox"></span>
+    <span class="day-label">Fri</span>
+    <div class="day-prompt">
+      The version I'll ship (good enough):
+      <div class="day-prompt-line"></div>
+    </div>
+  </div>
+
+  <h2 class="section-h">Friday evening report</h2>
+  <div class="section-h-rule"></div>
+
+  <div class="friday-eval">
+    <div class="yesno-row">
+      <span style="margin-right: 4px;">Did I ship the one thing?</span>
+      <span class="yesno-item"><span class="checkbox"></span> Yes</span>
+      <span class="yesno-item"><span class="checkbox"></span> No</span>
+      <span class="yesno-item"><span class="checkbox"></span> Shipped a different thing</span>
+    </div>
+    <p style="margin-bottom: 4px;">What I learned:</p>
+    <div class="blank-line"></div>
+    <div class="blank-line"></div>
+    <p style="margin-top: 10px; margin-bottom: 4px;">What I'll do next Sunday:</p>
+    <div class="blank-line"></div>
+  </div>
+
+  <div class="anchor-block">
+    <p class="anchor-h">The First Dollar Principle</p>
+    <p class="anchor-body">Most side hustles fail because people quit at day 7 when they didn't make $500 in a week. Day 7 is supposed to be empty. Day 14 is when you evaluate. Day 19 is when our first member got her first sale on Etsy. The first dollar is the only metric that matters in week one.</p>
+  </div>
+
+  <div class="footer">
+    <div class="footer-url">thesidehustleguild.com</div>
+    <div class="footer-tagline">The Side Hustle Guild — every builder, every level</div>
+    <p class="disclaimer">Member results not typical. The Side Hustle Guild is an educational community for ambitious builders.<br>No financial advice. No income guarantees.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
