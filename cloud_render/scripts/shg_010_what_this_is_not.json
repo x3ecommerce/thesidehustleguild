@@ -1,0 +1,66 @@
+{
+  "id": "shg_010_what_this_is_not",
+  "title": "What This Is Not",
+  "angle": "anti_positioning",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "We're not a guru course. We're not a dead Discord. We're not a ninety-nine-a-month lock-in. We're a community of builders, paying it forward.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Not a guru course."
+    },
+    {
+      "start": 3.0,
+      "end": 6.5,
+      "text": "Not a dead Discord."
+    },
+    {
+      "start": 6.5,
+      "end": 10.0,
+      "text": "Just a room of builders."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "x_red_through_yacht",
+      "mood": "anti"
+    },
+    {
+      "start": 3.0,
+      "end": 6.5,
+      "broll_topic": "x_red_through_dead_screen",
+      "mood": "anti"
+    },
+    {
+      "start": 6.5,
+      "end": 10.0,
+      "broll_topic": "end_card_brand",
+      "mood": "resolve"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "What we're not, said out loud. We won't pretend we're a $5K mastermind. We're a Discord room with sharp people and a real prize pool.",
+  "hashtags": [
+    "#honestpositioning",
+    "#notaguru",
+    "#realcommunity",
+    "#builders"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

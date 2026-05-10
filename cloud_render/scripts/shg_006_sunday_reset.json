@@ -1,0 +1,66 @@
+{
+  "id": "shg_006_sunday_reset",
+  "title": "The Sunday Reset",
+  "angle": "sunday_reset_planner",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Free thing today: the Sunday Reset Planner. One page. Print it Sunday. Five minutes. By Friday you'll have shipped one specific thing. Link in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Free planner"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "5 min Sunday \u2192 1 thing shipped Friday"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "/sunday-reset-planner"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "planner_coffee_topdown",
+      "mood": "calm_morning"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "hand_filling_planner",
+      "mood": "focus"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "end_card_brand",
+      "mood": "resolve"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/sunday-reset-planner/",
+  "post_caption": "The simplest tool we've built. Print on Sunday. Fill in 5 minutes. Have one specific thing shipped by Friday. Free. No email required.",
+  "hashtags": [
+    "#productivity",
+    "#weeklyplanner",
+    "#builders",
+    "#freeresource"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

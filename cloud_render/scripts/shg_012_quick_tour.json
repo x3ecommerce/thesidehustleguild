@@ -1,0 +1,66 @@
+{
+  "id": "shg_012_quick_tour",
+  "title": "Quick Tour",
+  "angle": "quick_tour",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Inside the Guild: Monday drops, weekly office hours, the Exchange forum, marketplace, leaderboards. You can lurk for free. The cash starts at $9.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Inside the Guild"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "Drops \u00b7 Office hours \u00b7 Exchange \u00b7 Marketplace"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "Free to lurk. $9 to compete."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "discord_channel_list",
+      "mood": "orientation"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "exchange_forum_view",
+      "mood": "showcase"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "end_card_brand",
+      "mood": "invitation"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "Quick walk through the rooms. Free tier gets you in the door. $9 Founder unlocks the prize pool, the leaderboard, and Champion Day.",
+  "hashtags": [
+    "#discordcommunity",
+    "#virtualtour",
+    "#sidehustle",
+    "#buildinghub"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

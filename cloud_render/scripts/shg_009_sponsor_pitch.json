@@ -1,0 +1,66 @@
+{
+  "id": "shg_009_sponsor_pitch",
+  "title": "The Sponsor Pitch",
+  "angle": "sponsor_pitch",
+  "platforms": [
+    "linkedin",
+    "tiktok",
+    "reels"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Brands: we run a 4-week themed contest for ambitious builders. Three sponsor tiers. We don't write reviews you wrote. We test, we cite, we cash-prize.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "text": "Sponsor the Builders Marketplace"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "text": "$1.5K \u00b7 $5K \u00b7 $15K"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "/sponsors"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "broll_topic": "sponsors_page",
+      "mood": "professional"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "broll_topic": "three_tier_cards",
+      "mood": "clarity"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "end_card_brand",
+      "mood": "invitation"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/sponsors/",
+  "post_caption": "Three sponsorship tiers. We never write your review for you. The Tribe Council votes. You sponsor the conversation, you don't buy it.",
+  "hashtags": [
+    "#sponsorship",
+    "#brandpartner",
+    "#community",
+    "#integrity"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

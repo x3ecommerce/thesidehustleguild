@@ -1,0 +1,67 @@
+{
+  "id": "shg_015_origin_mission",
+  "title": "The Why",
+  "angle": "origin_mission",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts",
+    "linkedin"
+  ],
+  "duration_sec": 10,
+  "voiceover": "We built the Side Hustle Guild for the people gurus skip. The nurse with one Etsy shop. The retiree with a dropshipping idea. The teen with a Notion template.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Every builder."
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "Every level."
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "thesidehustleguild.com"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "hand_writing_notebook",
+      "mood": "intent"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "shg_homepage_hero",
+      "mood": "warmth"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "end_card_brand",
+      "mood": "resolve"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "We built this for the people most communities ignore. The first-timers. The day-jobbers. The retirees. The teens. Every builder, every level.",
+  "hashtags": [
+    "#everylevel",
+    "#community",
+    "#builders",
+    "#sidehustle"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

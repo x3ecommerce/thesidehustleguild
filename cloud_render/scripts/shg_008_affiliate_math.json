@@ -1,0 +1,66 @@
+{
+  "id": "shg_008_affiliate_math",
+  "title": "The Affiliate Math",
+  "angle": "affiliate_math",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Refer one Lab Member, you earn five-seventy a month. Lifetime. Not just the first month. The whole time they're a member. Affiliate program in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "30% recurring. Lifetime."
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "1 referral = $5.70/mo"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "/affiliate"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "calculator_overlay",
+      "mood": "clarity"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "recurring_growth",
+      "mood": "compound"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "end_card_brand",
+      "mood": "action"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/affiliate/",
+  "post_caption": "30% commission. Recurring. Lifetime. Most affiliate programs pay once. We pay every month a member stays.",
+  "hashtags": [
+    "#affiliateprogram",
+    "#passiveincome",
+    "#recurring",
+    "#referral"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

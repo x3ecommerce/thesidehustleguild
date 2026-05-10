@@ -1,0 +1,66 @@
+{
+  "id": "shg_003_pool_math",
+  "title": "Where the Pool Comes From",
+  "angle": "prize_pool_math",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Where does the prize pool come from? You. 25% of every subscription dollar. 100 members? Three-fifty. 1,000? Forty-six hundred. The community funds the contest.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "text": "Pool = 25% of MRR"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "text": "100 members \u2192 $350/mo"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "1K \u2192 $4,600 \u00b7 5K \u2192 $23K"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "broll_topic": "calculator_overlay",
+      "mood": "transparency"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "broll_topic": "growth_chart_slate",
+      "mood": "momentum"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "ladder_graphic",
+      "mood": "scale"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "No sponsor required. The prize pool is funded by member subscriptions \u2014 25% of MRR scales with the room.",
+  "hashtags": [
+    "#buildinpublic",
+    "#transparency",
+    "#community",
+    "#everybuilder"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

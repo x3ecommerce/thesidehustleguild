@@ -1,0 +1,66 @@
+{
+  "id": "shg_011_champion_day",
+  "title": "Champion Day",
+  "angle": "champion_day",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Day 22, every month. Champion Day. Live in the Strategy Hour Stage. Winners revealed, prizes sent on stream. Yes, you watch the money land.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Champion Day"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "Day 22 \u00b7 Live Stage"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "Prizes wired on stream"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "discord_stage_live",
+      "mood": "event"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "winner_reveal_overlay",
+      "mood": "celebration"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "money_landing_account",
+      "mood": "proof"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "Champion Day is the 22nd of every month. Winners revealed live in the Discord Stage. Cash hits accounts during the stream. No mystery, no delay.",
+  "hashtags": [
+    "#cashprize",
+    "#monthlycontest",
+    "#discordcommunity",
+    "#liveevent"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

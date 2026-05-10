@@ -1,0 +1,66 @@
+{
+  "id": "shg_002_the_counter",
+  "title": "The Counter",
+  "angle": "countdown_100",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "When this Discord hits 100 paid members, the contest activates. Right now? We're at two. Joining now means you helped build it from the floor.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "text": "2 / 100"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "text": "Contest activates at 100"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "First 50 Founders: $9/mo for life"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "broll_topic": "countdown_animation_overlay",
+      "mood": "anticipation"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "broll_topic": "discord_screen",
+      "mood": "community"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "founder_offer_card",
+      "mood": "opportunity"
+    }
+  ],
+  "cta_url": "https://whop.com/the-side-hustle-guild/founder-membership-a9",
+  "post_caption": "The Builders Marketplace contest activates at 100 paid members. We're at 2. The first 50 Founders lock $9/month for life.",
+  "hashtags": [
+    "#founder",
+    "#earlyaccess",
+    "#community",
+    "#sidehustle"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

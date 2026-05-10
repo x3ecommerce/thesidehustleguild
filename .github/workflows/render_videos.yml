@@ -1,0 +1,100 @@
+name: SHG Render Farm
+
+on:
+  workflow_dispatch:
+    inputs:
+      script:
+        description: 'Script ID to render (or "all")'
+        required: true
+        default: 'all'
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        script:
+          - shg_001_permission_slip
+          - shg_002_the_counter
+          - shg_003_pool_math
+          - shg_004_three_things
+          - shg_005_day_one
+          - shg_006_sunday_reset
+          - shg_007_founder_offer
+          - shg_008_affiliate_math
+          - shg_009_sponsor_pitch
+          - shg_010_what_this_is_not
+          - shg_011_champion_day
+          - shg_012_quick_tour
+          - shg_013_first_dollar
+          - shg_014_form_demo
+          - shg_015_origin_mission
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Filter by input
+        id: gate
+        run: |
+          if [ "${{ inputs.script }}" != "all" ] && [ "${{ inputs.script }}" != "${{ matrix.script }}" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install deps
+        if: steps.gate.outputs.skip == 'false'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-liberation fonts-dejavu
+          # Install Manrope + Fraunces fonts for caption rendering
+          mkdir -p ~/.fonts
+          curl -sSLo /tmp/manrope.zip "https://fonts.google.com/download?family=Manrope" || true
+          if [ -f /tmp/manrope.zip ]; then unzip -qq /tmp/manrope.zip -d ~/.fonts/manrope || true; fi
+          fc-cache -f
+          fc-list | grep -i manrope || echo "Manrope not installed, will use Liberation Sans fallback"
+
+      - name: Render
+        if: steps.gate.outputs.skip == 'false'
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_BUCKET: shg-videos
+          R2_PUBLIC_DOMAIN: pub-404744d3257c4094982b374d0827c547.r2.dev
+        run: |
+          cd cloud_render
+          python3 render_one.py "scripts/${{ matrix.script }}.json"
+
+      - name: Upload artifact (backup)
+        if: steps.gate.outputs.skip == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.script }}
+          path: /tmp/shg_render/${{ matrix.script }}/${{ matrix.script }}.mp4
+          retention-days: 30
+
+  manifest:
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate manifest
+        env:
+          R2_PUBLIC_DOMAIN: pub-404744d3257c4094982b374d0827c547.r2.dev
+        run: |
+          cat > manifest.json <<JSON
+          {
+            "rendered_at": "$(date -u +%FT%TZ)",
+            "videos": [
+              "shg_001_permission_slip","shg_002_the_counter","shg_003_pool_math",
+              "shg_004_three_things","shg_005_day_one","shg_006_sunday_reset",
+              "shg_007_founder_offer","shg_008_affiliate_math","shg_009_sponsor_pitch",
+              "shg_010_what_this_is_not","shg_011_champion_day","shg_012_quick_tour",
+              "shg_013_first_dollar","shg_014_form_demo","shg_015_origin_mission"
+            ],
+            "base_url": "https://${R2_PUBLIC_DOMAIN}/"
+          }
+          JSON
+          cat manifest.json

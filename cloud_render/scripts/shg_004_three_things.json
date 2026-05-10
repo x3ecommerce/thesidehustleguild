@@ -1,0 +1,71 @@
+{
+  "id": "shg_004_three_things",
+  "title": "Three Things",
+  "angle": "how_to_submit",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Submitting a hustle is three things. Take one photo. Copy your link. Click submit. Six fields. Three minutes. That's it. Try it.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "1. Photo"
+    },
+    {
+      "start": 3.0,
+      "end": 6.0,
+      "text": "2. Link"
+    },
+    {
+      "start": 6.0,
+      "end": 9.0,
+      "text": "3. Click"
+    },
+    {
+      "start": 9.0,
+      "end": 10.0,
+      "text": "thesidehustleguild.com/submit"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "phone_taking_photo",
+      "mood": "action"
+    },
+    {
+      "start": 3.0,
+      "end": 6.0,
+      "broll_topic": "copying_url_browser",
+      "mood": "easy"
+    },
+    {
+      "start": 6.0,
+      "end": 10.0,
+      "broll_topic": "submit_button_click",
+      "mood": "completion"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/submit/",
+  "post_caption": "Three steps. About three minutes. 6 fields total. We made the submission flow as simple as showing a friend what you're building.",
+  "hashtags": [
+    "#howto",
+    "#sidehustle",
+    "#builders",
+    "#simplified"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

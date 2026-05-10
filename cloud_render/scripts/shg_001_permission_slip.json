@@ -1,0 +1,66 @@
+{
+  "id": "shg_001_permission_slip",
+  "title": "The Permission Slip",
+  "angle": "permission_slip",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Most communities make you wait until you're ready. We don't. Zero in sales? Submit it. Day one is a valid number. Side Hustle Guild. Link in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Most communities make you wait."
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "We don't."
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "thesidehustleguild.com"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "broll_topic": "kitchen_table_laptop",
+      "mood": "hesitation"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "broll_topic": "submit_page_screenshot",
+      "mood": "resolve"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "submit_button_click",
+      "mood": "calm_smile"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "No more waiting until you're ready. Submit your hustle at any stage. Every builder, every level.",
+  "hashtags": [
+    "#sidehustle",
+    "#buildinpublic",
+    "#firstsale",
+    "#everylevel"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "id": "shg_007_founder_offer",
+  "title": "$9 Locked",
+  "angle": "founder_offer",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "First 50 Founder spots: $9 a month, locked for life. Even if we raise prices, you stay at $9. After 50, it goes to $19. That's it.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "$9 / month"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "First 50 only"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "Locked for life"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "checkout_screen_close",
+      "mood": "clarity"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "counter_dial",
+      "mood": "scarcity_real"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "founder_card_brand",
+      "mood": "badge"
+    }
+  ],
+  "cta_url": "https://whop.com/the-side-hustle-guild/founder-membership-a9",
+  "post_caption": "First 50 Founders pay $9/mo for life. After that, $19. No countdown timer drama \u2014 just 50 spots, then they're gone.",
+  "hashtags": [
+    "#founder",
+    "#earlybird",
+    "#lifetimedeal",
+    "#sidehustle"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

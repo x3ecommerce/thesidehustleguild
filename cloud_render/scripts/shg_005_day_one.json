@@ -1,0 +1,66 @@
+{
+  "id": "shg_005_day_one",
+  "title": "Day-One Numbers",
+  "angle": "day_one_legitimacy",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "Zero in sales is a number. Zero reviews is a number. Day one is a stage. We put your card on the wall anyway.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "text": "Day one is a stage."
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "text": "Honesty wins."
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "Submit at any stage."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.5,
+      "broll_topic": "hand_typed_zero",
+      "mood": "honesty"
+    },
+    {
+      "start": 3.5,
+      "end": 7.0,
+      "broll_topic": "hustle_card_thread",
+      "mood": "validation"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "sunrise_calm",
+      "mood": "encouragement"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/submit/",
+  "post_caption": "You don't need a screenshot of $10K to submit. You need to be building. Day-one numbers are valid numbers.",
+  "hashtags": [
+    "#honesty",
+    "#buildinpublic",
+    "#firstsale",
+    "#sidehustle"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

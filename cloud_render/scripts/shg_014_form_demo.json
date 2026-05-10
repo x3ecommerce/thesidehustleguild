@@ -1,0 +1,66 @@
+{
+  "id": "shg_014_form_demo",
+  "title": "Inside the Submit Form",
+  "angle": "submit_form_demo",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "We rebuilt the submission form. Six fields. Mobile-friendly. About three minutes start to finish. If it took you longer than that, we owe you better.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "6 fields. 3 minutes."
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "Mobile friendly."
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "/submit"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "phone_form_scrolling",
+      "mood": "easy"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "form_fields_filling",
+      "mood": "speed"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "submit_confirmation",
+      "mood": "completion"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/submit/",
+  "post_caption": "Old form: 22 fields. New form: 6 fields, ~3 minutes, mobile-first. The hardest part of submitting your hustle should not be the form.",
+  "hashtags": [
+    "#builders",
+    "#sidehustle",
+    "#ux",
+    "#firstsubmission"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}

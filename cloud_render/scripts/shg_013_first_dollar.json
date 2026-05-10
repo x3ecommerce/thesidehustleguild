@@ -1,0 +1,66 @@
+{
+  "id": "shg_013_first_dollar",
+  "title": "First Dollar Principle",
+  "angle": "first_dollar_principle",
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "duration_sec": 10,
+  "voiceover": "The first dollar is the hardest dollar. It's also the only dollar that matters. Once one stranger pays you, you have a business. Get there first.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "The First Dollar Principle"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "text": "Hardest, then everything"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "text": "Free planner: /sunday-reset-planner"
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "broll_topic": "single_dollar_bill",
+      "mood": "focus"
+    },
+    {
+      "start": 3.0,
+      "end": 7.0,
+      "broll_topic": "hand_writing_principle",
+      "mood": "reflection"
+    },
+    {
+      "start": 7.0,
+      "end": 10.0,
+      "broll_topic": "planner_call_to_action",
+      "mood": "next_step"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/sunday-reset-planner/",
+  "post_caption": "Most side hustles fail because people quit at day 7 with $0. The first dollar matters more than the next thousand.",
+  "hashtags": [
+    "#firstsale",
+    "#firstdollar",
+    "#builders",
+    "#sidehustle"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community. We do not guarantee any specific income or outcome.",
+    "first_50_claim_active": true
+  }
+}
