@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Health — SHG Finance</title>
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+:root{--cream:#F8F4ED;--slate:#27384A;--sunrise:#E89B3B;--sage:#A8C9A0;--rust:#C23B22;--charcoal:#1E1E1E;--line:rgba(39,56,74,0.10);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Manrope,sans-serif;background:var(--cream);color:var(--charcoal);line-height:1.5}
+.shell{max-width:1200px;margin:0 auto;padding:32px 24px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+h1{font-family:Fraunces,serif;font-size:32px;color:var(--slate)}
+.nav{display:flex;gap:16px;font-size:14px}
+.nav a{color:var(--slate);text-decoration:none;padding:8px 12px;border-radius:6px}
+.nav a.active{background:var(--slate);color:var(--cream)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.kpi{background:white;border:1px solid var(--line);border-radius:12px;padding:20px}
+.kpi .label{font-size:12px;color:var(--slate);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.kpi .value{font-family:Fraunces,serif;font-size:28px;color:var(--slate);font-weight:600}
+.kpi .sub{font-size:13px;color:rgba(39,56,74,0.7);margin-top:4px}
+.card{background:white;border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:24px}
+.card h2{font-family:Fraunces,serif;font-size:20px;color:var(--slate);margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;font-size:14px;border-bottom:1px solid var(--line)}
+th{font-size:11px;color:var(--slate);text-transform:uppercase;letter-spacing:0.08em}
+.health-pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em}
+.h-green{background:#E5F1DD;color:#2F5C1F}
+.h-yellow{background:#FBE6BE;color:#7A4A0A}
+.h-red{background:#F8D6CF;color:#7C1B0E}
+.h-unknown{background:#E0E5EA;color:#27384A}
+.muted{color:rgba(39,56,74,0.65);font-size:12px}
+.errblock{background:#FBE9E5;color:#7C1B0E;padding:8px 10px;border-radius:6px;font-family:ui-monospace,Menlo,monospace;font-size:12px;white-space:pre-wrap;max-height:120px;overflow:auto}
+.row-flex{display:flex;gap:24px;align-items:center;justify-content:space-between}
+.btn{background:var(--sunrise);color:var(--slate);padding:10px 20px;border:none;border-radius:6px;font-weight:600;cursor:pointer;text-decoration:none;font-size:14px;font-family:Manrope,sans-serif}
+.btn:hover{background:#F2B561}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head><body>
+<div class="shell">
+<header>
+  <h1>Fleet Health</h1>
+  <nav class="nav">
+    <a href="/finance/">Overview</a>
+    <a href="/finance/ledger/">Ledger</a>
+    <a href="/finance/health/" class="active">Fleet</a>
+    <a href="/finance/agents/">Runs</a>
+    <a href="/finance/approvals/">Approvals</a>
+    <a href="/finance/members/">Members</a>
+    <a href="/finance/affiliates/">Affiliates</a>
+    <a href="/finance/sponsors/">Sponsors</a>
+    <a href="/finance/contests/">Contests</a>
+    <a href="/finance/audit/">Audit</a>
+    <a href="/finance/reports/monthly/">Reports</a>
+  </nav>
+</header>
+
+<div id="kpis" class="kpis"></div>
+
+<div class="card">
+  <div class="row-flex"><h2>Agents (11)</h2><button class="btn" onclick="loadHealth()">Refresh</button></div>
+  <div id="agents"></div>
+</div>
+
+<div class="card">
+  <h2>Open Alerts</h2>
+  <div id="alerts"></div>
+</div>
+
+<div class="card">
+  <h2>Money-in (last 7 days)</h2>
+  <div id="revenue"></div>
+</div>
+
+<div class="card">
+  <h2>Member Counter (last 30 snapshots)</h2>
+  <div id="counter"></div>
+</div>
+
+<script>
+const fmt = (c) => '$' + ((c||0)/100).toFixed(2);
+const pill = (h) => `<span class="health-pill h-${h||'unknown'}">${(h||'unknown').toUpperCase()}</span>`;
+
+async function loadHealth() {
+  const r = await fetch('/api/finance/health', { credentials:'include' });
+  if (r.status === 401) { window.location = '/finance/login.html'; return; }
+  const d = await r.json();
+  const greens = d.fleet.filter(a=>a.health==='green').length;
+  const yells = d.fleet.filter(a=>a.health==='yellow').length;
+  const reds = d.fleet.filter(a=>a.health==='red').length;
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="label">Active members</div><div class="value">${d.active_members||0}</div><div class="sub">/100 to contest activation</div></div>
+    <div class="kpi"><div class="label">Prize pool</div><div class="value">${fmt(d.prize_pool?.pool_cents)}</div><div class="sub">${d.prize_pool?.contest_active ? 'LIVE' : 'Pre-100'}</div></div>
+    <div class="kpi"><div class="label">Today net</div><div class="value">${fmt(d.revenue_7d?.[0]?.net_cents)}</div><div class="sub">+${d.revenue_7d?.[0]?.new_paid_members||0} new</div></div>
+    <div class="kpi"><div class="label">Fleet</div><div class="value" style="font-size:22px">🟢 ${greens} 🟡 ${yells} 🔴 ${reds}</div><div class="sub">${d.fleet.length} total agents</div></div>`;
+
+  document.getElementById('agents').innerHTML = `<table>
+    <thead><tr><th>Agent</th><th>Group</th><th>Health</th><th>Last run</th><th>Last status</th><th>Consecutive errors</th><th>Cron</th><th>Latest message</th></tr></thead>
+    <tbody>${d.fleet.map(a => `
+      <tr>
+        <td><b>${a.agent_name}</b><div class="muted">${a.agent_id}</div></td>
+        <td>${a.agent_group}</td>
+        <td>${pill(a.health)}</td>
+        <td>${a.last_run_started_at ? new Date(a.last_run_started_at).toLocaleString() : '—'}</td>
+        <td>${a.last_run_status || '—'}</td>
+        <td>${a.consecutive_errors || 0}</td>
+        <td><code>${a.cron_schedule || '—'}</code></td>
+        <td><span class="muted">${(a.latest_message||'').slice(0,140)}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('alerts').innerHTML = d.open_alerts.length === 0 ? '<p class="muted">No open alerts. 🟢</p>' :
+    `<table><thead><tr><th>Severity</th><th>Agent</th><th>Title</th><th>Detail</th><th>Raised</th></tr></thead>
+     <tbody>${d.open_alerts.map(a => `<tr><td>${pill(a.severity==='critical'?'red':(a.severity==='error'?'red':'yellow'))}</td><td>${a.agent_id}</td><td>${a.title}</td><td><div class="errblock">${(a.detail||'').slice(0,400)}</div></td><td>${new Date(a.raised_at).toLocaleString()}</td></tr>`).join('')}</tbody></table>`;
+
+  document.getElementById('revenue').innerHTML = `<table><thead><tr><th>Date</th><th>Net</th><th>Subs</th><th>Sponsors</th><th>Refunds</th><th>New</th><th>Churned</th></tr></thead>
+    <tbody>${d.revenue_7d.map(r => `<tr><td>${r.date}</td><td><b>${fmt(r.net_cents)}</b></td><td>${fmt(r.gross_subscription_cents)}</td><td>${fmt(r.gross_sponsor_cents)}</td><td>${fmt(r.refunds_cents+r.chargebacks_cents)}</td><td>${r.new_paid_members||0}</td><td>${r.churned_members||0}</td></tr>`).join('') || '<tr><td colspan=7 class="muted">No data yet</td></tr>'}</tbody></table>`;
+
+  document.getElementById('counter').innerHTML = `<table><thead><tr><th>Snapshot at</th><th>Total</th><th>Founder</th><th>Lab</th><th>+24h</th><th>+7d</th><th>Contest</th></tr></thead>
+    <tbody>${d.member_snapshots.map(s => `<tr><td>${new Date(s.snapshot_at).toLocaleString()}</td><td><b>${s.paid_member_count}</b></td><td>${s.founder_count}</td><td>${s.lab_member_count}</td><td>${s.delta_24h>=0?'+':''}${s.delta_24h}</td><td>${s.delta_7d>=0?'+':''}${s.delta_7d}</td><td>${s.contest_active ? '🟢' : '🟡'}</td></tr>`).join('') || '<tr><td colspan=7 class="muted">No data yet</td></tr>'}</tbody></table>`;
+}
+loadHealth();
+setInterval(loadHealth, 60000);
+</script>
+</body></html>
