@@ -17,7 +17,9 @@ Pipeline:
 Output: 1080x1920 MP4 with brand header, footer, progress bar, 12 scene cuts,
         word-level karaoke captions. End to end in a single GHA runner.
 """
-import os, sys, json, hashlib, urllib.request, urllib.error, urllib.parse, subprocess, base64, time, re, html
+import os, sys, json
+from pathlib import Path as _P
+SCRIPT_DIR = _P(__file__).parent, hashlib, urllib.request, urllib.error, urllib.parse, subprocess, base64, time, re, html
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -263,6 +265,64 @@ def build_caption_blocks(words, scene_timings):
     return blocks
 
 # ------------------------------------------------------------------ Pexels
+
+# Real SHG asset map — local screenshots beat stock photos every time
+LOCAL_ASSETS = {
+  # Brand / end card / homepage
+  "shg_brand_endcard":              "brand_logo_big.jpg",
+  "homepage_hero_branded":          "homepage_hero.jpg",
+  "shg_homepage_hero":              "homepage_hero.jpg",
+  # 100-member moment + counter
+  "counter_dial":                   "homepage_counter.jpg",
+  "countdown_animation_overlay":    "homepage_100moment.jpg",
+  # Prize pool math
+  "calculator_math_percent":        "homepage_pool_math.jpg",
+  "calculator_compound_growth":     "homepage_pool_math.jpg",
+  "money_stack_growing_chart":      "homepage_pool_math.jpg",
+  "growth_chart_slate":             "homepage_pool_math.jpg",
+  "subscription_revenue_chart":     "homepage_pool_math.jpg",
+  # Inside the Guild rooms
+  "exchange_forum_view":            "submissions_gallery.jpg",
+  "hustle_card_thread":             "submissions_gallery.jpg",
+  "community_members_avatars":      "homepage_rooms.jpg",
+  "real_builders_community":        "homepage_rooms.jpg",
+  # Pricing
+  "three_tier_cards":               "homepage_tiers.jpg",
+  "founder_offer_card":             "brand_founder_card.jpg",
+  "founder_membership_badge":       "brand_founder_card.jpg",
+  "founder_card_brand":             "brand_founder_card.jpg",
+  "checkout_screen_close":          "homepage_tiers.jpg",
+  "nine_dollar_price_tag":          "homepage_tiers.jpg",
+  "lifetime_locked_seal":           "homepage_tiers.jpg",
+  "subscription_billing_screen":    "homepage_tiers.jpg",
+  # Affiliate
+  "affiliate_dashboard_growing":    "affiliate_landing.jpg",
+  "recurring_growth":               "affiliate_math.jpg",
+  "recurring_payment_notification": "affiliate_math.jpg",
+  # Sponsors
+  "sponsors_page":                  "sponsors_landing.jpg",
+  # Submit flow
+  "submit_page_screenshot":         "submit_page_steps.jpg",
+  "submit_button_click":            "submit_page_button.jpg",
+  "phone_submit_form":              "submit_page_steps.jpg",
+  "phone_form_scrolling":           "submit_page_steps.jpg",
+  "submit_confirmation":            "submit_page_button.jpg",
+  "form_fields_filling":            "submit_page_steps.jpg",
+  # Discord screens (real channels)
+  "discord_screen":                 "discord_general_chat.jpg",
+  "discord_community_screen":       "discord_general_chat.jpg",
+  "discord_chat_window_close":      "discord_general_chat.jpg",
+  "discord_channel_list":           "discord_announcements.jpg",
+  "discord_stage_live":             "discord_announcements.jpg",
+  "live_stage_discord_audio":       "discord_announcements.jpg",
+  "champion_day_live_stage":        "discord_announcements.jpg",
+  "winner_announcement_stream":     "discord_wins_of_the_month.jpg",
+  "winner_reveal_overlay":          "discord_wins_of_the_month.jpg",
+  "judges_scoring_review":          "discord_monthly_theme.jpg",
+  # CTA / bio link — homepage hero works
+  "phone_bio_link_tap":             "homepage_hero.jpg",
+}
+
 TOPIC_QUERIES = {
     "kitchen_table_laptop":     "person laptop kitchen morning",
     "submit_page_screenshot":   "modern web form mobile screen",
@@ -485,10 +545,19 @@ def render(script, work_dir, out_mp4):
         if script_scenes and i < len(script_scenes):
             topic = script_scenes[i].get("broll_topic", topic)
         elif script_scenes:
-            # Beyond script length — keep rotating through topics WITHOUT reusing the same image
             topic = script_scenes[i % len(script_scenes)].get("broll_topic", topic)
-        q = TOPIC_QUERIES.get(topic, topic.replace("_", " "))
+
         img = assets_dir / f"scene_{i+1:02d}.jpg"
+        # PRIORITY 1: Local SHG asset (real screenshot)
+        local_filename = LOCAL_ASSETS.get(topic)
+        local_path = SCRIPT_DIR / "assets" / "static" / local_filename if local_filename else None
+        if local_path and local_path.exists():
+            import shutil
+            shutil.copy(local_path, img)
+            print(f"  scene_{i+1:02d}.jpg <- LOCAL {local_filename} ({img.stat().st_size//1024} KB)")
+            continue
+        # PRIORITY 2: Pexels stock for money/non-brand topics
+        q = TOPIC_QUERIES.get(topic, topic.replace("_", " "))
         pid, url = get_photo(q)
         if not url:
             # Try a sibling query (one of our wider fallbacks)
