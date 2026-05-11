@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales Pipeline — SHG Finance</title>
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+:root{--cream:#F8F4ED;--slate:#27384A;--sunrise:#E89B3B;--sage:#A8C9A0;--rust:#C23B22;--line:rgba(39,56,74,0.10);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Manrope,sans-serif;background:var(--cream);color:#1E1E1E;line-height:1.5}
+.shell{max-width:1280px;margin:0 auto;padding:24px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+h1{font-family:Fraunces,serif;font-size:30px;color:var(--slate);font-weight:600}
+.nav{display:flex;gap:14px;font-size:13px;flex-wrap:wrap}
+.nav a{color:var(--slate);text-decoration:none;padding:6px 10px;border-radius:5px}
+.nav a.active{background:var(--slate);color:var(--cream)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:18px 0 24px}
+.kpi{background:white;border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi .label{font-size:11px;color:var(--slate);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+.kpi .value{font-family:Fraunces,serif;font-size:26px;color:var(--slate);font-weight:700}
+.card{background:white;border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px}
+.card h2{font-family:Fraunces,serif;font-size:18px;color:var(--slate);margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:10px;color:var(--slate);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;background:var(--cream)}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase}
+.p-new{background:#E0E5EA;color:#27384A}.p-contacted{background:#FBE6BE;color:#7A4A0A}.p-replied_positive,.p-positive{background:#E5F1DD;color:#2F5C1F}.p-replied_negative,.p-negative{background:#F8D6CF;color:#7C1B0E}.p-unsubscribed,.p-suppressed{background:#E0E5EA;color:#666}
+.right{text-align:right}
+.muted{color:rgba(39,56,74,0.65)}
+.settings{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.settings label{font-size:12px;color:var(--slate);min-width:140px}
+.settings input{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:5px;font-family:Manrope,sans-serif}
+.settings button{background:var(--sunrise);color:var(--slate);padding:7px 14px;border:none;border-radius:5px;font-weight:600;cursor:pointer;font-family:Manrope,sans-serif}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head><body>
+<div class="shell">
+<header>
+<h1>Sales Pipeline</h1>
+<nav class="nav">
+  <a href="/finance/">Overview</a>
+  <a href="/finance/ledger/">Ledger</a>
+  <a href="/finance/health/">Fleet</a>
+  <a href="/finance/agents/">Runs</a>
+  <a href="/finance/sales/" class="active">Sales</a>
+  <a href="/finance/approvals/">Approvals</a>
+  <a href="/finance/members/">Members</a>
+</nav>
+</header>
+
+<div id="kpis" class="kpis"></div>
+
+<div class="card">
+  <h2>Settings</h2>
+  <div id="settings"></div>
+</div>
+
+<div class="card">
+  <h2>Lead Pipeline (top 50 by score)</h2>
+  <div id="leads"></div>
+</div>
+
+<div class="card">
+  <h2>Recent Outreach (last 50)</h2>
+  <div id="outreach"></div>
+</div>
+
+<div class="card">
+  <h2>Recent Replies (last 30)</h2>
+  <div id="replies"></div>
+</div>
+
+<script>
+const pill = (s) => `<span class="pill p-${(s||'').replace(/[^a-z_]/g,'')}">${s||'—'}</span>`;
+async function load(){
+  const r = await fetch('/api/finance/sales', { credentials:'include' });
+  if (r.status === 401) { location='/finance/login.html'; return; }
+  const d = await r.json();
+  const settings = await fetch('/api/finance/settings', { credentials:'include' }).then(r=>r.json());
+
+  // KPIs
+  const byStatus = {};
+  for (const s of d.stats) byStatus[s.status] = (byStatus[s.status]||0) + s.n;
+  const replyByClass = {};
+  for (const r of d.reply_stats_7d) replyByClass[r.classification] = r.n;
+
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="label">Total Leads</div><div class="value">${d.leads.length}</div></div>
+    <div class="kpi"><div class="label">Sent 24h</div><div class="value">${d.sent_24h}</div></div>
+    <div class="kpi"><div class="label">Contacted</div><div class="value">${byStatus['contacted']||0}</div></div>
+    <div class="kpi"><div class="label">Positive Replies 7d</div><div class="value" style="color:#2F5C1F">${replyByClass['positive']||0}</div></div>
+    <div class="kpi"><div class="label">Suppressed</div><div class="value muted">${(byStatus['unsubscribed']||0)+(byStatus['suppressed']||0)}</div></div>`;
+
+  // Settings
+  const editable = ['mailing_address','sender_name','sender_email','unsub_url','daily_brand_quota','daily_creator_quota'];
+  document.getElementById('settings').innerHTML = editable.map(k => `
+    <div class="settings"><label>${k}</label><input id="set-${k}" value="${(settings[k]||'').replace(/"/g,'&quot;')}"><button onclick="saveSetting('${k}')">Save</button></div>
+  `).join('');
+
+  document.getElementById('leads').innerHTML = `<table>
+    <thead><tr><th>Kind</th><th>Company / Contact</th><th>Email</th><th>Status</th><th>Score</th><th>Signal</th><th>Created</th></tr></thead>
+    <tbody>${d.leads.slice(0,50).map(l => `
+      <tr>
+        <td><b>${l.kind}</b></td>
+        <td>${l.company_name || l.contact_name || '—'}</td>
+        <td class="muted">${l.contact_email || '—'}</td>
+        <td>${pill(l.status)}</td>
+        <td class="right">${l.score||0}</td>
+        <td class="muted" style="max-width:280px">${(l.signals_json||'').slice(0,80)}</td>
+        <td class="muted">${new Date(l.created_at).toLocaleDateString()}</td>
+      </tr>`).join('') || '<tr><td colspan=7 class="muted">No leads yet</td></tr>'}</tbody></table>`;
+
+  document.getElementById('outreach').innerHTML = `<table>
+    <thead><tr><th>When</th><th>Step</th><th>Channel</th><th>Subject</th><th>Status</th><th>Agent</th></tr></thead>
+    <tbody>${d.outreach.slice(0,50).map(o => `
+      <tr>
+        <td class="muted">${o.sent_at ? new Date(o.sent_at).toLocaleString() : new Date(o.created_at).toLocaleString()}</td>
+        <td>#${o.sequence_step}</td>
+        <td>${o.channel}</td>
+        <td style="max-width:340px">${(o.subject||'').slice(0,80)}</td>
+        <td>${pill(o.status)}</td>
+        <td class="muted">${o.agent_id}</td>
+      </tr>`).join('') || '<tr><td colspan=6 class="muted">No outreach yet</td></tr>'}</tbody></table>`;
+
+  document.getElementById('replies').innerHTML = `<table>
+    <thead><tr><th>When</th><th>From</th><th>Subject</th><th>Class</th><th>Excerpt</th></tr></thead>
+    <tbody>${d.replies.slice(0,30).map(r => `
+      <tr>
+        <td class="muted">${new Date(r.received_at).toLocaleString()}</td>
+        <td>${r.sender || '—'}</td>
+        <td>${(r.subject||'').slice(0,60)}</td>
+        <td>${pill(r.classification||'unknown')}</td>
+        <td class="muted" style="max-width:380px">${(r.body||'').slice(0,140)}</td>
+      </tr>`).join('') || '<tr><td colspan=5 class="muted">No replies yet</td></tr>'}</tbody></table>`;
+}
+async function saveSetting(key){
+  const value = document.getElementById('set-'+key).value;
+  const r = await fetch('/api/finance/settings', { method:'POST', credentials:'include', headers:{'content-type':'application/json'}, body: JSON.stringify({ key, value })});
+  if (r.ok){ alert('Saved.'); load(); } else alert('Failed.');
+}
+load();
+setInterval(load, 60000);
+</script>
+</body></html>
