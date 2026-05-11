@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Preview — The Side Hustle Guild</title>
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+  :root {
+    --cream:#F8F4ED; --slate:#27384A; --slate-soft:#3A4D62;
+    --sunrise:#E89B3B; --ink:#1E1E1E; --line:rgba(39,56,74,0.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Manrope,sans-serif;background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  header{padding:48px 24px 24px;max-width:1200px;margin:0 auto;text-align:center}
+  header .stamp{font-size:12px;text-transform:uppercase;letter-spacing:0.18em;color:var(--sunrise);font-weight:700;margin-bottom:14px}
+  h1{font-family:Fraunces,serif;font-size:clamp(36px,5vw,56px);font-weight:600;color:var(--slate);margin-bottom:14px;letter-spacing:-0.01em}
+  header p{color:var(--slate-soft);font-size:17px;max-width:580px;margin:0 auto 12px}
+  .nav-back{display:inline-block;margin-top:18px;color:var(--slate);text-decoration:none;font-weight:600;font-size:14px;padding:8px 16px;border:1px solid var(--line);border-radius:6px;background:white}
+  .nav-back:hover{background:var(--slate);color:var(--cream)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;max-width:1280px;margin:48px auto;padding:0 24px}
+  .card{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(39,56,74,0.10)}
+  .card .video-wrap{aspect-ratio:9/16;background:var(--slate);position:relative;overflow:hidden}
+  .card video{width:100%;height:100%;display:block;object-fit:cover;background:var(--slate)}
+  .card .meta{padding:16px 18px;flex:1;display:flex;flex-direction:column;gap:8px}
+  .card .num{font-family:Fraunces,serif;color:var(--sunrise);font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase}
+  .card .title{font-family:Fraunces,serif;font-weight:600;font-size:18px;color:var(--slate);line-height:1.25}
+  .card .angle{font-size:12px;color:var(--slate-soft)}
+  .card .links{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .card .links a{font-size:11px;color:var(--slate);background:var(--cream);padding:4px 10px;border-radius:99px;text-decoration:none;border:1px solid var(--line)}
+  .card .links a:hover{background:var(--slate);color:var(--cream);border-color:var(--slate)}
+
+  footer{padding:32px 24px 64px;text-align:center;color:var(--slate-soft);font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="stamp">Cloud-rendered · Ready to post</p>
+  <h1>15 videos rendered. Pick one to play.</h1>
+  <p>Click any thumbnail to play inline. Tap the link buttons to copy the direct R2 URL or open the script JSON.</p>
+  <a href="/" class="nav-back">← Back to home</a>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  All MP4s live on Cloudflare R2 · <code style="font-size:11px">pub-404744d3257c4094982b374d0827c547.r2.dev</code>
+</footer>
+
+<script>
+const VIDEOS = [
+  {n:1,  id:"shg_001_permission_slip",   title:"The Permission Slip",         angle:"Reframe gatekeeping"},
+  {n:2,  id:"shg_002_the_counter",        title:"The Counter",                 angle:"100-member countdown"},
+  {n:3,  id:"shg_003_pool_math",          title:"Where the Pool Comes From",   angle:"Prize pool math"},
+  {n:4,  id:"shg_004_three_things",       title:"Three Things",                angle:"How to submit"},
+  {n:5,  id:"shg_005_day_one",            title:"Day-One Numbers",             angle:"$0 is a valid number"},
+  {n:6,  id:"shg_006_sunday_reset",       title:"The Sunday Reset",            angle:"Lead magnet"},
+  {n:7,  id:"shg_007_founder_offer",      title:"$9 Locked",                   angle:"Founder offer"},
+  {n:8,  id:"shg_008_affiliate_math",     title:"The Affiliate Math",          angle:"30% recurring"},
+  {n:9,  id:"shg_009_sponsor_pitch",      title:"The Sponsor Pitch",           angle:"Brand B2B"},
+  {n:10, id:"shg_010_what_this_is_not",   title:"What This Is Not",            angle:"Anti-positioning"},
+  {n:11, id:"shg_011_champion_day",       title:"Champion Day",                angle:"The 22nd, live"},
+  {n:12, id:"shg_012_quick_tour",         title:"Quick Tour",                  angle:"Inside the rooms"},
+  {n:13, id:"shg_013_first_dollar",       title:"First Dollar Principle",     angle:"Reset progress"},
+  {n:14, id:"shg_014_form_demo",          title:"Inside the Submit Form",      angle:"UX demo"},
+  {n:15, id:"shg_015_origin_mission",     title:"The Why",                     angle:"Origin / mission"},
+];
+
+const BASE = "https://pub-404744d3257c4094982b374d0827c547.r2.dev/";
+const grid = document.getElementById('grid');
+for (const v of VIDEOS) {
+  const url = BASE + v.id + ".mp4";
+  const html = `
+    <div class="card">
+      <div class="video-wrap">
+        <video src="${url}" preload="metadata" playsinline controls poster=""></video>
+      </div>
+      <div class="meta">
+        <div class="num">No. ${String(v.n).padStart(2,'0')}</div>
+        <div class="title">${v.title}</div>
+        <div class="angle">${v.angle}</div>
+        <div class="links">
+          <a href="${url}" target="_blank" rel="noopener">Open MP4</a>
+          <a href="javascript:void(0)" onclick="navigator.clipboard.writeText('${url}');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy URL',1200)">Copy URL</a>
+        </div>
+      </div>
+    </div>`;
+  grid.insertAdjacentHTML('beforeend', html);
+}
+</script>
+
+</body>
+</html>
