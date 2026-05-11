@@ -32,6 +32,11 @@ jobs:
           - shg_013_first_dollar
           - shg_014_form_demo
           - shg_015_origin_mission
+          - shg_101_do_you_like_money
+          - shg_102_built_a_side_hustle
+          - shg_103_want_more_money
+          - shg_104_tired_of_gurus
+          - shg_105_get_paid_in_discord
     steps:
       - uses: actions/checkout@v4
 
