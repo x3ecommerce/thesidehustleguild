@@ -56,7 +56,7 @@ Sentence 3 is the soft CTA ("Want me to send you the listing link?").
 Return ONLY the email body. No greeting, no signoff — those are appended automatically.`;
 
   const prompt = kind === "sponsor" ? sponsorContext : creatorContext;
-  return await anthropicSummarize(env, prompt, 350);
+  return await anthropicSummarize(env, prompt, 350, { worker_id: "sales" });
 }
 
 export function buildEmailHtml({ greeting, body, sender_name, sender_title, mailing_address, unsub_url, unsub_token }) {

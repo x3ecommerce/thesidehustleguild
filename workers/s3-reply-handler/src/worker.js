@@ -18,7 +18,7 @@ ${body.slice(0, 1500)}
 """
 
 Return ONE word only: positive, negative, autoresp, unsubscribe, spam, or unknown.`;
-  const r = await anthropicSummarize(env, prompt, 20);
+  const r = await anthropicSummarize(env, prompt, 20, { worker_id: "s3_reply_handler" });
   const word = r.trim().toLowerCase().split(/\s+/)[0].replace(/[^a-z]/g,'');
   return ["positive","negative","autoresp","unsubscribe","spam","unknown"].includes(word) ? word : "unknown";
 }

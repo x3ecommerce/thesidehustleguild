@@ -160,8 +160,55 @@ export async function resendSend(env, { from, to, subject, html, text, tags, hea
   return { status: r.status, body: await r.json().catch(() => null) };
 }
 
-// ---------------------------------------------------------------- Anthropic (light summarization only)
-export async function anthropicSummarize(env, prompt, maxTokens = 400) {
+// ---------------------------------------------------------------- Anthropic (with spend guardrails)
+// Haiku 4.5 pricing: $1.00 / 1M input tokens, $5.00 / 1M output tokens
+const HAIKU_IN_USD  = 1.0 / 1_000_000;
+const HAIKU_OUT_USD = 5.0 / 1_000_000;
+
+export async function getAnthropicSpend(env, dateStr) {
+  const r = await env.DB.prepare(
+    "SELECT COALESCE(SUM(cost_cents), 0) AS cents FROM anthropic_spend WHERE date(occurred_at) = ?"
+  ).bind(dateStr).first().catch(() => ({ cents: 0 }));
+  return r?.cents || 0;
+}
+export async function getDailyCap(env) {
+  const r = await env.DB.prepare("SELECT value FROM org_settings WHERE key='daily_anthropic_cap_cents'").first().catch(() => null);
+  return parseInt(r?.value || "500", 10);
+}
+export async function getMinuteCap(env) {
+  const r = await env.DB.prepare("SELECT value FROM org_settings WHERE key='per_worker_minute_cap'").first().catch(() => null);
+  return parseInt(r?.value || "10", 10);
+}
+
+// Hard cap: max prompt + max output enforced regardless of caller request
+const MAX_PROMPT_CHARS = 6000;  // ~1500 tokens, keeps any single call cheap
+const MAX_OUTPUT_TOKENS = 500;
+
+export async function anthropicSummarize(env, prompt, maxTokens = 400, opts = {}) {
+  // Truncate prompt defensively
+  if (prompt.length > MAX_PROMPT_CHARS) prompt = prompt.slice(0, MAX_PROMPT_CHARS);
+  const allowedMax = Math.min(maxTokens || 400, MAX_OUTPUT_TOKENS);
+
+  // Daily cap check
+  const today = new Date().toISOString().slice(0, 10);
+  const cap = await getDailyCap(env);
+  const spent = await getAnthropicSpend(env, today);
+  if (spent >= cap) {
+    console.warn(`anthropic: daily cap hit ($${(cap/100).toFixed(2)}) — returning empty`);
+    return ""; // graceful degradation
+  }
+
+  // Per-worker per-minute rate limit
+  const workerId = opts.worker_id || "unknown";
+  const minuteCap = await getMinuteCap(env);
+  const recent = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM anthropic_spend WHERE worker_id = ? AND occurred_at > datetime('now','-60 seconds')"
+  ).bind(workerId).first().catch(() => ({ n: 0 }));
+  if ((recent?.n || 0) >= minuteCap) {
+    console.warn(`anthropic: per-minute cap hit for ${workerId}`);
+    return "";
+  }
+
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -171,12 +218,19 @@ export async function anthropicSummarize(env, prompt, maxTokens = 400) {
     },
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: maxTokens,
+      max_tokens: allowedMax,
       messages: [{ role: "user", content: prompt }],
     }),
   });
   if (!r.ok) throw new Error(`anthropic → ${r.status}: ${await r.text()}`);
   const j = await r.json();
+  const usage = j.usage || {};
+  const cost_cents = ((usage.input_tokens || 0) * HAIKU_IN_USD + (usage.output_tokens || 0) * HAIKU_OUT_USD) * 100;
+  try {
+    await env.DB.prepare(
+      "INSERT INTO anthropic_spend (worker_id, model, input_tokens, output_tokens, cost_cents) VALUES (?, ?, ?, ?, ?)"
+    ).bind(workerId, "claude-haiku-4-5", usage.input_tokens || 0, usage.output_tokens || 0, cost_cents).run();
+  } catch (e) { /* never fail the call because of logging */ }
   return j.content?.[0]?.text || "";
 }
 
