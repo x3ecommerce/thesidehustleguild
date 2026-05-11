@@ -319,6 +319,25 @@ LOCAL_ASSETS = {
   "judges_scoring_review":          "discord_monthly_theme.jpg",
   # CTA / bio link — homepage hero works
   "phone_bio_link_tap":             "homepage_hero.jpg",
+  # Override bad Pexels picks with real SHG Discord screenshots:
+  "person_at_laptop_smiling":       "discord_monday_drops.jpg",
+  "cash_prize_winning_moment":      "discord_wins_of_the_month.jpg",
+  "cash_prize_winner_check":        "discord_wins_of_the_month.jpg",
+  "winner_announcement_stream":     "discord_wins_of_the_month.jpg",
+  "winner_reveal_overlay":          "discord_wins_of_the_month.jpg",
+  "trophy_award_winner":            "discord_wins_of_the_month.jpg",
+  "calendar_calendar_calendar":     "discord_announcements.jpg",
+  "calendar_monthly_recurring":     "discord_announcements.jpg",
+  "calendar_22nd_circled":          "discord_monthly_theme.jpg",
+  "judges_scoring_review":          "discord_monthly_theme.jpg",
+  "split_screen_two_paths":         "discord_monday_drops.jpg",
+  "etsy_shop_owner_packing":        "discord_general_chat.jpg",
+  "empty_dashboard_no_sales":       "discord_general_chat.jpg",
+  "guru_yacht_lifestyle_overlay":   "discord_general_chat.jpg",
+  "rejected_cancelled_red_x":       "discord_general_chat.jpg",
+  "empty_dead_discord_screen":      "discord_general_chat.jpg",
+  "person_at_kitchen_table_working":"discord_monday_drops.jpg",
+
 }
 
 TOPIC_QUERIES = {
