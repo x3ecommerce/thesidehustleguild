@@ -17,13 +17,9 @@ Pipeline:
 Output: 1080x1920 MP4 with brand header, footer, progress bar, 12 scene cuts,
         word-level karaoke captions. End to end in a single GHA runner.
 """
-import os, sys, json
-from pathlib import Path as _P
-hashlib, urllib.request, urllib.error, urllib.parse, subprocess, base64, time, re, html
-from pathlib import Path as _P
-SCRIPT_DIR = _P(__file__).parent
+import os, sys, json, hashlib, urllib.request, urllib.error, urllib.parse, subprocess, base64, time, re, html
 from pathlib import Path
-
+SCRIPT_DIR = Path(__file__).parent
 ROOT = Path(__file__).parent
 WORK = Path(os.environ.get("WORKDIR", "/tmp/shg_render"))
 WORK.mkdir(parents=True, exist_ok=True)
