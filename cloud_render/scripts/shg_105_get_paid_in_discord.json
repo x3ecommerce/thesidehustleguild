@@ -2,109 +2,109 @@
   "id": "shg_105_get_paid_in_discord",
   "title": "Ever Make Money From a Discord?",
   "angle": "money_hook",
-  "duration_sec": 14,
-  "voiceover": "Ever make money from a Discord? Yeah, that's a thing now. The Side Hustle Guild has a monthly cash contest funded by the community itself. And an affiliate pool that pays thirty percent recurring, lifetime. Two real ways to earn. Every month. Come check us out. Link is in the bio.",
+  "duration_sec": 18,
+  "voiceover": "Ever make money from a Discord? Yeah, that's a thing now. The Side Hustle Guild has a monthly cash contest funded by the community itself. Plus an affiliate pool that pays thirty percent recurring. Lifetime. Two real ways to earn. Every month. Come check us out. Link is in the bio.",
   "captions": [
     {
       "start": 0.0,
-      "end": 2.0,
+      "end": 2.5,
       "text": "EVER MAKE MONEY"
     },
     {
-      "start": 2.0,
-      "end": 3.5,
+      "start": 2.5,
+      "end": 4.5,
       "text": "FROM A DISCORD?"
     },
     {
-      "start": 3.5,
-      "end": 5.0,
+      "start": 4.5,
+      "end": 6.5,
       "text": "Yeah. That's a thing now."
     },
     {
-      "start": 5.0,
-      "end": 6.5,
+      "start": 6.5,
+      "end": 9.0,
       "text": "The Side Hustle Guild"
     },
     {
-      "start": 6.5,
-      "end": 8.5,
+      "start": 9.0,
+      "end": 11.5,
       "text": "Monthly cash contest"
     },
     {
-      "start": 8.5,
-      "end": 10.5,
+      "start": 11.5,
+      "end": 14.0,
       "text": "+ 30% affiliate pool"
     },
     {
-      "start": 10.5,
-      "end": 12.0,
+      "start": 14.0,
+      "end": 16.0,
       "text": "Two real ways to earn."
     },
     {
-      "start": 12.0,
-      "end": 14.0,
-      "text": "Come check us out. Link is in the bio."
+      "start": 16.0,
+      "end": 18.0,
+      "text": "Come check us out. Link in bio."
     }
   ],
   "scenes": [
     {
       "start": 0.0,
-      "end": 1.7,
+      "end": 2.5,
       "broll_topic": "discord_chat_window_close"
     },
     {
-      "start": 1.7,
-      "end": 3.0,
-      "broll_topic": "person_at_laptop_smiling"
-    },
-    {
-      "start": 3.0,
+      "start": 2.5,
       "end": 4.5,
-      "broll_topic": "cash_money_falling_down"
+      "broll_topic": "discord_community_screen"
     },
     {
       "start": 4.5,
-      "end": 6.0,
+      "end": 6.5,
+      "broll_topic": "cash_money_falling_down"
+    },
+    {
+      "start": 6.5,
+      "end": 8.0,
       "broll_topic": "homepage_hero_branded"
     },
     {
-      "start": 6.0,
-      "end": 7.5,
+      "start": 8.0,
+      "end": 9.5,
+      "broll_topic": "discord_screen"
+    },
+    {
+      "start": 9.5,
+      "end": 11.0,
       "broll_topic": "cash_prize_winner_check"
     },
     {
-      "start": 7.5,
-      "end": 8.5,
+      "start": 11.0,
+      "end": 12.5,
       "broll_topic": "champion_day_live_stage"
     },
     {
-      "start": 8.5,
-      "end": 9.7,
+      "start": 12.5,
+      "end": 14.0,
       "broll_topic": "affiliate_dashboard_growing"
     },
     {
-      "start": 9.7,
-      "end": 10.7,
-      "broll_topic": "recurring_payment_notification"
+      "start": 14.0,
+      "end": 15.5,
+      "broll_topic": "recurring_growth"
     },
     {
-      "start": 10.7,
-      "end": 12.0,
-      "broll_topic": "community_members_avatars"
+      "start": 15.5,
+      "end": 17.0,
+      "broll_topic": "homepage_hero_branded"
     },
     {
-      "start": 12.0,
-      "end": 13.0,
+      "start": 17.0,
+      "end": 17.5,
       "broll_topic": "phone_bio_link_tap"
     },
     {
-      "start": 13.0,
-      "end": 13.7,
-      "broll_topic": "shg_brand_endcard"
-    },
-    {
-      "start": 13.7,
-      "end": 14.0,
+      "start": 17.5,
+      "end": 18.0,
       "broll_topic": "shg_brand_endcard"
     }
   ],

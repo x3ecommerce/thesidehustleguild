@@ -2,43 +2,43 @@
   "id": "shg_103_want_more_money",
   "title": "Want More From Your Side Hustle?",
   "angle": "money_hook",
-  "duration_sec": 13,
-  "voiceover": "Want to make more from your side hustle? Two ways inside The Side Hustle Guild. One: monthly cash contest, real money, real winners. Two: affiliate program, thirty percent recurring, lifetime. Come check us out. Link is in the bio.",
+  "duration_sec": 16,
+  "voiceover": "Want to make more from your side hustle? The Side Hustle Guild has two ways. One \u2014 the monthly cash contest. Real money. Real winners. Two \u2014 the affiliate program. Thirty percent recurring. Lifetime. Come check us out. Link is in the bio.",
   "captions": [
     {
       "start": 0.0,
-      "end": 2.2,
+      "end": 2.0,
       "text": "WANT MORE MONEY?"
     },
     {
-      "start": 2.2,
+      "start": 2.0,
       "end": 4.0,
       "text": "Two ways inside SHG."
     },
     {
       "start": 4.0,
-      "end": 5.5,
+      "end": 6.5,
       "text": "1. Monthly cash contest"
     },
     {
-      "start": 5.5,
-      "end": 7.0,
+      "start": 6.5,
+      "end": 8.5,
       "text": "Real money. Real winners."
     },
     {
-      "start": 7.0,
-      "end": 8.5,
+      "start": 8.5,
+      "end": 11.0,
       "text": "2. Affiliate program"
     },
     {
-      "start": 8.5,
-      "end": 10.0,
+      "start": 11.0,
+      "end": 13.5,
       "text": "30% recurring. Lifetime."
     },
     {
-      "start": 10.0,
-      "end": 13.0,
-      "text": "Come check us out. Link is in the bio."
+      "start": 13.5,
+      "end": 15.5,
+      "text": "Come check us out. Link in bio."
     }
   ],
   "scenes": [
@@ -49,57 +49,57 @@
     },
     {
       "start": 2.0,
-      "end": 3.5,
-      "broll_topic": "split_screen_two_paths"
-    },
-    {
-      "start": 3.5,
-      "end": 5.0,
-      "broll_topic": "cash_prize_winner_check"
-    },
-    {
-      "start": 5.0,
-      "end": 6.2,
-      "broll_topic": "champion_day_live_stage"
-    },
-    {
-      "start": 6.2,
-      "end": 7.5,
-      "broll_topic": "affiliate_dashboard_growing"
-    },
-    {
-      "start": 7.5,
-      "end": 8.5,
-      "broll_topic": "recurring_payment_notification"
-    },
-    {
-      "start": 8.5,
-      "end": 9.5,
-      "broll_topic": "calculator_compound_growth"
-    },
-    {
-      "start": 9.5,
-      "end": 10.3,
+      "end": 4.0,
       "broll_topic": "homepage_hero_branded"
     },
     {
-      "start": 10.3,
-      "end": 10.8,
+      "start": 4.0,
+      "end": 5.5,
+      "broll_topic": "cash_prize_winner_check"
+    },
+    {
+      "start": 5.5,
+      "end": 7.0,
+      "broll_topic": "champion_day_live_stage"
+    },
+    {
+      "start": 7.0,
+      "end": 8.5,
+      "broll_topic": "cash_money_falling_down"
+    },
+    {
+      "start": 8.5,
+      "end": 10.0,
+      "broll_topic": "affiliate_dashboard_growing"
+    },
+    {
+      "start": 10.0,
+      "end": 11.5,
+      "broll_topic": "recurring_growth"
+    },
+    {
+      "start": 11.5,
+      "end": 13.5,
+      "broll_topic": "calculator_compound_growth"
+    },
+    {
+      "start": 13.5,
+      "end": 14.5,
+      "broll_topic": "homepage_hero_branded"
+    },
+    {
+      "start": 14.5,
+      "end": 15.3,
       "broll_topic": "phone_bio_link_tap"
     },
     {
-      "start": 11.0,
-      "end": 11.7,
-      "broll_topic": "phone_bio_link_tap"
-    },
-    {
-      "start": 11.7,
-      "end": 12.4,
+      "start": 15.3,
+      "end": 15.7,
       "broll_topic": "shg_brand_endcard"
     },
     {
-      "start": 12.4,
-      "end": 13.0,
+      "start": 15.7,
+      "end": 16.0,
       "broll_topic": "shg_brand_endcard"
     }
   ],

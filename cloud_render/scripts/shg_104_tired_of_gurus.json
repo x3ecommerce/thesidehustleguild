@@ -2,48 +2,53 @@
   "id": "shg_104_tired_of_gurus",
   "title": "Tired of Guru Communities?",
   "angle": "anti_guru_hook",
-  "duration_sec": 14,
-  "voiceover": "Tired of guru communities that go dead in three weeks? Tired of five-thousand-dollar masterminds? We built the opposite. The Side Hustle Guild. Nine dollars a month locked for life for the first fifty members. Nineteen a month after that. Real cash contest. Real builders. No gurus. Come check us out. Link is in the bio.",
+  "duration_sec": 18,
+  "voiceover": "Tired of guru communities that go dead in three weeks? Tired of five-thousand-dollar masterminds? We built the opposite. The Side Hustle Guild. Nine bucks a month locked for life \u2014 for the first fifty members. Nineteen a month after that. Real cash contest. Real builders. No gurus. Come check us out. Link is in the bio.",
   "captions": [
     {
       "start": 0.0,
-      "end": 2.3,
+      "end": 2.0,
       "text": "TIRED OF GURUS?"
     },
     {
-      "start": 2.3,
+      "start": 2.0,
       "end": 4.0,
-      "text": "Dead Discords. $5K masterminds."
+      "text": "Dead Discords."
     },
     {
       "start": 4.0,
-      "end": 5.5,
+      "end": 5.8,
+      "text": "$5K masterminds."
+    },
+    {
+      "start": 5.8,
+      "end": 7.5,
       "text": "We built the opposite."
     },
     {
-      "start": 5.5,
-      "end": 6.8,
+      "start": 7.5,
+      "end": 9.5,
       "text": "The Side Hustle Guild"
     },
     {
-      "start": 6.8,
-      "end": 9.0,
-      "text": "$9/mo locked \u2014 first 50"
-    },
-    {
-      "start": 9.0,
-      "end": 10.5,
-      "text": "$19/mo after that"
-    },
-    {
-      "start": 10.5,
+      "start": 9.5,
       "end": 12.0,
-      "text": "Real cash. Real builders."
+      "text": "$9/mo locked \u2014 first 50"
     },
     {
       "start": 12.0,
       "end": 14.0,
-      "text": "Come check us out. Link is in the bio."
+      "text": "$19/mo after that"
+    },
+    {
+      "start": 14.0,
+      "end": 16.0,
+      "text": "Real cash. Real builders."
+    },
+    {
+      "start": 16.0,
+      "end": 18.0,
+      "text": "Come check us out. Link in bio."
     }
   ],
   "scenes": [
@@ -54,57 +59,57 @@
     },
     {
       "start": 2.0,
-      "end": 3.0,
+      "end": 4.0,
       "broll_topic": "empty_dead_discord_screen"
     },
     {
-      "start": 3.0,
-      "end": 4.0,
+      "start": 4.0,
+      "end": 5.8,
       "broll_topic": "rejected_cancelled_red_x"
     },
     {
-      "start": 4.0,
-      "end": 5.5,
+      "start": 5.8,
+      "end": 7.5,
       "broll_topic": "person_at_kitchen_table_working"
     },
     {
-      "start": 5.5,
-      "end": 6.8,
+      "start": 7.5,
+      "end": 9.5,
       "broll_topic": "homepage_hero_branded"
     },
     {
-      "start": 6.8,
-      "end": 7.8,
+      "start": 9.5,
+      "end": 11.0,
       "broll_topic": "nine_dollar_price_tag"
     },
     {
-      "start": 7.8,
-      "end": 8.8,
-      "broll_topic": "lifetime_locked_seal"
-    },
-    {
-      "start": 8.8,
-      "end": 9.7,
-      "broll_topic": "founder_membership_badge"
-    },
-    {
-      "start": 9.7,
-      "end": 10.7,
-      "broll_topic": "subscription_billing_screen"
-    },
-    {
-      "start": 10.7,
+      "start": 11.0,
       "end": 12.0,
-      "broll_topic": "real_builders_community"
+      "broll_topic": "founder_membership_badge"
     },
     {
       "start": 12.0,
       "end": 13.0,
-      "broll_topic": "phone_bio_link_tap"
+      "broll_topic": "subscription_billing_screen"
     },
     {
       "start": 13.0,
       "end": 14.0,
+      "broll_topic": "lifetime_locked_seal"
+    },
+    {
+      "start": 14.0,
+      "end": 15.5,
+      "broll_topic": "cash_money_falling_down"
+    },
+    {
+      "start": 15.5,
+      "end": 17.0,
+      "broll_topic": "real_builders_community"
+    },
+    {
+      "start": 17.0,
+      "end": 18.0,
       "broll_topic": "shg_brand_endcard"
     }
   ],
