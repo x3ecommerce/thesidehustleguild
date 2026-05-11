@@ -1,4 +1,4 @@
-name: SHG Render Farm
+name: SHG Render Farm (HyperFrames)
 
 on:
   workflow_dispatch:
@@ -11,9 +11,10 @@ on:
 jobs:
   render:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 4
       matrix:
         script:
           - shg_001_permission_slip
@@ -43,18 +44,35 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install deps
+      - name: Set up Node 20
+        if: steps.gate.outputs.skip == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install system deps (Chromium + FFmpeg + fonts)
         if: steps.gate.outputs.skip == 'false'
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-liberation fonts-dejavu fonts-dejavu-core fonts-dejavu-extra python3-pip
-          pip3 install --quiet Pillow
+          sudo apt-get install -y -qq \
+            ffmpeg \
+            fonts-liberation fonts-dejavu fonts-dejavu-core fonts-dejavu-extra \
+            python3-pip \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+            libgbm1 libasound2t64 libpango-1.0-0 libcairo2 libxshmfence1
+          pip3 install --quiet Pillow Jinja2
           fc-cache -f
-          # Verify DejaVu Sans Bold is available (we use it for captions)
-          fc-list | grep -i "DejaVu Sans" | head -2
 
-      - name: Render
+      - name: Pre-fetch HyperFrames + Chrome
         if: steps.gate.outputs.skip == 'false'
+        run: |
+          npx --yes hyperframes@0.5.4 doctor || true
+          npx --yes hyperframes@0.5.4 browser ensure
+
+      - name: Render via HyperFrames
+        if: steps.gate.outputs.skip == 'false'
+        id: render
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
@@ -62,9 +80,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_BUCKET: shg-videos
           R2_PUBLIC_DOMAIN: pub-404744d3257c4094982b374d0827c547.r2.dev
+          HYPERFRAMES_VERSION: '0.5.4'
         run: |
           cd cloud_render
-          python3 render_one.py "scripts/${{ matrix.script }}.json"
+          python3 render_hyperframes.py "scripts/${{ matrix.script }}.json"
 
       - name: Upload artifact (backup)
         if: steps.gate.outputs.skip == 'false'
@@ -74,9 +93,18 @@ jobs:
           path: /tmp/shg_render/${{ matrix.script }}/${{ matrix.script }}.mp4
           retention-days: 30
 
+      - name: Upload render log on failure
+        if: steps.gate.outputs.skip == 'false' && failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.script }}-log
+          path: /tmp/shg_render/${{ matrix.script }}/hyperframes.log
+          retention-days: 7
+
   manifest:
     needs: render
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Generate manifest
         env:
@@ -85,6 +113,7 @@ jobs:
           cat > manifest.json <<JSON
           {
             "rendered_at": "$(date -u +%FT%TZ)",
+            "pipeline": "hyperframes@0.5.4",
             "videos": [
               "shg_001_permission_slip","shg_002_the_counter","shg_003_pool_math",
               "shg_004_three_things","shg_005_day_one","shg_006_sunday_reset",

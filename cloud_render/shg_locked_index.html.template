@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1E1E1E;
+      font-family: 'Inter Tight', -apple-system, system-ui, sans-serif; }
+    .scene { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: hidden; opacity: 0; }
+    .scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: center; }
+    /* SHG: cream-on-photo with 35% slate at top + bottom so captions stay legible */
+    .scene::after { content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg,
+        rgba(39,56,74,0.55) 0%,
+        rgba(39,56,74,0.18) 22%,
+        rgba(39,56,74,0.18) 70%,
+        rgba(39,56,74,0.78) 100%);
+      pointer-events: none; }
+    .scene.hook::after {
+      background: linear-gradient(180deg,
+        rgba(39,56,74,0.42) 0%,
+        rgba(39,56,74,0.22) 50%,
+        rgba(39,56,74,0.72) 100%);
+    }
+    .header { position: absolute; top: 90px; left: 0; right: 0; text-align: center; z-index: 10;
+      font-size: 32px; font-weight: 800; letter-spacing: 0.20em; color: #F8F4ED; text-transform: uppercase;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.65); }
+    .header::after { content: ''; display: block; width: 60px; height: 4px; background: #E89B3B; margin: 22px auto 0; }
+    .footer { position: absolute; bottom: 100px; left: 0; right: 0; text-align: center; z-index: 10;
+      font-size: 42px; font-weight: 800; color: #F8F4ED; letter-spacing: -0.01em;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.65); }
+    .caption { position: absolute; left: 60px; right: 60px; top: 50%; transform: translateY(-50%);
+      text-align: center; z-index: 20; font-weight: 800;
+      text-shadow: 0 6px 16px rgba(0,0,0,0.85), 0 2px 4px rgba(0,0,0,0.95);
+      line-height: 1.05; letter-spacing: -0.015em; opacity: 0; text-transform: uppercase; }
+    .caption .w { opacity: 0.30; color: #F8F4ED; display: inline-block; }
+    .caption .w.accent { color: #E89B3B; }
+    .caption .w.positive { color: #A8C9A0; }
+    .caption .w.danger { color: #ff4d4d; }
+    .caption.hook { font-size: 150px; line-height: 0.95; }
+    .caption.s1 { font-size: 130px; }
+    .caption.s2 { font-size: 110px; }
+    .caption.s3 { font-size: 92px; }
+    .progress-bar { position: absolute; top: 0; left: 0; height: 6px; width: 0%; background: #E89B3B; z-index: 30; }
+  </style>
+</head>
+<body>
+<div id="root"
+     data-composition-id="main"
+     data-start="0" data-duration="{{ duration_sec }}"
+     data-width="1080" data-height="1920" data-fps="30">
+
+  <audio id="voice" data-start="0" data-duration="{{ duration_sec }}" data-track-index="0"
+         class="clip" src="assets/voice.mp3"></audio>
+  <audio id="music" data-start="0" data-duration="{{ duration_sec }}" data-track-index="1"
+         class="clip" src="assets/music.aac" data-volume="0.18"></audio>
+
+  <div id="progress" class="progress-bar clip"
+       data-start="0" data-duration="{{ duration_sec }}" data-track-index="100"></div>
+  <div id="header" class="header clip"
+       data-start="0" data-duration="{{ duration_sec }}" data-track-index="50">The Side Hustle Guild</div>
+  <div id="footer" class="footer clip"
+       data-start="0" data-duration="{{ duration_sec }}" data-track-index="51">thesidehustleguild.com</div>
+
+  <!-- Scenes timed to sentence boundaries from real audio alignment -->
+{% for s in scenes %}  <div class="scene clip{% if s.hook %} hook{% endif %}" id="sc{{ s.n }}"  data-start="{{ s.start }}"   data-duration="{{ s.duration }}" data-track-index="{{ s.n + 1 }}"><img src="assets/{{ s.image }}"></div>
+{% endfor %}
+  <!-- Captions - word-level timings synced to real audio alignment -->
+{% for c in captions %}  <div class="caption clip {{ c.size }}" id="c{{ c.n }}"  data-start="{{ c.start }}"  data-duration="{{ c.duration }}" data-track-index="{{ 199 + c.n }}">{{ c.html|safe }}</div>
+{% endfor %}
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  const TOTAL = {{ duration_sec }};
+  tl.fromTo("#progress", { width: "0%" }, { width: "100%", duration: TOTAL, ease: "none" }, 0);
+  tl.from("#header, #footer", { opacity: 0, y: -20, duration: 0.6, ease: "power2.out" }, 0.1);
+
+  const scenes = [
+{% for s in scenes %}    {id:"#sc{{ s.n }}",  s:{{ s.start }},   d:{{ s.duration }}}{% if not loop.last %},{% endif %}
+{% endfor %}  ];
+  scenes.forEach(sc => {
+    const exitEnd = sc.s + sc.d;
+    tl.set(sc.id, { visibility: "visible" }, sc.s);
+    tl.fromTo(sc.id, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, sc.s);
+    tl.fromTo(sc.id + " img", { scale: 1.0 }, { scale: 1.12, duration: sc.d, ease: "none" }, sc.s);
+    tl.to(sc.id, { opacity: 0, duration: 0.4, ease: "power2.in" }, Math.max(sc.s, exitEnd - 0.4));
+    tl.set(sc.id, { visibility: "hidden" }, exitEnd);
+  });
+
+  // Captions: container fades in/out at caption start/end. Within container,
+  // each word has an explicit absolute reveal time pulled from ElevenLabs forced alignment.
+  const captionsData = [
+{% for c in captions %}    { id:"#c{{ c.n }}",  s:{{ c.start }},  d:{{ c.duration }},  n:{{ c.n }}, words:[{% for w in c.words %} {t:{{ w.t }}}{% if not loop.last %},{% endif %}{% endfor %} ] }{% if not loop.last %},{% endif %}
+{% endfor %}  ];
+
+  captionsData.forEach((c) => {
+    const exitEnd = c.s + c.d;
+    tl.set(c.id, { visibility: "visible" }, c.s);
+    tl.fromTo(c.id, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1.0, duration: 0.30, ease: "back.out(2.0)" }, c.s);
+    tl.to(c.id, { opacity: 0, scale: 1.05, duration: 0.25, ease: "power2.in" }, Math.max(c.s, exitEnd - 0.25));
+    tl.set(c.id, { visibility: "hidden" }, exitEnd);
+    // Per-word reveal at exact audio timings
+    c.words.forEach((w, wIdx) => {
+      const wId = `#c${c.n}w${wIdx+1}`;
+      tl.set(wId, { opacity: 0.30 }, c.s);
+      tl.to(wId, { opacity: 1.0, duration: 0.15, ease: "power1.out" }, w.t);
+    });
+  });
+
+  window.__timelines["main"] = tl;
+</script>
+
+</body>
+</html>
