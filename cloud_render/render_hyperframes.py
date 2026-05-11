@@ -25,10 +25,10 @@ WORK = Path(os.environ.get("WORKDIR", "/tmp/shg_render"))
 WORK.mkdir(parents=True, exist_ok=True)
 
 # Brand voice settings (locked in the_side_hustle_guild.yaml)
-VOICE_ID  = "bIHbv24MWmeRgasZH58o"   # Will - relaxed optimist American male
+VOICE_ID  = "kdmDKE6EkgrWrrykO9Qt"   # Alexandra - warm friendly female (founder pick)
 MODEL_ID  = "eleven_turbo_v2_5"
-# Tuned for BAMMM energy: lower stability = more variation, higher style = more energetic delivery
-VOICE_SETTINGS = {"stability":0.35,"similarity_boost":0.75,"style":0.45,"use_speaker_boost":True}
+# Tuned for NATURAL conversation — warm, builder-to-builder, not rushed, not over-acted
+VOICE_SETTINGS = {"stability":0.55,"similarity_boost":0.75,"style":0.25,"use_speaker_boost":True}
 WIDTH, HEIGHT = 1080, 1920
 TARGET_SCENES = 12
 
