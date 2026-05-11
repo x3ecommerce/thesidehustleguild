@@ -19,7 +19,9 @@ Output: 1080x1920 MP4 with brand header, footer, progress bar, 12 scene cuts,
 """
 import os, sys, json
 from pathlib import Path as _P
-SCRIPT_DIR = _P(__file__).parent, hashlib, urllib.request, urllib.error, urllib.parse, subprocess, base64, time, re, html
+hashlib, urllib.request, urllib.error, urllib.parse, subprocess, base64, time, re, html
+from pathlib import Path as _P
+SCRIPT_DIR = _P(__file__).parent
 from pathlib import Path
 
 ROOT = Path(__file__).parent
