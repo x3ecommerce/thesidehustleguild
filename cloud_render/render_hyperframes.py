@@ -25,9 +25,10 @@ WORK = Path(os.environ.get("WORKDIR", "/tmp/shg_render"))
 WORK.mkdir(parents=True, exist_ok=True)
 
 # Brand voice settings (locked in the_side_hustle_guild.yaml)
-VOICE_ID  = "kdmDKE6EkgrWrrykO9Qt"   # Alexandra - warm friendly female
+VOICE_ID  = "bIHbv24MWmeRgasZH58o"   # Will - relaxed optimist American male
 MODEL_ID  = "eleven_turbo_v2_5"
-VOICE_SETTINGS = {"stability":0.50,"similarity_boost":0.75,"style":0.30,"use_speaker_boost":True}
+# Tuned for BAMMM energy: lower stability = more variation, higher style = more energetic delivery
+VOICE_SETTINGS = {"stability":0.35,"similarity_boost":0.75,"style":0.45,"use_speaker_boost":True}
 WIDTH, HEIGHT = 1080, 1920
 TARGET_SCENES = 12
 
@@ -84,6 +85,20 @@ def synth_voice_with_alignment(text, out_mp3, out_alignment_json):
     alignment = data.get("normalized_alignment") or data["alignment"]
     out_alignment_json.write_text(json.dumps(alignment, indent=2))
     return out_mp3, alignment
+
+def trim_silences(in_mp3, out_mp3, threshold_db=-35, min_silence_sec=0.4, kept_pad_sec=0.2):
+    """Compact long silences in the voiceover. Anything over min_silence_sec
+    gets shortened to kept_pad_sec. Keeps natural rhythm but removes dead air."""
+    try:
+        subprocess.run([
+            "ffmpeg","-y","-loglevel","error","-i", str(in_mp3),
+            "-af", f"silenceremove=stop_periods=-1:stop_duration={min_silence_sec}:stop_threshold={threshold_db}dB",
+            "-c:a","libmp3lame","-b:a","128k", str(out_mp3)
+        ], check=True)
+        return True
+    except Exception as e:
+        print(f"  silence trim fail: {e}", file=sys.stderr)
+        return False
 
 def voice_duration_sec(mp3):
     out = subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration",
