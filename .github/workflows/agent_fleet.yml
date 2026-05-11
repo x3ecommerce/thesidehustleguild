@@ -50,8 +50,13 @@ jobs:
           if [ "$MIN" = "05" ] || [ "$MIN" = "35" ]; then RUN+=" e1-role-grant e2-concierge"; fi
           # revenue at :07
           if [ "$MIN" = "07" ]; then RUN+=" f2-revenue"; fi
-          # 08:00 UTC
-          if [ "$HR" = "08" ] && [ "$MIN" = "00" ]; then RUN+=" c2-pricepool"; fi
+          # community workers: tickets + events every 10 min, polls every 5 min
+          if [ "$((10#$MIN % 10))" -eq 0 ]; then RUN+=" m1-tickets m5-events"; fi
+          if [ "$((10#$MIN % 5))" -eq 0 ]; then RUN+=" m3-polls"; fi
+          # faq health every 30
+          if [ "$((10#$MIN % 30))" -eq 0 ]; then RUN+=" m2-faq"; fi
+          # 08:00 UTC = pricepool + analytics
+          if [ "$HR" = "08" ] && [ "$MIN" = "00" ]; then RUN+=" c2-pricepool m4-analytics"; fi
           # 10:00 UTC
           if [ "$HR" = "10" ] && [ "$MIN" = "00" ]; then RUN+=" f4-controller"; fi
           # 11:00 UTC
@@ -68,7 +73,7 @@ jobs:
             RUN="${{ inputs.agent }}"
           fi
           if [ "${{ inputs.agent }}" = "all" ]; then
-            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool e1-role-grant e2-concierge a1-admin"
+            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool e1-role-grant e2-concierge a1-admin m1-tickets m2-faq m3-polls m4-analytics m5-events"
           fi
           echo "list=$RUN" >> $GITHUB_OUTPUT
           echo "Agents to run: $RUN"
