@@ -92,8 +92,10 @@ export async function sendOutreachEmail(env, { to, subject, body, sender_name, m
 }
 
 export function makeUnsubToken(email) {
-  // Simple hash — not crypto-secure but good enough for unsub deep link
+  // Simple hash — not crypto-secure but good enough for unsub deep link.
+  // Uses btoa (Web standard) instead of Node's Buffer (not available in Workers).
   let h = 5381;
   for (let i = 0; i < email.length; i++) h = ((h << 5) + h + email.charCodeAt(i)) & 0xffffffff;
-  return Math.abs(h).toString(36) + "-" + Buffer.from(email).toString("base64url").slice(0, 16);
+  const b64 = btoa(email).replace(/\+/g,"-").replace(/\//g,"_").replace(/=/g,"");
+  return Math.abs(h).toString(36) + "-" + b64.slice(0, 16);
 }

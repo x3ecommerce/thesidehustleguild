@@ -86,10 +86,22 @@ async function handle(env) {
       } catch {}
     }
 
+    // Auto-resolve alerts where the agent has been green since the alert was raised
+    const autoResolved = await env.DB.prepare(
+      `UPDATE agent_alerts SET resolved_at = CURRENT_TIMESTAMP, resolved_by = 'a1_admin_auto', resolution_note = 'Agent green on subsequent runs.'
+       WHERE resolved_at IS NULL
+         AND EXISTS (
+           SELECT 1 FROM agent_status s
+           WHERE s.agent_id = agent_alerts.agent_id
+             AND s.health = 'green'
+             AND s.last_success_at > agent_alerts.raised_at
+         )`
+    ).run().catch(() => null);
+
     return {
       status: reds.length ? "warn" : "success",
-      summary: `fleet_red=${reds.length} fleet_yellow=${yellows.length} stale=${stales.length}`,
-      metadata: { reds: reds.map(r=>r.agent_id), yellows: yellows.map(y=>y.agent_id), stales: stales.map(s=>s.agent_id) }
+      summary: `fleet_red=${reds.length} fleet_yellow=${yellows.length} stale=${stales.length} auto_resolved=${autoResolved?.meta?.changes || 0}`,
+      metadata: { reds: reds.map(r=>r.agent_id), yellows: yellows.map(y=>y.agent_id), stales: stales.map(s=>s.agent_id), auto_resolved: autoResolved?.meta?.changes || 0 }
     };
   });
 }
