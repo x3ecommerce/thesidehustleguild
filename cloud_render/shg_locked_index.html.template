@@ -47,6 +47,14 @@
   </style>
 </head>
 <body>
+  <!-- SHG G-coin watermark, always visible top-right -->
+  <div class="shg-watermark clip" data-start="0" data-duration="{{ duration_sec }}" data-track-index="60"
+       style="position:absolute;top:24px;right:24px;z-index:25;
+              width:120px;height:120px;
+              background-image:url('assets/shg_g_coin.png');
+              background-size:contain;background-repeat:no-repeat;
+              opacity:0.85;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));"></div>
+
 <div id="root"
      data-composition-id="main"
      data-start="0" data-duration="{{ duration_sec }}"

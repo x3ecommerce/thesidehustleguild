@@ -577,6 +577,12 @@ def render(script, work_dir, out_mp4):
             print(f"  scene_{i+1:02d}.jpg no photo available, using cream", file=sys.stderr)
             fallback_cream_image(img)
 
+    # Copy G-coin watermark next to scenes for the HTML to reference
+    import shutil as _sh
+    coin_src = SCRIPT_DIR / "assets" / "static" / "shg_g_coin.png"
+    if coin_src.exists():
+        _sh.copy(coin_src, assets_dir / "shg_g_coin.png")
+        print(f"  ✅ G-coin watermark copied")
     print(f"[6/9] Generating ambient music ({duration:.2f}s)...")
     generate_music(duration, assets_dir / "music.aac")
 
