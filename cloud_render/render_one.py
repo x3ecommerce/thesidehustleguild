@@ -42,7 +42,9 @@ def post_json(url, headers, body, timeout=30):
         return r.read()
 
 def get(url, headers=None, timeout=20):
-    req = urllib.request.Request(url, headers=headers or {})
+    h = {"User-Agent": "SHG-RenderFarm/1.0 (+https://thesidehustleguild.com)"}
+    if headers: h.update(headers)
+    req = urllib.request.Request(url, headers=h)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read()
 
@@ -57,7 +59,8 @@ def synth_voice(text, out_path):
         "voice_settings": VOICE_SETTINGS,
     }
     req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
-        headers={"xi-api-key": api_key, "Content-Type": "application/json", "Accept": "audio/mpeg"})
+        headers={"xi-api-key": api_key, "Content-Type": "application/json", "Accept": "audio/mpeg",
+                 "User-Agent": "SHG-RenderFarm/1.0"})
     with urllib.request.urlopen(req, timeout=60) as r:
         out_path.write_bytes(r.read())
     return out_path
@@ -144,7 +147,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: SHG, Manrope, 88, {primary}, {primary}, {outline}, {back}, 1, 0, 0, 0, 100, 100, 0, 0, 3, 14, 4, 5, 80, 80, 0, 1
+Style: SHG, DejaVu Sans, 92, {primary}, {primary}, {outline}, {back}, 1, 0, 0, 0, 100, 100, 0, 0, 3, 14, 4, 5, 80, 80, 0, 1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -185,9 +188,9 @@ def render(script, work_dir, out_mp4):
                             "-i", f"color=c={PAPER}:s={WIDTH}x{HEIGHT}:d=1",
                             "-frames:v","1", str(img)], check=True)
         scene_imgs.append(img)
-    while len(scene_imgs) < 3:
-        # Pad with end-card cream
-        cream = work_dir / f"scene_pad_{len(scene_imgs)}.jpg"
+    # No padding — use exactly the scenes the script defines
+    if len(scene_imgs) == 0:
+        cream = work_dir / "scene_fallback.jpg"
         subprocess.run(["ffmpeg","-y","-loglevel","error","-f","lavfi",
                         "-i", f"color=c={PAPER}:s={WIDTH}x{HEIGHT}:d=1",
                         "-frames:v","1", str(cream)], check=True)
@@ -220,7 +223,7 @@ def render(script, work_dir, out_mp4):
     for i, sc in enumerate(script["scenes"]):
         scene_durs.append(sc["end"] - sc["start"])
     # Pad to 3 scenes
-    while len(scene_durs) < 3: scene_durs.append(2.0)
+    # Use whatever scene_durs the script provided
 
     # Build the input list: each image looped for its scene duration
     inputs = []
@@ -259,6 +262,30 @@ def render(script, work_dir, out_mp4):
         str(out_mp4)
     ]
     subprocess.run(cmd, check=True)
+    # Sanity check: extract a frame at the midpoint, verify B-roll actually rendered
+    mid_frame = work_dir / "_sanity_mid.png"
+    midpoint = duration / 2
+    subprocess.run(["ffmpeg","-y","-loglevel","error","-ss",str(midpoint),"-i",str(out_mp4),
+                    "-frames:v","1", str(mid_frame)], check=True)
+    try:
+        from PIL import Image
+        im = Image.open(mid_frame).convert("RGB").resize((40,40))
+        pixels = list(im.getdata())
+        avg = tuple(sum(p[i] for p in pixels)//len(pixels) for i in range(3))
+        cream_count = sum(1 for p in pixels if all(c > 225 for c in p))
+        cream_pct = cream_count / len(pixels)
+        print(f"  sanity: avg_rgb={avg} cream_pct={cream_pct:.1%}")
+        if cream_pct > 0.85:
+            raise RuntimeError(f"Video appears cream-only at midpoint (cream_pct={cream_pct:.1%}). B-roll likely failed.")
+    except ImportError:
+        subprocess.run(["pip","install","Pillow","--quiet"], check=True)
+        # re-run check
+        from PIL import Image
+        im = Image.open(mid_frame).convert("RGB").resize((40,40))
+        pixels = list(im.getdata())
+        cream_count = sum(1 for p in pixels if all(c > 225 for c in p))
+        if cream_count / len(pixels) > 0.85:
+            raise RuntimeError("Video appears cream-only at midpoint. B-roll likely failed.")
     return out_mp4
 
 # ------------------------------------------------------------------ R2 upload

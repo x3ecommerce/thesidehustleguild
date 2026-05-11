@@ -47,13 +47,11 @@ jobs:
         if: steps.gate.outputs.skip == 'false'
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-liberation fonts-dejavu
-          # Install Manrope + Fraunces fonts for caption rendering
-          mkdir -p ~/.fonts
-          curl -sSLo /tmp/manrope.zip "https://fonts.google.com/download?family=Manrope" || true
-          if [ -f /tmp/manrope.zip ]; then unzip -qq /tmp/manrope.zip -d ~/.fonts/manrope || true; fi
+          sudo apt-get install -y -qq ffmpeg fonts-liberation fonts-dejavu fonts-dejavu-core fonts-dejavu-extra python3-pip
+          pip3 install --quiet Pillow
           fc-cache -f
-          fc-list | grep -i manrope || echo "Manrope not installed, will use Liberation Sans fallback"
+          # Verify DejaVu Sans Bold is available (we use it for captions)
+          fc-list | grep -i "DejaVu Sans" | head -2
 
       - name: Render
         if: steps.gate.outputs.skip == 'false'

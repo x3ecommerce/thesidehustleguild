@@ -7,48 +7,76 @@
     "reels",
     "shorts"
   ],
-  "duration_sec": 10,
-  "voiceover": "Submitting a hustle is three things. Take one photo. Copy your link. Click submit. Six fields. Three minutes. That's it. Try it.",
+  "duration_sec": 20,
+  "voiceover": "Submitting a hustle is three things. One \u2014 take one photo. A product shot, your shop screen, anything visual. Two \u2014 copy your link. Your Etsy URL, your website, your TikTok, wherever it lives. Three \u2014 click submit. Six fields. Three minutes total. Day-one numbers welcome. Try it.",
   "captions": [
     {
       "start": 0.0,
-      "end": 3.0,
-      "text": "1. Photo"
+      "end": 2.5,
+      "text": "Submitting your hustle"
     },
     {
-      "start": 3.0,
-      "end": 6.0,
-      "text": "2. Link"
+      "start": 2.5,
+      "end": 7.0,
+      "text": "1. One photo"
     },
     {
-      "start": 6.0,
-      "end": 9.0,
-      "text": "3. Click"
+      "start": 7.0,
+      "end": 12.0,
+      "text": "2. Your link"
     },
     {
-      "start": 9.0,
-      "end": 10.0,
+      "start": 12.0,
+      "end": 16.0,
+      "text": "3. Click submit"
+    },
+    {
+      "start": 16.0,
+      "end": 19.0,
+      "text": "6 fields \u00b7 3 minutes"
+    },
+    {
+      "start": 19.0,
+      "end": 20.0,
       "text": "thesidehustleguild.com/submit"
     }
   ],
   "scenes": [
     {
       "start": 0.0,
-      "end": 3.0,
+      "end": 2.5,
+      "broll_topic": "kitchen_table_laptop",
+      "mood": "calm"
+    },
+    {
+      "start": 2.5,
+      "end": 7.0,
       "broll_topic": "phone_taking_photo",
       "mood": "action"
     },
     {
-      "start": 3.0,
-      "end": 6.0,
+      "start": 7.0,
+      "end": 12.0,
       "broll_topic": "copying_url_browser",
-      "mood": "easy"
+      "mood": "transfer"
     },
     {
-      "start": 6.0,
-      "end": 10.0,
+      "start": 12.0,
+      "end": 16.0,
       "broll_topic": "submit_button_click",
       "mood": "completion"
+    },
+    {
+      "start": 16.0,
+      "end": 19.0,
+      "broll_topic": "submit_confirmation",
+      "mood": "celebration"
+    },
+    {
+      "start": 19.0,
+      "end": 20.0,
+      "broll_topic": "end_card_brand",
+      "mood": "brand"
     }
   ],
   "cta_url": "https://thesidehustleguild.com/submit/",
