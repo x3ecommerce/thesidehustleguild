@@ -2,8 +2,8 @@
   "id": "shg_101_do_you_like_money",
   "title": "Do You Like Money?",
   "angle": "money_hook",
-  "duration_sec": 11,
-  "voiceover": "Do you like money? Then you need to see this. The Side Hustle Guild pays real cash every month. The contest pool is funded by the community itself. Twenty-five percent of every subscription. Link in bio.",
+  "duration_sec": 12,
+  "voiceover": "Do you like money? Then you need to see this. The Side Hustle Guild pays real cash every month. The contest pool is funded by the community itself. Twenty-five percent of every subscription. Come check us out. Link is in the bio.",
   "captions": [
     {
       "start": 0.0,
@@ -32,8 +32,8 @@
     },
     {
       "start": 10.0,
-      "end": 11.0,
-      "text": "Link in bio."
+      "end": 12.0,
+      "text": "Come check us out. Link is in the bio."
     }
   ],
   "scenes": [
@@ -84,17 +84,17 @@
     },
     {
       "start": 10.3,
-      "end": 10.7,
+      "end": 11.0,
       "broll_topic": "phone_bio_link_tap"
     },
     {
-      "start": 10.7,
-      "end": 10.9,
+      "start": 11.0,
+      "end": 11.6,
       "broll_topic": "shg_brand_endcard"
     },
     {
-      "start": 10.9,
-      "end": 11.0,
+      "start": 11.6,
+      "end": 12.0,
       "broll_topic": "shg_brand_endcard"
     }
   ],

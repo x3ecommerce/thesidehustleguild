@@ -2,8 +2,8 @@
   "id": "shg_102_built_a_side_hustle",
   "title": "Built a Side Hustle?",
   "angle": "money_hook",
-  "duration_sec": 11,
-  "voiceover": "You built a side hustle. Nobody knows. We pay real cash for real side hustles. Every month. The Side Hustle Guild. Submit a Hustle Card. Judges score it. Winners get paid live on stream. Link in bio.",
+  "duration_sec": 12,
+  "voiceover": "You built a side hustle. Nobody knows. We pay real cash for real side hustles every month. The Side Hustle Guild. Submit a Hustle Card. Judges score it. Winners get paid live on stream. Come check us out. Link is in the bio.",
   "captions": [
     {
       "start": 0.0,
@@ -37,8 +37,8 @@
     },
     {
       "start": 9.5,
-      "end": 11.0,
-      "text": "Link in bio."
+      "end": 12.0,
+      "text": "Come check us out. Link is in the bio."
     }
   ],
   "scenes": [
@@ -88,18 +88,18 @@
       "broll_topic": "calendar_22nd_circled"
     },
     {
-      "start": 9.5,
-      "end": 10.2,
+      "start": 10.0,
+      "end": 10.8,
       "broll_topic": "phone_bio_link_tap"
     },
     {
-      "start": 10.2,
-      "end": 10.7,
+      "start": 10.8,
+      "end": 11.5,
       "broll_topic": "shg_brand_endcard"
     },
     {
-      "start": 10.7,
-      "end": 11.0,
+      "start": 11.5,
+      "end": 12.0,
       "broll_topic": "shg_brand_endcard"
     }
   ],
