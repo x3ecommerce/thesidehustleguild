@@ -301,7 +301,62 @@ TOPIC_QUERIES = {
     "hand_writing_principle":   "calligraphy notebook quote",
     "hand_writing_notebook":    "hand journaling close up",
     "shg_homepage_hero":        "modern landing page warm",
+    "stack_of_cash_close_up": "stack of cash bills close up money",
+    "person_at_laptop_smiling": "smiling person laptop kitchen happy",
+    "phone_notification_payment": "smartphone payment received notification",
+    "discord_community_screen": "online chat community screen",
+    "homepage_hero_branded": "modern landing page hero website",
+    "cash_prize_winning_moment": "celebration money winning prize",
+    "calendar_calendar_calendar": "calendar wall planner schedule",
+    "calculator_math_percent": "calculator desk percentage math",
+    "subscription_billing_screen": "subscription billing monthly recurring",
+    "phone_bio_link_tap": "smartphone bio link tap finger",
+    "shg_brand_endcard": "warm cream texture minimal brand",
+    "etsy_shop_owner_packing": "small business packing orders craft",
+    "empty_dashboard_no_sales": "empty laptop screen quiet office",
+    "cash_dollar_bills_table": "dollar bills spread out table",
+    "phone_submit_form": "phone form submission mobile",
+    "judges_scoring_review": "review evaluation scorecard rubric",
+    "winner_announcement_stream": "live announcement reveal celebration",
+    "live_stage_discord_audio": "podcast live audio room stream",
+    "calendar_22nd_circled": "calendar date circled marker",
+    "money_stack_growing_chart": "money growth chart upward trend",
+    "split_screen_two_paths": "fork in road two paths choice",
+    "cash_prize_winner_check": "winner big check prize cash",
+    "champion_day_live_stage": "stage event audience celebration",
+    "affiliate_dashboard_growing": "affiliate dashboard analytics revenue",
+    "recurring_payment_notification": "recurring payment notification mobile",
+    "calculator_compound_growth": "compound interest math growth",
+    "guru_yacht_lifestyle_overlay": "yacht luxury stock cliche",
+    "empty_dead_discord_screen": "empty dim computer screen abandoned",
+    "rejected_cancelled_red_x": "red x rejection cancelled",
+    "person_at_kitchen_table_working": "person working laptop kitchen warm",
+    "founder_membership_badge": "membership badge gold premium",
+    "nine_dollar_price_tag": "price tag low cost affordable",
+    "lifetime_locked_seal": "lifetime guarantee seal stamp",
+    "real_builders_community": "diverse builders workshop community",
+    "discord_chat_window_close": "chat messaging app close up",
+    "cash_money_falling_down": "money falling raining bills",
+    "phone_payment_received": "phone payment success notification",
+    "calendar_monthly_recurring": "monthly calendar planner",
+    "subscription_revenue_chart": "revenue chart growing subscription",
+    "community_members_avatars": "diverse profile avatars grid",
+    "trophy_award_winner": "trophy gold award winner",
+    "loop_repeat_cycle_arrows": "cycle loop arrows infinity",
 }
+
+def fetch_pexels_pool(query, n=5, page=1):
+    """Return list of (id, url) for up to N photos from Pexels for this query."""
+    api_key = env("PEXELS_API_KEY")
+    qs = urllib.parse.urlencode({"query": query, "per_page": min(n*2, 15), "orientation": "portrait", "page": page})
+    url = f"https://api.pexels.com/v1/search?{qs}"
+    try:
+        data = json.loads(http_get(url, headers={"Authorization": api_key}))
+        photos = data.get("photos", []) or []
+        return [(p["id"], p["src"]["large2x"]) for p in photos][:n]
+    except Exception as e:
+        print(f"  pool fetch fail '{query}' page {page}: {e}", file=sys.stderr)
+        return []
 
 def fetch_pexels(query, out_path):
     api_key = env("PEXELS_API_KEY")
@@ -405,20 +460,54 @@ def render(script, work_dir, out_mp4):
     print(f"[4/9] Building caption blocks...")
     caption_blocks = build_caption_blocks(words, scene_timings)
 
-    print(f"[5/9] Fetching {TARGET_SCENES} B-roll stills from Pexels...")
+    print(f"[5/9] Fetching {TARGET_SCENES} UNIQUE B-roll stills from Pexels...")
     script_scenes = script.get("scenes", [])
+    # Pre-build a pool of unique photos per query so we never repeat
+    used_ids = set()
+    photo_pool = {}  # query -> [(id, url), ...] remaining unused
+    def get_photo(query):
+        if query not in photo_pool: photo_pool[query] = []
+        # Refill if empty
+        if not photo_pool[query]:
+            page = 1
+            while not photo_pool[query] and page <= 3:
+                pool = fetch_pexels_pool(query, n=10, page=page)
+                photo_pool[query] = [(pid, url) for (pid, url) in pool if pid not in used_ids]
+                page += 1
+        if photo_pool[query]:
+            pid, url = photo_pool[query].pop(0)
+            used_ids.add(pid)
+            return (pid, url)
+        return (None, None)
+
     for i, sc in enumerate(scene_timings):
-        # Map to script scene by index, falling back round-robin
         topic = "kitchen_table_laptop"
-        if script_scenes:
+        if script_scenes and i < len(script_scenes):
+            topic = script_scenes[i].get("broll_topic", topic)
+        elif script_scenes:
+            # Beyond script length — keep rotating through topics WITHOUT reusing the same image
             topic = script_scenes[i % len(script_scenes)].get("broll_topic", topic)
         q = TOPIC_QUERIES.get(topic, topic.replace("_", " "))
         img = assets_dir / f"scene_{i+1:02d}.jpg"
-        try:
-            fetch_pexels(q, img)
-            print(f"  scene_{i+1:02d}.jpg <- '{q}' ({img.stat().st_size//1024} KB)")
-        except Exception as e:
-            print(f"  pexels fail '{q}': {e} -> cream fallback", file=sys.stderr)
+        pid, url = get_photo(q)
+        if not url:
+            # Try a sibling query (one of our wider fallbacks)
+            for alt in ["entrepreneur laptop", "creator economy", "small business owner", "online business desk"]:
+                pid, url = get_photo(alt)
+                if url:
+                    print(f"  scene_{i+1:02d}.jpg fallback to '{alt}'", file=sys.stderr)
+                    q = alt
+                    break
+        if url:
+            try:
+                with open(img, "wb") as f:
+                    f.write(http_get(url))
+                print(f"  scene_{i+1:02d}.jpg <- '{q}' pexels_id={pid} ({img.stat().st_size//1024} KB)")
+            except Exception as e:
+                print(f"  scene_{i+1:02d}.jpg pexels download fail: {e} -> cream", file=sys.stderr)
+                fallback_cream_image(img)
+        else:
+            print(f"  scene_{i+1:02d}.jpg no photo available, using cream", file=sys.stderr)
             fallback_cream_image(img)
 
     print(f"[6/9] Generating ambient music ({duration:.2f}s)...")

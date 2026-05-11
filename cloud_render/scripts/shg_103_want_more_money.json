@@ -1,0 +1,127 @@
+{
+  "id": "shg_103_want_more_money",
+  "title": "Want More From Your Side Hustle?",
+  "angle": "money_hook",
+  "duration_sec": 12,
+  "voiceover": "Want to make more from your side hustle? Two ways inside The Side Hustle Guild. One: monthly cash contest, real money, real winners. Two: affiliate program, thirty percent recurring, lifetime. Real money. Real builders. Link in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 2.2,
+      "text": "WANT MORE MONEY?"
+    },
+    {
+      "start": 2.2,
+      "end": 4.0,
+      "text": "Two ways inside SHG."
+    },
+    {
+      "start": 4.0,
+      "end": 5.5,
+      "text": "1. Monthly cash contest"
+    },
+    {
+      "start": 5.5,
+      "end": 7.0,
+      "text": "Real money. Real winners."
+    },
+    {
+      "start": 7.0,
+      "end": 8.5,
+      "text": "2. Affiliate program"
+    },
+    {
+      "start": 8.5,
+      "end": 10.0,
+      "text": "30% recurring. Lifetime."
+    },
+    {
+      "start": 10.0,
+      "end": 12.0,
+      "text": "Link in bio."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 2.0,
+      "broll_topic": "money_stack_growing_chart"
+    },
+    {
+      "start": 2.0,
+      "end": 3.5,
+      "broll_topic": "split_screen_two_paths"
+    },
+    {
+      "start": 3.5,
+      "end": 5.0,
+      "broll_topic": "cash_prize_winner_check"
+    },
+    {
+      "start": 5.0,
+      "end": 6.2,
+      "broll_topic": "champion_day_live_stage"
+    },
+    {
+      "start": 6.2,
+      "end": 7.5,
+      "broll_topic": "affiliate_dashboard_growing"
+    },
+    {
+      "start": 7.5,
+      "end": 8.5,
+      "broll_topic": "recurring_payment_notification"
+    },
+    {
+      "start": 8.5,
+      "end": 9.5,
+      "broll_topic": "calculator_compound_growth"
+    },
+    {
+      "start": 9.5,
+      "end": 10.3,
+      "broll_topic": "homepage_hero_branded"
+    },
+    {
+      "start": 10.3,
+      "end": 10.8,
+      "broll_topic": "phone_bio_link_tap"
+    },
+    {
+      "start": 10.8,
+      "end": 11.3,
+      "broll_topic": "shg_brand_endcard"
+    },
+    {
+      "start": 11.3,
+      "end": 11.7,
+      "broll_topic": "shg_brand_endcard"
+    },
+    {
+      "start": 11.7,
+      "end": 12.0,
+      "broll_topic": "shg_brand_endcard"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "Two paths to more money. The monthly contest + 30% recurring lifetime affiliate. Inside The Side Hustle Guild.",
+  "hashtags": [
+    "#sidehustle",
+    "#cashprize",
+    "#affiliate",
+    "#recurring"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community."
+  }
+}

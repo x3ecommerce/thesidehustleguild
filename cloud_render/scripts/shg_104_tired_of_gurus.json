@@ -1,0 +1,127 @@
+{
+  "id": "shg_104_tired_of_gurus",
+  "title": "Tired of Guru Communities?",
+  "angle": "anti_guru_hook",
+  "duration_sec": 12,
+  "voiceover": "Tired of guru communities that go dead in three weeks? Tired of five-thousand-dollar masterminds? We built the opposite. The Side Hustle Guild. Nine bucks a month locked for life. Real cash contest. Real builders. No gurus. Link in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 2.3,
+      "text": "TIRED OF GURUS?"
+    },
+    {
+      "start": 2.3,
+      "end": 4.0,
+      "text": "Dead Discords. $5K masterminds."
+    },
+    {
+      "start": 4.0,
+      "end": 5.5,
+      "text": "We built the opposite."
+    },
+    {
+      "start": 5.5,
+      "end": 7.0,
+      "text": "The Side Hustle Guild"
+    },
+    {
+      "start": 7.0,
+      "end": 9.0,
+      "text": "$9/mo locked for life"
+    },
+    {
+      "start": 9.0,
+      "end": 10.5,
+      "text": "Cash contest. Real builders."
+    },
+    {
+      "start": 10.5,
+      "end": 12.0,
+      "text": "Link in bio."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 2.0,
+      "broll_topic": "guru_yacht_lifestyle_overlay"
+    },
+    {
+      "start": 2.0,
+      "end": 3.0,
+      "broll_topic": "empty_dead_discord_screen"
+    },
+    {
+      "start": 3.0,
+      "end": 4.0,
+      "broll_topic": "rejected_cancelled_red_x"
+    },
+    {
+      "start": 4.0,
+      "end": 5.5,
+      "broll_topic": "person_at_kitchen_table_working"
+    },
+    {
+      "start": 5.5,
+      "end": 6.5,
+      "broll_topic": "homepage_hero_branded"
+    },
+    {
+      "start": 6.5,
+      "end": 7.5,
+      "broll_topic": "founder_membership_badge"
+    },
+    {
+      "start": 7.5,
+      "end": 8.5,
+      "broll_topic": "nine_dollar_price_tag"
+    },
+    {
+      "start": 8.5,
+      "end": 9.5,
+      "broll_topic": "lifetime_locked_seal"
+    },
+    {
+      "start": 9.5,
+      "end": 10.5,
+      "broll_topic": "real_builders_community"
+    },
+    {
+      "start": 10.5,
+      "end": 11.0,
+      "broll_topic": "phone_bio_link_tap"
+    },
+    {
+      "start": 11.0,
+      "end": 11.5,
+      "broll_topic": "shg_brand_endcard"
+    },
+    {
+      "start": 11.5,
+      "end": 12.0,
+      "broll_topic": "shg_brand_endcard"
+    }
+  ],
+  "cta_url": "https://whop.com/the-side-hustle-guild/founder-membership-a9",
+  "post_caption": "Not a guru. Not a dead Discord. Not a $5K mastermind. The Side Hustle Guild \u2014 $9/mo locked for life.",
+  "hashtags": [
+    "#notaguru",
+    "#sidehustle",
+    "#community",
+    "#realbuilders"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community."
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "id": "shg_105_get_paid_in_discord",
+  "title": "Get Paid Just for Being in a Discord",
+  "angle": "money_hook",
+  "duration_sec": 11,
+  "voiceover": "Get paid just for being in a Discord? Yeah, that's a thing now. The Side Hustle Guild pays a real cash pool every month. Funded by member subscriptions. Submit your hustle. Win the pool. Repeat. Link in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 2.0,
+      "text": "GET PAID IN A DISCORD?"
+    },
+    {
+      "start": 2.0,
+      "end": 3.5,
+      "text": "Yeah. That's a thing now."
+    },
+    {
+      "start": 3.5,
+      "end": 5.5,
+      "text": "The Side Hustle Guild"
+    },
+    {
+      "start": 5.5,
+      "end": 7.0,
+      "text": "Real cash pool, every month."
+    },
+    {
+      "start": 7.0,
+      "end": 8.5,
+      "text": "Funded by the room itself."
+    },
+    {
+      "start": 8.5,
+      "end": 10.0,
+      "text": "Submit. Win. Repeat."
+    },
+    {
+      "start": 10.0,
+      "end": 11.0,
+      "text": "Link in bio."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 1.5,
+      "broll_topic": "discord_chat_window_close"
+    },
+    {
+      "start": 1.5,
+      "end": 3.0,
+      "broll_topic": "cash_money_falling_down"
+    },
+    {
+      "start": 3.0,
+      "end": 3.8,
+      "broll_topic": "phone_payment_received"
+    },
+    {
+      "start": 3.8,
+      "end": 5.0,
+      "broll_topic": "homepage_hero_branded"
+    },
+    {
+      "start": 5.0,
+      "end": 6.0,
+      "broll_topic": "calendar_monthly_recurring"
+    },
+    {
+      "start": 6.0,
+      "end": 7.0,
+      "broll_topic": "subscription_revenue_chart"
+    },
+    {
+      "start": 7.0,
+      "end": 8.0,
+      "broll_topic": "community_members_avatars"
+    },
+    {
+      "start": 8.0,
+      "end": 9.0,
+      "broll_topic": "phone_submit_form"
+    },
+    {
+      "start": 9.0,
+      "end": 9.7,
+      "broll_topic": "trophy_award_winner"
+    },
+    {
+      "start": 9.7,
+      "end": 10.3,
+      "broll_topic": "loop_repeat_cycle_arrows"
+    },
+    {
+      "start": 10.3,
+      "end": 10.7,
+      "broll_topic": "phone_bio_link_tap"
+    },
+    {
+      "start": 10.7,
+      "end": 11.0,
+      "broll_topic": "shg_brand_endcard"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "Get paid for being in a Discord? It's a thing now. The Side Hustle Guild \u2014 real cash, every month.",
+  "hashtags": [
+    "#discordcommunity",
+    "#cashprize",
+    "#sidehustle",
+    "#monthlypayouts"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community."
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "id": "shg_102_built_a_side_hustle",
+  "title": "Built a Side Hustle?",
+  "angle": "money_hook",
+  "duration_sec": 11,
+  "voiceover": "You built a side hustle. Nobody knows. We pay real cash for real side hustles. Every month. The Side Hustle Guild. Submit a Hustle Card. Judges score it. Winners get paid live on stream. Link in bio.",
+  "captions": [
+    {
+      "start": 0.0,
+      "end": 1.5,
+      "text": "BUILT A SIDE HUSTLE?"
+    },
+    {
+      "start": 1.5,
+      "end": 3.0,
+      "text": "Nobody knows."
+    },
+    {
+      "start": 3.0,
+      "end": 5.0,
+      "text": "We pay cash for real ones."
+    },
+    {
+      "start": 5.0,
+      "end": 6.5,
+      "text": "The Side Hustle Guild"
+    },
+    {
+      "start": 6.5,
+      "end": 8.0,
+      "text": "Submit. Get scored. Win."
+    },
+    {
+      "start": 8.0,
+      "end": 9.5,
+      "text": "Live on stream. Day 22."
+    },
+    {
+      "start": 9.5,
+      "end": 11.0,
+      "text": "Link in bio."
+    }
+  ],
+  "scenes": [
+    {
+      "start": 0.0,
+      "end": 1.5,
+      "broll_topic": "etsy_shop_owner_packing"
+    },
+    {
+      "start": 1.5,
+      "end": 3.0,
+      "broll_topic": "empty_dashboard_no_sales"
+    },
+    {
+      "start": 3.0,
+      "end": 4.5,
+      "broll_topic": "cash_dollar_bills_table"
+    },
+    {
+      "start": 4.5,
+      "end": 5.5,
+      "broll_topic": "homepage_hero_branded"
+    },
+    {
+      "start": 5.5,
+      "end": 6.5,
+      "broll_topic": "phone_submit_form"
+    },
+    {
+      "start": 6.5,
+      "end": 7.5,
+      "broll_topic": "judges_scoring_review"
+    },
+    {
+      "start": 7.5,
+      "end": 8.5,
+      "broll_topic": "winner_announcement_stream"
+    },
+    {
+      "start": 8.5,
+      "end": 9.0,
+      "broll_topic": "live_stage_discord_audio"
+    },
+    {
+      "start": 9.0,
+      "end": 9.5,
+      "broll_topic": "calendar_22nd_circled"
+    },
+    {
+      "start": 9.5,
+      "end": 10.2,
+      "broll_topic": "phone_bio_link_tap"
+    },
+    {
+      "start": 10.2,
+      "end": 10.7,
+      "broll_topic": "shg_brand_endcard"
+    },
+    {
+      "start": 10.7,
+      "end": 11.0,
+      "broll_topic": "shg_brand_endcard"
+    }
+  ],
+  "cta_url": "https://thesidehustleguild.com/",
+  "post_caption": "You built it. We pay for it. The Side Hustle Guild \u2014 real cash contest, every month.",
+  "hashtags": [
+    "#sidehustle",
+    "#cashprize",
+    "#builders",
+    "#etsyshop"
+  ],
+  "brand_id": "thesidehustleguild",
+  "aspect_ratio": {
+    "width": 1080,
+    "height": 1920
+  },
+  "platforms": [
+    "tiktok",
+    "reels",
+    "shorts"
+  ],
+  "compliance": {
+    "earnings_disclaimer": "Member results not typical. Educational community."
+  }
+}
