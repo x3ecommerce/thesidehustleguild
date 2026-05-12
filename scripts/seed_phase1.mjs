@@ -144,7 +144,7 @@ async function ensureMember({ whopId, discordId, emailHash, signupDate, tier, st
        VALUES (?,?,?,?,?,?,?,?,?)`,
       ["affiliate_rates", "v2.0", "2026-05-01T00:00:00Z", null,
        "1d17c0d0000000000000000000000000seed0001",
-       "https://github.com/frontdeskglobal/thesidehustleguild/blob/main/34_AFFILIATE_PROGRAM_v2_OPERATING_DOC.md",
+       "https://github.com/x3ecommerce/thesidehustleguild/blob/main/34_AFFILIATE_PROGRAM_v2_OPERATING_DOC.md",
        "Phase 1 seed: affiliate rate ladder v2.0",
        "FOUNDER_JOSHUA", "2026-05-01T00:00:00Z"]
     );
