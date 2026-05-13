@@ -1,0 +1,39 @@
+# The Side Hustle Guild — robots.txt
+# https://thesidehustleguild.com
+
+# Allow all well-behaved crawlers everywhere except internal surfaces
+User-agent: *
+Allow: /
+Disallow: /finance/
+Disallow: /functions/
+Disallow: /api/
+Disallow: /_trust_pages_stage/
+
+# Block AI training crawlers that don't materially benefit our reach.
+# (Allowed: Googlebot, Bingbot, Applebot, DuckDuckBot, PerplexityBot — they send referral traffic.)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# Sitemap location
+Sitemap: https://thesidehustleguild.com/sitemap.xml

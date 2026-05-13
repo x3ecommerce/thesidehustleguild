@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage — top priority -->
+  <url>
+    <loc>https://thesidehustleguild.com/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Public revenue surfaces -->
+  <url>
+    <loc>https://thesidehustleguild.com/affiliate/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://thesidehustleguild.com/sponsors/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Public content -->
+  <url>
+    <loc>https://thesidehustleguild.com/submissions/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thesidehustleguild.com/submit/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thesidehustleguild.com/videos/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thesidehustleguild.com/sunday-reset-planner/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Trust pages (required for Whop Discover, lower priority for SEO) -->
+  <url>
+    <loc>https://thesidehustleguild.com/privacy/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://thesidehustleguild.com/terms/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://thesidehustleguild.com/cookies/</loc>
+    <lastmod>2026-05-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>
