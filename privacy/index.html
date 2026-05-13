@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="The Side Hustle Guild Privacy Policy — what we collect, why, who we share with, and your rights. Plain English first, legal text second.">
+<meta name="theme-color" content="#27384A">
+<meta name="robots" content="index, follow">
+<title>Privacy Policy — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/SHG-Logo-256x256.png">
+<style>
+  :root {
+    --cream: #F8F4ED; --cream-2: #F2EBDD; --paper: #FDFBF6;
+    --slate: #27384A; --slate-soft: #3A4D62;
+    --sunrise: #E89B3B; --sage: #A8C9A0; --ink: #1E1E1E;
+    --line: rgba(39,56,74,0.10); --line-strong: rgba(39,56,74,0.20);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { font-family: 'Manrope', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--slate); line-height: 1.15; letter-spacing: -0.01em; }
+  a { color: var(--slate); text-decoration: underline; text-decoration-color: var(--sunrise); text-underline-offset: 3px; }
+  a:hover { color: var(--sunrise); }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(248,244,237,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .container { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; max-width: 1180px; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; color: var(--slate); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo:hover { color: var(--slate); }
+  .logo-dot { width: 12px; height: 12px; background: var(--sunrise); border-radius: 50%; box-shadow: 0 0 12px rgba(232,155,59,0.5); }
+  .nav-cta { background: var(--slate); color: var(--cream) !important; padding: 9px 18px; font-weight: 600; font-size: 13px; border-radius: 6px; text-decoration: none !important; }
+  .nav-cta:hover { background: var(--sunrise); color: var(--slate) !important; }
+
+  header.page-head { padding: 72px 0 32px; background: radial-gradient(ellipse 90% 60% at 50% 0%, var(--cream-2) 0%, var(--cream) 60%); border-bottom: 1px solid var(--line); }
+  header.page-head h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; margin-bottom: 16px; max-width: 720px; }
+  header.page-head .lead { font-size: 19px; color: var(--slate-soft); max-width: 640px; font-family: 'Fraunces', serif; font-weight: 400; line-height: 1.5; }
+  .updated-badge { display: inline-flex; align-items: center; gap: 8px; background: white; padding: 8px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; color: var(--slate); border: 1px solid var(--line); margin-bottom: 28px; }
+  .updated-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); }
+
+  .toc { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 24px 28px; margin: 40px 0 56px; }
+  .toc-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; color: var(--slate-soft); margin-bottom: 14px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; padding: 7px 0; font-size: 15px; }
+  .toc ol li::before { content: counter(toc, decimal-leading-zero) "."; color: var(--sunrise); font-family: 'Fraunces', serif; font-weight: 700; margin-right: 14px; font-size: 13px; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; text-decoration-color: var(--sunrise); }
+
+  main { padding: 0 0 96px; }
+  section.policy-section { padding: 36px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 96px; }
+  section.policy-section:last-of-type { border-bottom: none; }
+  section.policy-section h2 { font-size: 28px; margin-bottom: 8px; }
+  section.policy-section .section-num { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--sunrise); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+
+  .plain { background: rgba(168,201,160,0.14); border-left: 3px solid var(--sage); padding: 18px 22px; border-radius: 0 8px 8px 0; margin: 18px 0 22px; }
+  .plain .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; color: var(--slate); margin-bottom: 6px; display: block; }
+  .plain p { font-size: 15.5px; line-height: 1.55; color: var(--slate); margin: 0; }
+  .plain p strong { font-weight: 700; }
+
+  .legal { font-size: 15px; color: var(--ink); }
+  .legal p { margin-bottom: 12px; }
+  .legal ul { margin: 8px 0 14px 28px; }
+  .legal ul li { margin-bottom: 6px; font-size: 15px; }
+  .legal strong { color: var(--slate); font-weight: 700; }
+
+  .contact-card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 32px; margin-top: 56px; }
+  .contact-card h3 { font-size: 22px; margin-bottom: 14px; }
+  .contact-card .email { font-family: 'Fraunces', serif; font-size: 18px; color: var(--sunrise); font-weight: 600; }
+
+  footer { background: var(--slate); color: var(--cream); padding: 56px 0 32px; }
+  footer .container { max-width: 1180px; }
+  footer .foot-bottom { padding-top: 24px; border-top: 1px solid rgba(248,244,237,0.12); display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 13px; color: rgba(248,244,237,0.65); }
+  footer a { color: var(--cream); text-decoration: none; }
+  footer a:hover { color: var(--sunrise); }
+  .foot-links { display: flex; gap: 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><span class="logo-dot"></span> The Side Hustle Guild</a>
+    <a href="/" class="nav-cta">Back to home →</a>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <div class="updated-badge"><span class="dot"></span> Last updated: May 13, 2026 · <a href="#changelog" style="margin-left: 4px; color: var(--slate);">changelog</a></div>
+    <h1>Privacy Policy</h1>
+    <p class="lead">What we collect, why we collect it, and your rights. Plain English first. The legal text is right below each summary if you want to read it.</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc-title">In this policy</div>
+      <ol>
+        <li><a href="#who-we-are">Who we are</a></li>
+        <li><a href="#what-we-collect">What we collect</a></li>
+        <li><a href="#how-we-use">How we use it</a></li>
+        <li><a href="#who-we-share-with">Who we share with</a></li>
+        <li><a href="#cookies">Cookies and tracking</a></li>
+        <li><a href="#your-rights">Your rights (GDPR, CCPA)</a></li>
+        <li><a href="#data-retention">Data retention</a></li>
+        <li><a href="#security">How we protect your data</a></li>
+        <li><a href="#children">Children's privacy</a></li>
+        <li><a href="#changes">Changes to this policy</a></li>
+        <li><a href="#contact">Contact us</a></li>
+      </ol>
+    </nav>
+
+    <section class="policy-section" id="who-we-are">
+      <div class="section-num">Section 01</div>
+      <h2>Who we are</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>The Side Hustle Guild is operated by <strong>X3 E-Commerce LLC</strong>, a U.S. company. When you join the Guild, X3 E-Commerce LLC is the "data controller" — the entity responsible for your data.</p>
+      </div>
+      <div class="legal">
+        <p>X3 E-Commerce LLC ("we", "us", "our") doing business as The Side Hustle Guild ("the Guild") is the controller of personal data processed in connection with this website (thesidehustleguild.com), our Discord server, our paid membership tiers (sold through Whop), and any related services we operate.</p>
+        <p>Registered business address available on request: <a href="mailto:legal@thesidehustleguild.com">legal@thesidehustleguild.com</a>.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="what-we-collect">
+      <div class="section-num">Section 02</div>
+      <h2>What we collect</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Three buckets: <strong>what you give us</strong> (email, name, payment via Whop/Stripe), <strong>what Discord shares</strong> (your username and role when you join the server), and <strong>what we measure</strong> (anonymous page views, which buttons you click, technical info like browser type). We do not collect government IDs, biometric data, or precise GPS location.</p>
+      </div>
+      <div class="legal">
+        <p><strong>2.1 Information you provide.</strong></p>
+        <ul>
+          <li>Email address (for newsletters, account confirmation, support)</li>
+          <li>Display name and Discord username</li>
+          <li>Payment information — processed by Whop and Stripe; we receive transaction metadata (date, amount, last 4 of card) but not full card numbers</li>
+          <li>Hustle Card submissions, forum posts, messages you send in our Discord, contest entries</li>
+          <li>Tax info (W-9, address) only if you receive prize payouts over $600/year</li>
+        </ul>
+        <p><strong>2.2 Information automatically collected.</strong></p>
+        <ul>
+          <li>Anonymous analytics events (pages viewed, buttons clicked) — stored in Cloudflare and our D1 database</li>
+          <li>Technical data — IP address (truncated for analytics), browser user-agent, device type</li>
+          <li>Server-side logs of API requests for security and debugging</li>
+        </ul>
+        <p><strong>2.3 Information from third parties.</strong></p>
+        <ul>
+          <li>From Discord: your Discord ID, username, server-role when you join the Guild</li>
+          <li>From Whop: subscription status, renewal date, affiliate referral code if applicable</li>
+          <li>From Stripe: payment confirmation, refund status</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="policy-section" id="how-we-use">
+      <div class="section-num">Section 03</div>
+      <h2>How we use it</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>To run the Guild — verify your membership, send you the newsletter, process prize payouts, keep things working. We do <strong>not</strong> sell your data to advertisers. We do <strong>not</strong> train AI models on your private messages.</p>
+      </div>
+      <div class="legal">
+        <p>We process your personal data for the following purposes:</p>
+        <ul>
+          <li><strong>Service delivery:</strong> grant Discord access, verify payment status, deliver contest payouts, send transactional emails</li>
+          <li><strong>Communication:</strong> respond to your support requests, send weekly newsletter (you can unsubscribe anytime)</li>
+          <li><strong>Improvement:</strong> understand which content resonates, measure conversion, fix broken pages</li>
+          <li><strong>Legal:</strong> comply with tax reporting (1099 for prize winners over $600), respond to lawful requests, defend our legal interests</li>
+          <li><strong>Security:</strong> detect fraud, block bots, prevent abuse of the platform</li>
+        </ul>
+        <p>Our legal bases under GDPR are: <strong>contract</strong> (delivering the service you paid for), <strong>legitimate interest</strong> (analytics, security), and <strong>consent</strong> (marketing emails, optional cookies).</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="who-we-share-with">
+      <div class="section-num">Section 04</div>
+      <h2>Who we share with</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Only the vendors that help us run the Guild — none of them get your data to use for their own marketing. They process it only to provide their service to us.</p>
+      </div>
+      <div class="legal">
+        <p>We share personal data with the following categories of service providers ("data processors"), each bound by data processing agreements:</p>
+        <ul>
+          <li><strong>Payment & subscription:</strong> Whop (merchant of record), Stripe (payments)</li>
+          <li><strong>Hosting & infrastructure:</strong> Cloudflare (Pages, Workers, D1, R2, Email Routing)</li>
+          <li><strong>Email:</strong> Resend (transactional + newsletter)</li>
+          <li><strong>Community platform:</strong> Discord</li>
+          <li><strong>Forms:</strong> Tally</li>
+          <li><strong>AI processing:</strong> Anthropic (Claude API, used for content moderation and concierge messages — your private DMs are not sent)</li>
+          <li><strong>Analytics:</strong> Our own first-party D1 database (no third-party analytics tool sells your data)</li>
+          <li><strong>Tax / accounting:</strong> Our accountant and the IRS (only for payouts ≥ $600/year)</li>
+        </ul>
+        <p>We will disclose data to law enforcement only when legally required (e.g., valid subpoena). We will notify you unless prohibited by law.</p>
+        <p><strong>We do not sell your personal information.</strong> We do not share it with advertisers, data brokers, or AI training datasets.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="cookies">
+      <div class="section-num">Section 05</div>
+      <h2>Cookies and tracking</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>We use a small number of cookies. The strictly-necessary ones are always on (they're what makes the site work). Everything else is optional — you control it in the cookie banner at the bottom of the page, or by visiting <a href="/cookies/">our cookies preferences page</a>.</p>
+      </div>
+      <div class="legal">
+        <p><strong>5.1 Strictly necessary (always on).</strong> Session cookies, CSRF tokens, login state. Cannot be disabled without breaking the site.</p>
+        <p><strong>5.2 Analytics (optional).</strong> A first-party cookie that records anonymous page visits to our own database. No third-party analytics provider.</p>
+        <p><strong>5.3 Marketing (optional).</strong> Used only if we run a paid ad campaign — to measure conversion. Off by default.</p>
+        <p>You can change your preferences anytime at <a href="/cookies/">/cookies/</a>. EU and UK visitors will see a consent banner on first visit.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="your-rights">
+      <div class="section-num">Section 06</div>
+      <h2>Your rights (GDPR, CCPA)</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>You can ask us to show you, correct, or delete your data. Email <a href="mailto:privacy@thesidehustleguild.com">privacy@thesidehustleguild.com</a> and we respond within 30 days. California residents have additional rights under CCPA.</p>
+      </div>
+      <div class="legal">
+        <p>Under GDPR (EU/UK) and CCPA (California), you have the right to:</p>
+        <ul>
+          <li><strong>Access</strong> the personal data we hold about you</li>
+          <li><strong>Correct</strong> inaccurate data</li>
+          <li><strong>Delete</strong> your data ("right to erasure")</li>
+          <li><strong>Export</strong> your data in a portable format</li>
+          <li><strong>Object</strong> to specific processing (e.g., marketing)</li>
+          <li><strong>Withdraw consent</strong> at any time without affecting prior lawful processing</li>
+          <li><strong>Lodge a complaint</strong> with your local data protection authority</li>
+        </ul>
+        <p>To exercise any of these rights, email <a href="mailto:privacy@thesidehustleguild.com">privacy@thesidehustleguild.com</a>. We will verify your identity and respond within 30 days (or 45 days for complex requests, with notice).</p>
+        <p>California residents: you have the right to opt out of "sale" of personal information. We do not sell personal information, so there is no opt-out to exercise — but you may still confirm this in writing.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="data-retention">
+      <div class="section-num">Section 07</div>
+      <h2>Data retention</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>We keep your data while you're a member, plus a reasonable period after — for tax records, fraud prevention, and in case you want to come back. You can request deletion anytime.</p>
+      </div>
+      <div class="legal">
+        <p>Default retention periods:</p>
+        <ul>
+          <li><strong>Account data:</strong> while active + 24 months after cancellation</li>
+          <li><strong>Payment records:</strong> 7 years (IRS requirement)</li>
+          <li><strong>Tax forms (W-9, 1099):</strong> 7 years (IRS requirement)</li>
+          <li><strong>Analytics events:</strong> 12 months in raw form, then aggregated indefinitely</li>
+          <li><strong>Discord messages:</strong> retained by Discord per their policies; the Guild does not maintain an independent archive of member chat</li>
+          <li><strong>Email logs:</strong> 6 months</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="policy-section" id="security">
+      <div class="section-num">Section 08</div>
+      <h2>How we protect your data</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>TLS everywhere, encrypted databases, short-lived access tokens, and strict permissions on who can read what. If we ever have a breach affecting you, we tell you within 72 hours.</p>
+      </div>
+      <div class="legal">
+        <p>Technical and organizational measures include: TLS 1.3 for all traffic, encrypted at-rest storage (Cloudflare D1, R2), restricted access via principle of least privilege, regular rotation of API tokens, no plaintext storage of credentials, audit logs of administrative actions.</p>
+        <p>In the event of a personal data breach likely to result in a high risk to your rights, we will notify you and the relevant supervisory authority within 72 hours of becoming aware, per GDPR Art. 33–34.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="children">
+      <div class="section-num">Section 09</div>
+      <h2>Children's privacy</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>The Guild is for adults building income. You must be at least 18 to join. We don't knowingly collect data from anyone under 18.</p>
+      </div>
+      <div class="legal">
+        <p>The Guild is intended for users aged 18 and over. We do not knowingly collect personal data from children. If you believe we have data from someone under 18, contact <a href="mailto:privacy@thesidehustleguild.com">privacy@thesidehustleguild.com</a> and we will delete it.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="changes">
+      <div class="section-num">Section 10</div>
+      <h2>Changes to this policy</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>If we make material changes, we'll email all active members at least 14 days before the changes take effect, and ask you to re-acknowledge on next login.</p>
+      </div>
+      <div class="legal">
+        <p>We may update this policy from time to time. Changes are governed by:</p>
+        <ul>
+          <li><strong>Minor changes</strong> (typo fixes, clarifications): updated last-modified date, no notice</li>
+          <li><strong>Material changes</strong> (new processing purposes, new data categories, new processors): 14-day advance notice via email + re-acknowledgement banner on next login</li>
+        </ul>
+        <p id="changelog"><strong>Change log:</strong></p>
+        <ul>
+          <li><strong>v1.0 — May 13, 2026:</strong> Initial publication</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="policy-section" id="contact">
+      <div class="section-num">Section 11</div>
+      <h2>Contact us</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Privacy questions? Email <strong>privacy@thesidehustleguild.com</strong>. General questions? <strong>hello@thesidehustleguild.com</strong>.</p>
+      </div>
+      <div class="legal">
+        <div class="contact-card">
+          <h3>Reach the Data Protection contact</h3>
+          <p>For privacy requests, access requests, deletion requests, or any GDPR/CCPA-related concern:</p>
+          <p class="email"><a href="mailto:privacy@thesidehustleguild.com">privacy@thesidehustleguild.com</a></p>
+          <p style="margin-top: 14px; color: var(--slate-soft); font-size: 14.5px;">For all other inquiries: <a href="mailto:hello@thesidehustleguild.com">hello@thesidehustleguild.com</a></p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-bottom">
+      <span>© 2026 X3 E-Commerce LLC dba The Side Hustle Guild. All rights reserved.</span>
+      <div class="foot-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/cookies/">Cookies</a>
+        <a href="mailto:legal@thesidehustleguild.com">Legal contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/cookie-banner.js" defer></script>
+
+</body>
+</html>

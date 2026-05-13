@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="The Side Hustle Guild Terms of Service — what you agree to when you join. Plain English first, legal text second.">
+<meta name="theme-color" content="#27384A">
+<meta name="robots" content="index, follow">
+<title>Terms of Service — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/SHG-Logo-256x256.png">
+<style>
+  :root {
+    --cream: #F8F4ED; --cream-2: #F2EBDD; --paper: #FDFBF6;
+    --slate: #27384A; --slate-soft: #3A4D62;
+    --sunrise: #E89B3B; --sage: #A8C9A0; --ink: #1E1E1E; --rust: #C23B22;
+    --line: rgba(39,56,74,0.10); --line-strong: rgba(39,56,74,0.20);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { font-family: 'Manrope', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--slate); line-height: 1.15; letter-spacing: -0.01em; }
+  a { color: var(--slate); text-decoration: underline; text-decoration-color: var(--sunrise); text-underline-offset: 3px; }
+  a:hover { color: var(--sunrise); }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(248,244,237,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .container { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; max-width: 1180px; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; color: var(--slate); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo:hover { color: var(--slate); }
+  .logo-dot { width: 12px; height: 12px; background: var(--sunrise); border-radius: 50%; box-shadow: 0 0 12px rgba(232,155,59,0.5); }
+  .nav-cta { background: var(--slate); color: var(--cream) !important; padding: 9px 18px; font-weight: 600; font-size: 13px; border-radius: 6px; text-decoration: none !important; }
+  .nav-cta:hover { background: var(--sunrise); color: var(--slate) !important; }
+
+  header.page-head { padding: 72px 0 32px; background: radial-gradient(ellipse 90% 60% at 50% 0%, var(--cream-2) 0%, var(--cream) 60%); border-bottom: 1px solid var(--line); }
+  header.page-head h1 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; margin-bottom: 16px; max-width: 720px; }
+  header.page-head .lead { font-size: 19px; color: var(--slate-soft); max-width: 640px; font-family: 'Fraunces', serif; font-weight: 400; line-height: 1.5; }
+  .updated-badge { display: inline-flex; align-items: center; gap: 8px; background: white; padding: 8px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; color: var(--slate); border: 1px solid var(--line); margin-bottom: 28px; }
+  .updated-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); }
+
+  .toc { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 24px 28px; margin: 40px 0 56px; }
+  .toc-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; color: var(--slate-soft); margin-bottom: 14px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; padding: 7px 0; font-size: 15px; }
+  .toc ol li::before { content: counter(toc, decimal-leading-zero) "."; color: var(--sunrise); font-family: 'Fraunces', serif; font-weight: 700; margin-right: 14px; font-size: 13px; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; text-decoration-color: var(--sunrise); }
+
+  main { padding: 0 0 96px; }
+  section.policy-section { padding: 36px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 96px; }
+  section.policy-section:last-of-type { border-bottom: none; }
+  section.policy-section h2 { font-size: 28px; margin-bottom: 8px; }
+  section.policy-section .section-num { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--sunrise); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+
+  .plain { background: rgba(168,201,160,0.14); border-left: 3px solid var(--sage); padding: 18px 22px; border-radius: 0 8px 8px 0; margin: 18px 0 22px; }
+  .plain .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 700; color: var(--slate); margin-bottom: 6px; display: block; }
+  .plain p { font-size: 15.5px; line-height: 1.55; color: var(--slate); margin: 0; }
+  .plain p strong { font-weight: 700; }
+
+  .legal { font-size: 15px; color: var(--ink); }
+  .legal p { margin-bottom: 12px; }
+  .legal ul { margin: 8px 0 14px 28px; }
+  .legal ul li { margin-bottom: 6px; font-size: 15px; }
+  .legal strong { color: var(--slate); font-weight: 700; }
+
+  .callout-warning { background: rgba(194,59,34,0.06); border-left: 3px solid var(--rust); padding: 18px 22px; border-radius: 0 8px 8px 0; margin: 22px 0; }
+  .callout-warning strong { color: var(--rust); font-weight: 700; }
+  .callout-warning p { font-size: 15px; color: var(--ink); margin: 0; }
+
+  footer { background: var(--slate); color: var(--cream); padding: 56px 0 32px; }
+  footer .container { max-width: 1180px; }
+  footer .foot-bottom { padding-top: 24px; border-top: 1px solid rgba(248,244,237,0.12); display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 13px; color: rgba(248,244,237,0.65); }
+  footer a { color: var(--cream); text-decoration: none; }
+  footer a:hover { color: var(--sunrise); }
+  .foot-links { display: flex; gap: 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><span class="logo-dot"></span> The Side Hustle Guild</a>
+    <a href="/" class="nav-cta">Back to home →</a>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <div class="updated-badge"><span class="dot"></span> Last updated: May 13, 2026 · v1.0 · <a href="#changelog" style="margin-left: 4px; color: var(--slate);">changelog</a></div>
+    <h1>Terms of Service</h1>
+    <p class="lead">What you agree to when you join the Guild. Plain English first. Read once. The serious bits — refunds, prize eligibility, no-guarantee — are clearly flagged.</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc-title">In these terms</div>
+      <ol>
+        <li><a href="#agreement">Your agreement</a></li>
+        <li><a href="#eligibility">Eligibility</a></li>
+        <li><a href="#membership">Membership & billing</a></li>
+        <li><a href="#refunds">Refunds & cancellation</a></li>
+        <li><a href="#contest-rules">Contest rules & prize eligibility</a></li>
+        <li><a href="#no-guarantee">No income guarantee</a></li>
+        <li><a href="#user-content">Your content & content rights</a></li>
+        <li><a href="#acceptable-use">Acceptable use</a></li>
+        <li><a href="#affiliate">Affiliate program terms</a></li>
+        <li><a href="#sponsor">Sponsor terms</a></li>
+        <li><a href="#termination">Termination</a></li>
+        <li><a href="#liability">Limitation of liability</a></li>
+        <li><a href="#disputes">Dispute resolution & arbitration</a></li>
+        <li><a href="#governing-law">Governing law</a></li>
+        <li><a href="#changes">Changes to these terms</a></li>
+        <li><a href="#contact">Contact us</a></li>
+      </ol>
+    </nav>
+
+    <section class="policy-section" id="agreement">
+      <div class="section-num">Section 01</div>
+      <h2>Your agreement</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>By using thesidehustleguild.com, joining our Discord, or buying a membership, you agree to these terms and our <a href="/privacy/">Privacy Policy</a>. If you don't agree, please don't use the service.</p>
+      </div>
+      <div class="legal">
+        <p>These Terms of Service ("Terms") form a binding agreement between you and X3 E-Commerce LLC, a U.S. limited liability company doing business as The Side Hustle Guild ("the Guild", "we", "us", "our"). By accessing or using the Guild website, Discord server, membership, or related services (collectively, the "Service"), you agree to be bound by these Terms.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="eligibility">
+      <div class="section-num">Section 02</div>
+      <h2>Eligibility</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>You must be at least 18 years old. The Guild is for adults working on side hustles or building businesses.</p>
+      </div>
+      <div class="legal">
+        <p>To use the Service you must (a) be at least 18 years of age, (b) have legal capacity to enter into a contract under the laws of your jurisdiction, and (c) not be barred from receiving the Service under applicable law. You represent and warrant that the information you provide is accurate and that you will keep it up to date.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="membership">
+      <div class="section-num">Section 03</div>
+      <h2>Membership & billing</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Paid memberships are billed monthly through Whop (our merchant of record). You can cancel anytime in your Whop dashboard. Your membership stays active until the end of your paid period.</p>
+      </div>
+      <div class="legal">
+        <p>Paid tiers (currently Founder at $9/mo and Lab Member at $19/mo) are processed through <a href="https://whop.com">Whop</a> acting as merchant of record. Whop's own terms apply to the billing transaction. Subscriptions auto-renew monthly until canceled.</p>
+        <p><strong>Price changes:</strong> Founder-tier pricing of $9/mo is locked for life for the first 50 Founders. After the 50-member cap, new Founder signups pay the then-current rate. Existing Lab Members are notified 30 days before any price change.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="refunds">
+      <div class="section-num">Section 04</div>
+      <h2>Refunds & cancellation</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>You can cancel anytime — you keep access until your current period ends, then it stops. We offer a 7-day refund window for first-time members. After that, no partial refunds on monthly subscriptions.</p>
+      </div>
+      <div class="legal">
+        <p><strong>Cancellation:</strong> You may cancel at any time via your Whop dashboard or by emailing <a href="mailto:billing@thesidehustleguild.com">billing@thesidehustleguild.com</a>. Cancellation takes effect at the end of the current billing period.</p>
+        <p><strong>Refunds:</strong> First-time members may request a full refund within 7 days of initial payment, no questions asked. After 7 days, refunds are at our sole discretion. Refunds are processed through Whop and may take 5–10 business days to appear on your card.</p>
+        <p><strong>No partial-month refunds.</strong> If you cancel mid-month, your access continues to the end of the paid period; no prorated refunds are issued.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="contest-rules">
+      <div class="section-num">Section 05</div>
+      <h2>Contest rules & prize eligibility</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>The monthly contest prize pool is 25% of monthly subscription revenue from active members. Prizes are awarded based on the contest theme published each month. To collect a prize over $600 in a year, you'll need to provide a W-9 (U.S.) or equivalent tax info.</p>
+      </div>
+      <div class="legal">
+        <p><strong>5.1 Pool funding.</strong> The monthly prize pool equals 25% of net monthly subscription revenue from active Guild memberships, calculated after Whop's processing fees and refunds. The pool is reset and recomputed on the 1st of each calendar month.</p>
+        <p><strong>5.2 Eligibility.</strong> Only paid members in good standing as of the contest closing date are eligible. Founder and Lab Member tiers are equally eligible. Members who have been banned, refunded, or suspended within the contest period are not eligible.</p>
+        <p><strong>5.3 Judging.</strong> Each season's theme, judging criteria, and submission window are published in the Guild Discord at the start of the period. Judging is conducted by Guild leadership and, where applicable, invited guest judges. Decisions are final.</p>
+        <p><strong>5.4 Payouts.</strong> Winners are paid within 14 days of contest close via Stripe Connect, PayPal, or check, at the winner's election. U.S. winners receiving aggregate prizes ≥ $600 in a calendar year must submit a valid IRS Form W-9 before payout. International winners may be subject to applicable withholding.</p>
+        <p><strong>5.5 Void where prohibited.</strong> The contest is void where prohibited by law. Members residing in jurisdictions that restrict participation are not eligible.</p>
+        <p><strong>5.6 No purchase necessary alternative.</strong> Where required by law, a no-purchase-necessary entry method is available — mail a 3x5 card with your name, email, and Discord username to the registered business address, with one entry per envelope per contest period.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="no-guarantee">
+      <div class="section-num">Section 06</div>
+      <h2>No income guarantee</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>The Guild is an educational community, not an income product. We do not guarantee that you will make money, win a prize, or achieve any specific result. Member results vary widely.</p>
+      </div>
+      <div class="callout-warning">
+        <p><strong>Important.</strong> Joining the Guild does not guarantee any income, prize, sale, or business outcome. Earnings examples shared by members are not typical and are not promises of similar results. Building a side hustle requires work, time, and luck — and most attempts do not generate significant income. You should consult your own financial, tax, and legal advisors before making decisions based on Guild content.</p>
+      </div>
+      <div class="legal">
+        <p>You acknowledge that the Service is provided for educational, entertainment, and community purposes. We make no representations or warranties regarding income, financial gain, prize eligibility, or business success. Any results shared by members are individual experiences and are not typical, average, or guaranteed.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="user-content">
+      <div class="section-num">Section 07</div>
+      <h2>Your content & content rights</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>You keep ownership of what you post (Hustle Cards, comments, contest submissions). By posting, you grant us a license to display it inside the Guild and use it in marketing. You can ask us to remove it anytime.</p>
+      </div>
+      <div class="legal">
+        <p>You retain all ownership and intellectual property rights in content you submit to the Service ("User Content"). By submitting User Content, you grant the Guild a worldwide, non-exclusive, royalty-free, sublicensable, transferable license to host, display, reproduce, modify, and distribute that content for the purpose of operating, promoting, and improving the Service.</p>
+        <p>You represent that your User Content does not infringe the rights of any third party and complies with applicable law. You may request removal of your User Content by emailing <a href="mailto:legal@thesidehustleguild.com">legal@thesidehustleguild.com</a>; we will honor reasonable removal requests within 30 days, except where content has been incorporated into other lawful uses (e.g., a published case study).</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="acceptable-use">
+      <div class="section-num">Section 08</div>
+      <h2>Acceptable use</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Don't be a jerk. Don't spam. Don't promote scams, MLMs, get-rich-quick schemes, gambling, illegal stuff, or anything that exploits other members. Don't pretend to be someone you're not.</p>
+      </div>
+      <div class="legal">
+        <p>You agree not to:</p>
+        <ul>
+          <li>Post content that is unlawful, defamatory, harassing, hateful, threatening, or invasive of privacy</li>
+          <li>Promote multi-level marketing schemes, pyramid schemes, gambling, financial fraud, "guru" courses with fake testimonials, or any unregistered investment offering</li>
+          <li>Impersonate any person or entity, or misrepresent your affiliation with any person or entity</li>
+          <li>Spam, send unsolicited bulk messages, or use the Service for mass cold outreach</li>
+          <li>Interfere with or disrupt the Service or any servers or networks connected to it</li>
+          <li>Use automated systems (bots, scrapers) to access or interact with the Service without our written consent</li>
+          <li>Reverse-engineer, decompile, or attempt to extract source code from any part of the Service</li>
+        </ul>
+        <p>Violations may result in immediate termination without refund.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="affiliate">
+      <div class="section-num">Section 09</div>
+      <h2>Affiliate program terms</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Active members can refer others and earn 30% recurring commission on their referrals for as long as both parties remain members. Cookies last 30 days. No paid ads using our brand name allowed.</p>
+      </div>
+      <div class="legal">
+        <p><strong>9.1 Eligibility.</strong> Open to active paid Guild members.</p>
+        <p><strong>9.2 Commission.</strong> 30% recurring commission on net subscription revenue from referred members, paid monthly through Whop, with a 30-day attribution cookie window.</p>
+        <p><strong>9.3 Disclosure required.</strong> Affiliates must disclose the affiliate relationship in compliance with FTC guidelines (e.g., "I receive a commission if you join through my link") on social posts, videos, and newsletters.</p>
+        <p><strong>9.4 Prohibited tactics.</strong> No paid search ads on Guild brand terms (e.g., "Side Hustle Guild"). No spam. No fake reviews. No incentivized signups (e.g., "I'll give you $5 if you join through my link").</p>
+        <p><strong>9.5 Termination.</strong> We may terminate affiliate status for any violation, and unpaid commissions may be forfeited.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="sponsor">
+      <div class="section-num">Section 10</div>
+      <h2>Sponsor terms</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>If you sponsor a season, you agree to the sponsorship deliverables in writing. No retroactive content removal once a season has shipped.</p>
+      </div>
+      <div class="legal">
+        <p>Sponsorship agreements are governed by a separate written agreement between the sponsor and the Guild. Sponsorship inventory, pricing, deliverables, and exclusivity terms are detailed in each sponsorship order form. Once a sponsored season has commenced, content created and distributed as part of the sponsorship cannot be retroactively removed without the Guild's consent.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="termination">
+      <div class="section-num">Section 11</div>
+      <h2>Termination</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>You can leave anytime. We can also remove members who break the rules, with or without notice. If we kick someone out for violating these terms, no refund.</p>
+      </div>
+      <div class="legal">
+        <p>You may terminate your membership at any time by canceling through Whop. We may suspend or terminate your access to the Service immediately, without notice or liability, for any reason — including but not limited to a breach of these Terms or our acceptable-use policy. Upon termination, your right to use the Service ceases immediately. Termination does not relieve you of any obligation accrued prior to termination.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="liability">
+      <div class="section-num">Section 12</div>
+      <h2>Limitation of liability</h2>
+      <div class="legal">
+        <p>To the maximum extent permitted by law, in no event shall the Guild, its officers, directors, employees, or agents be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, data, goodwill, or business opportunity — arising out of or in connection with your use of the Service.</p>
+        <p>Our total aggregate liability for any claim arising out of or relating to the Service shall not exceed the greater of (a) the amount you have paid us in the 12 months preceding the claim, or (b) one hundred U.S. dollars ($100).</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="disputes">
+      <div class="section-num">Section 13</div>
+      <h2>Dispute resolution & arbitration</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>If we have a dispute, we agree to try to resolve it informally first. If that fails, individual binding arbitration in the U.S. — not a class action.</p>
+      </div>
+      <div class="legal">
+        <p><strong>13.1 Informal resolution.</strong> Before filing any formal claim, you agree to email <a href="mailto:legal@thesidehustleguild.com">legal@thesidehustleguild.com</a> describing the dispute. We will attempt in good faith to resolve the matter within 30 days.</p>
+        <p><strong>13.2 Binding arbitration.</strong> If informal resolution fails, any dispute arising out of or relating to these Terms or the Service shall be resolved by binding individual arbitration administered by the American Arbitration Association under its Consumer Arbitration Rules. The arbitration shall take place in the U.S. county where the Guild is headquartered, or by video conference at your election.</p>
+        <p><strong>13.3 Class action waiver.</strong> You and the Guild each waive any right to participate in a class action, mass arbitration, or representative action.</p>
+        <p><strong>13.4 Opt-out.</strong> You may opt out of this arbitration clause within 30 days of first joining by emailing <a href="mailto:legal@thesidehustleguild.com">legal@thesidehustleguild.com</a> with the subject "Arbitration Opt-Out" and your full name and account email.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="governing-law">
+      <div class="section-num">Section 14</div>
+      <h2>Governing law</h2>
+      <div class="legal">
+        <p>These Terms are governed by the laws of the State of registration of X3 E-Commerce LLC in the United States, without regard to conflict-of-laws principles. Subject to the arbitration provisions above, any disputes not subject to arbitration shall be resolved exclusively in the state or federal courts located in that State.</p>
+      </div>
+    </section>
+
+    <section class="policy-section" id="changes">
+      <div class="section-num">Section 15</div>
+      <h2>Changes to these terms</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>We may update these terms. Material changes get 14 days notice via email and require you to re-acknowledge next time you log in.</p>
+      </div>
+      <div class="legal">
+        <p>We may modify these Terms from time to time. Minor changes (clarifications, typo fixes) take effect immediately upon posting. Material changes (substantive amendments to your rights or obligations) will be communicated via email at least 14 days in advance and will require re-acknowledgment on next sign-in. Continued use of the Service after the effective date constitutes acceptance.</p>
+        <p id="changelog"><strong>Change log:</strong></p>
+        <ul>
+          <li><strong>v1.0 — May 13, 2026:</strong> Initial publication</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="policy-section" id="contact">
+      <div class="section-num">Section 16</div>
+      <h2>Contact us</h2>
+      <div class="plain">
+        <span class="label">In plain English</span>
+        <p>Legal questions? Email <strong>legal@thesidehustleguild.com</strong>. Billing? <strong>billing@thesidehustleguild.com</strong>.</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-bottom">
+      <span>© 2026 X3 E-Commerce LLC dba The Side Hustle Guild. All rights reserved.</span>
+      <div class="foot-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/cookies/">Cookies</a>
+        <a href="mailto:legal@thesidehustleguild.com">Legal contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/cookie-banner.js" defer></script>
+
+</body>
+</html>

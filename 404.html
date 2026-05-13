@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="That page took a wrong turn. Here's a way back to The Side Hustle Guild.">
+<meta name="theme-color" content="#27384A">
+<meta name="robots" content="noindex">
+<title>Page not found — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/SHG-Logo-256x256.png">
+<style>
+  :root {
+    --cream: #F8F4ED; --cream-2: #F2EBDD; --paper: #FDFBF6;
+    --slate: #27384A; --slate-soft: #3A4D62;
+    --sunrise: #E89B3B; --sage: #A8C9A0; --ink: #1E1E1E;
+    --line: rgba(39,56,74,0.10); --line-strong: rgba(39,56,74,0.20);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Manrope', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--slate); line-height: 1.05; letter-spacing: -0.02em; }
+  a { color: var(--slate); text-decoration: none; transition: color .2s; }
+  a:hover { color: var(--sunrise); }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  nav { background: rgba(248,244,237,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .container { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; max-width: 1180px; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+  .logo-dot { width: 12px; height: 12px; background: var(--sunrise); border-radius: 50%; box-shadow: 0 0 12px rgba(232,155,59,0.5); }
+  .nav-cta { background: var(--slate); color: var(--cream) !important; padding: 9px 18px; font-weight: 600; font-size: 13px; border-radius: 6px; }
+  .nav-cta:hover { background: var(--sunrise); color: var(--slate) !important; }
+
+  main { flex: 1; display: flex; align-items: center; padding: 80px 0; background: radial-gradient(ellipse 70% 50% at 50% 40%, var(--cream-2) 0%, var(--cream) 65%); }
+  .empty-state { text-align: center; max-width: 640px; margin: 0 auto; padding: 0 24px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 10px; background: white; padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 700; color: var(--slate); border: 1px solid var(--line); margin-bottom: 28px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sunrise); }
+
+  .big-404 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(120px, 22vw, 220px); line-height: 0.85; color: var(--slate); letter-spacing: -0.04em; margin-bottom: 12px; }
+  .big-404 .accent { color: var(--sunrise); }
+
+  h1 { font-size: clamp(32px, 5vw, 48px); margin-bottom: 16px; }
+  .lead { font-size: 19px; color: var(--slate-soft); margin-bottom: 40px; font-family: 'Fraunces', serif; font-weight: 400; line-height: 1.5; }
+
+  .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 16px 28px; border-radius: 8px; font-weight: 600; font-size: 15px; transition: all .2s; text-decoration: none; }
+  .btn-primary { background: var(--slate); color: var(--cream); }
+  .btn-primary:hover { background: var(--ink); color: var(--cream); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(39,56,74,0.18); }
+  .btn-ghost { background: transparent; color: var(--slate); border: 1px solid var(--line-strong); }
+  .btn-ghost:hover { border-color: var(--slate); color: var(--slate); transform: translateY(-2px); }
+
+  .quick-links { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 24px; text-align: left; }
+  .quick-links h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--slate-soft); font-family: 'Manrope', sans-serif; font-weight: 700; margin-bottom: 16px; }
+  .quick-links ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+  @media (max-width: 600px) { .quick-links ul { grid-template-columns: 1fr; } }
+  .quick-links li a { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 6px; font-size: 15px; color: var(--slate); transition: background .15s; }
+  .quick-links li a:hover { background: white; color: var(--sunrise); }
+  .quick-links li a::after { content: '→'; opacity: 0.4; transition: opacity .15s, transform .15s; }
+  .quick-links li a:hover::after { opacity: 1; transform: translateX(3px); }
+
+  footer { background: var(--slate); color: var(--cream); padding: 32px 0; }
+  footer .container { max-width: 1180px; }
+  footer .foot-bottom { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 13px; color: rgba(248,244,237,0.65); }
+  footer a { color: var(--cream); }
+  footer a:hover { color: var(--sunrise); }
+  .foot-links { display: flex; gap: 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><span class="logo-dot"></span> The Side Hustle Guild</a>
+    <a href="/" class="nav-cta">Back to home →</a>
+  </div>
+</nav>
+
+<main>
+  <div class="empty-state">
+    <div class="badge"><span class="dot"></span> Page not found · 404</div>
+    <div class="big-404"><span class="accent">4</span>0<span class="accent">4</span></div>
+    <h1>That page took a wrong turn.</h1>
+    <p class="lead">The URL you tried doesn't exist on the Guild. Could be a typo, a moved page, or a broken link from somewhere. Pick a door below.</p>
+
+    <div class="actions">
+      <a href="/" class="btn btn-primary">Back to home →</a>
+      <a href="https://discord.gg/6x6UXC7WQp" class="btn btn-ghost">Join the Discord</a>
+    </div>
+
+    <div class="quick-links">
+      <h2>Or jump to —</h2>
+      <ul>
+        <li><a href="/submissions/">Hustle Cards</a></li>
+        <li><a href="/submit/">Submit a Hustle Card</a></li>
+        <li><a href="/affiliate/">Affiliate program</a></li>
+        <li><a href="/sponsors/">Sponsor a season</a></li>
+        <li><a href="/videos/">Videos</a></li>
+        <li><a href="/sunday-reset-planner/">Sunday Reset Planner</a></li>
+        <li><a href="https://whop.com/the-side-hustle-guild/founder-membership-a9">Founder membership</a></li>
+        <li><a href="mailto:hello@thesidehustleguild.com">Email us</a></li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-bottom">
+      <span>© 2026 X3 E-Commerce LLC dba The Side Hustle Guild</span>
+      <div class="foot-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/cookies/">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/cookie-banner.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Manage your cookie preferences for The Side Hustle Guild. Strictly necessary cookies only by default. You're in control.">
+<meta name="theme-color" content="#27384A">
+<meta name="robots" content="index, follow">
+<title>Cookie Preferences — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,600,700|manrope:400,500,600,700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/SHG-Logo-256x256.png">
+<style>
+  :root {
+    --cream: #F8F4ED; --cream-2: #F2EBDD; --paper: #FDFBF6;
+    --slate: #27384A; --slate-soft: #3A4D62;
+    --sunrise: #E89B3B; --sage: #A8C9A0; --ink: #1E1E1E;
+    --line: rgba(39,56,74,0.10); --line-strong: rgba(39,56,74,0.20);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Manrope', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; color: var(--slate); line-height: 1.15; letter-spacing: -0.01em; }
+  a { color: var(--slate); text-decoration: underline; text-decoration-color: var(--sunrise); text-underline-offset: 3px; }
+  a:hover { color: var(--sunrise); }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(248,244,237,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .container { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; max-width: 1180px; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; color: var(--slate); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo:hover { color: var(--slate); }
+  .logo-dot { width: 12px; height: 12px; background: var(--sunrise); border-radius: 50%; box-shadow: 0 0 12px rgba(232,155,59,0.5); }
+  .nav-cta { background: var(--slate); color: var(--cream) !important; padding: 9px 18px; font-weight: 600; font-size: 13px; border-radius: 6px; text-decoration: none !important; }
+  .nav-cta:hover { background: var(--sunrise); color: var(--slate) !important; }
+
+  header.page-head { padding: 72px 0 32px; background: radial-gradient(ellipse 90% 60% at 50% 0%, var(--cream-2) 0%, var(--cream) 60%); border-bottom: 1px solid var(--line); }
+  header.page-head h1 { font-size: clamp(40px, 6vw, 56px); font-weight: 700; margin-bottom: 16px; }
+  header.page-head .lead { font-size: 19px; color: var(--slate-soft); max-width: 640px; font-family: 'Fraunces', serif; font-weight: 400; line-height: 1.5; }
+
+  main { padding: 56px 0 96px; }
+
+  .pref-card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 28px; margin-bottom: 18px; display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-items: start; }
+  .pref-card.required { background: var(--paper); border-color: var(--line); }
+  .pref-card h3 { font-size: 22px; margin-bottom: 6px; }
+  .pref-card .desc { color: var(--slate-soft); font-size: 15px; line-height: 1.55; }
+  .pref-card .examples { font-size: 13px; color: var(--slate-soft); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .pref-card .examples strong { color: var(--slate); font-weight: 700; }
+  .pref-card .required-label { display: inline-block; background: var(--cream-2); color: var(--slate); padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+
+  .toggle { position: relative; width: 56px; height: 30px; background: var(--line-strong); border-radius: 100px; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+  .toggle.on { background: var(--sage); }
+  .toggle.disabled { cursor: not-allowed; opacity: 0.6; background: var(--sage); }
+  .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: transform .2s; box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
+  .toggle.on::after, .toggle.disabled::after { transform: translateX(26px); }
+
+  .actions { display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; padding: 14px 26px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; font-family: inherit; transition: all .2s; text-decoration: none; }
+  .btn-primary { background: var(--slate); color: var(--cream); }
+  .btn-primary:hover { background: var(--ink); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--slate); border: 1px solid var(--line-strong); }
+  .btn-ghost:hover { border-color: var(--slate); }
+
+  .saved-flash { display: none; padding: 14px 20px; background: rgba(168,201,160,0.18); border-left: 3px solid var(--sage); border-radius: 0 8px 8px 0; color: var(--slate); font-size: 15px; font-weight: 600; margin-top: 18px; }
+  .saved-flash.show { display: block; }
+
+  footer { background: var(--slate); color: var(--cream); padding: 56px 0 32px; margin-top: 64px; }
+  footer .container { max-width: 1180px; }
+  footer .foot-bottom { padding-top: 24px; border-top: 1px solid rgba(248,244,237,0.12); display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 13px; color: rgba(248,244,237,0.65); }
+  footer a { color: var(--cream); text-decoration: none; }
+  footer a:hover { color: var(--sunrise); }
+  .foot-links { display: flex; gap: 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><span class="logo-dot"></span> The Side Hustle Guild</a>
+    <a href="/" class="nav-cta">Back to home →</a>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <h1>Cookie preferences</h1>
+    <p class="lead">You decide which optional cookies to allow. Strictly necessary cookies are always on — they're what makes login and the site itself work. Everything else is up to you.</p>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="pref-card required">
+      <div>
+        <span class="required-label">Always on</span>
+        <h3>Strictly necessary</h3>
+        <p class="desc">Required for the site to function. Cannot be disabled. Includes session cookies for staying logged in, CSRF tokens for security, and your cookie-preference setting itself.</p>
+        <div class="examples"><strong>Examples:</strong> shg_session, shg_csrf, shg_cookie_prefs</div>
+      </div>
+      <div class="toggle disabled" aria-label="Strictly necessary cookies — always on"></div>
+    </div>
+
+    <div class="pref-card">
+      <div>
+        <h3>Analytics</h3>
+        <p class="desc">First-party analytics so we can see which pages people visit and which buttons get clicked. No third-party analytics provider — the data stays in our own database. Used only in aggregate.</p>
+        <div class="examples"><strong>Examples:</strong> shg_analytics (first-party, anonymous page-view counter)</div>
+      </div>
+      <div class="toggle" id="toggle-analytics" data-cat="analytics" role="switch" tabindex="0" aria-label="Analytics cookies"></div>
+    </div>
+
+    <div class="pref-card">
+      <div>
+        <h3>Marketing</h3>
+        <p class="desc">Used only if we run a paid advertising campaign — to measure conversion from an ad. Off by default. No data shared with ad platforms unless you enable this.</p>
+        <div class="examples"><strong>Examples:</strong> shg_utm_attribution (only set when arriving from a paid ad)</div>
+      </div>
+      <div class="toggle" id="toggle-marketing" data-cat="marketing" role="switch" tabindex="0" aria-label="Marketing cookies"></div>
+    </div>
+
+    <div class="pref-card">
+      <div>
+        <h3>Personalization</h3>
+        <p class="desc">Used to remember your tier/role preferences across sessions so the Discord onboarding doesn't ask the same questions twice. Anonymous, never shared.</p>
+        <div class="examples"><strong>Examples:</strong> shg_role_pref, shg_tier_pref</div>
+      </div>
+      <div class="toggle" id="toggle-personalization" data-cat="personalization" role="switch" tabindex="0" aria-label="Personalization cookies"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="save-prefs">Save my preferences</button>
+      <button class="btn btn-ghost" id="reject-all">Reject all optional</button>
+      <button class="btn btn-ghost" id="accept-all">Accept all optional</button>
+    </div>
+
+    <div class="saved-flash" id="saved-flash">✓ Preferences saved. You can change them anytime by returning to this page.</div>
+
+    <p style="margin-top: 56px; color: var(--slate-soft); font-size: 14.5px;">Want the details on what data we collect? See our <a href="/privacy/">Privacy Policy</a>. For our full terms of service, see <a href="/terms/">Terms of Service</a>.</p>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-bottom">
+      <span>© 2026 X3 E-Commerce LLC dba The Side Hustle Guild. All rights reserved.</span>
+      <div class="foot-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/cookies/">Cookies</a>
+        <a href="mailto:legal@thesidehustleguild.com">Legal contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function readPrefs() {
+    try { return JSON.parse(localStorage.getItem('shg_cookie_prefs') || '{}'); }
+    catch (e) { return {}; }
+  }
+  function writePrefs(p) {
+    p._updated = new Date().toISOString();
+    p._version = 1;
+    localStorage.setItem('shg_cookie_prefs', JSON.stringify(p));
+    var v = encodeURIComponent(JSON.stringify(p));
+    document.cookie = 'shg_cookie_prefs=' + v + '; path=/; max-age=31536000; SameSite=Lax';
+  }
+  var prefs = readPrefs();
+  ['analytics','marketing','personalization'].forEach(function(c) {
+    var t = document.getElementById('toggle-' + c);
+    if (prefs[c]) t.classList.add('on');
+    t.addEventListener('click', function() { t.classList.toggle('on'); });
+    t.addEventListener('keydown', function(e) {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); t.classList.toggle('on'); }
+    });
+  });
+  function flash() {
+    var f = document.getElementById('saved-flash');
+    f.classList.add('show');
+    setTimeout(function() { f.classList.remove('show'); }, 4000);
+  }
+  document.getElementById('save-prefs').addEventListener('click', function() {
+    var p = {};
+    ['analytics','marketing','personalization'].forEach(function(c) {
+      p[c] = document.getElementById('toggle-' + c).classList.contains('on');
+    });
+    writePrefs(p); flash();
+  });
+  document.getElementById('reject-all').addEventListener('click', function() {
+    ['analytics','marketing','personalization'].forEach(function(c) {
+      document.getElementById('toggle-' + c).classList.remove('on');
+    });
+    writePrefs({ analytics:false, marketing:false, personalization:false });
+    flash();
+  });
+  document.getElementById('accept-all').addEventListener('click', function() {
+    ['analytics','marketing','personalization'].forEach(function(c) {
+      document.getElementById('toggle-' + c).classList.add('on');
+    });
+    writePrefs({ analytics:true, marketing:true, personalization:true });
+    flash();
+  });
+</script>
+
+</body>
+</html>
