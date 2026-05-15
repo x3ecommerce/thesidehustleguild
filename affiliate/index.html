@@ -539,7 +539,7 @@ footer p { font-size: 13px; color: var(--slate-soft); max-width: 720px; }
       </div>
       <div class="step">
         <h4>Submit your tax info</h4>
-        <p>The form routes you to a W-9 (US) or W-8BEN (non-US) — required by the IRS for any contractor we pay $600+ in a calendar year. Your data is encrypted at rest and never shared.</p>
+        <p>The form routes you to a W-9 (US) or W-8BEN (non-US) — required by the IRS for any contractor we pay $600+ in a calendar year. Your data is encrypted at rest and never shared. If you accrue commission but never submit your form, the balance sits in a holding state — see the FAQ below for the 90/180-day timeline.</p>
       </div>
       <div class="step">
         <h4>Get approved</h4>
@@ -626,6 +626,10 @@ footer p { font-size: 13px; color: var(--slate-soft); max-width: 720px; }
       <div class="faq-item">
         <div class="faq-q">What about taxes?</div>
         <div class="faq-a">If you earn $600+ in a calendar year as a US affiliate, the IRS requires 1099 reporting. Stripe Connect (which handles your payouts) auto-issues a 1099-K when the threshold is hit — we don't issue it ourselves. Non-US affiliates submit a W-8BEN at signup and may have withholding applied.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if I accrue commission but never submit my W-9 or W-8BEN?</div>
+        <div class="faq-a">Your earned balance sits in <strong>holding</strong> the moment you cross $600 lifetime — no payouts until the form lands. At <strong>90 days</strong> of holding, we email you a reminder. At <strong>180 days</strong>, the unclaimed balance is <strong>forfeited to the member prize pool</strong>. We'd rather pay you. This rule exists because we can't legally hold uncollected contractor funds indefinitely, and "vanished affiliate" balances would otherwise distort the books forever. You can submit the form any time before day 180 and the balance pays out on the next payout cycle.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">What gets me removed from the program?</div>
