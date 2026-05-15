@@ -29,6 +29,8 @@ on:
     - cron: '*/15 * * * *'
     # Every 30 min: e1_role_grant, e2_concierge
     - cron: '5,35 * * * *'
+    # 08:00 ET / 12:00 UTC: c3_content_engine (daily Discord posts)
+    - cron: '0 12 * * *'
 
 jobs:
   dispatch:
@@ -67,13 +69,15 @@ jobs:
           if [ "$HR" = "13" ] && [ "$MIN" = "00" ]; then RUN+=" c1-subcounter f3-payouts"; fi
           # Mondays 16:00 UTC
           if [ "$DOW" = "1" ] && [ "$HR" = "16" ] && [ "$MIN" = "00" ]; then RUN+=" f6-fpa"; fi
+          # 12:00 UTC: c3_content_engine
+          if [ "$HR" = "12" ] && [ "$MIN" = "00" ]; then RUN+=" c3-content-engine"; fi
 
           # Manual override
           if [ "${{ inputs.agent }}" != "" ] && [ "${{ inputs.agent }}" != "all" ]; then
             RUN="${{ inputs.agent }}"
           fi
           if [ "${{ inputs.agent }}" = "all" ]; then
-            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool e1-role-grant e2-concierge a1-admin m1-tickets m2-faq m3-polls m4-analytics m5-events"
+            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine e1-role-grant e2-concierge a1-admin m1-tickets m2-faq m3-polls m4-analytics m5-events"
           fi
           echo "list=$RUN" >> $GITHUB_OUTPUT
           echo "Agents to run: $RUN"
