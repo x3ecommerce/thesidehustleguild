@@ -1,0 +1,8 @@
+name = "shg-d1-doctor"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shg-ledger"
+database_id = "9193c780-e7e7-4fc5-9d58-1a1dbe8c7042"

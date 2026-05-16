@@ -27,6 +27,8 @@ on:
     - cron: '0 16 * * 1'
     # Every 15 min: a1_admin
     - cron: '*/15 * * * *'
+    # Every 15 min offset 10: d1_doctor (sweeps incidents a1_admin opens)
+    - cron: '10,25,40,55 * * * *'
     # Every 30 min: e1_role_grant, e2_concierge
     - cron: '5,35 * * * *'
     # 08:00 ET / 12:00 UTC: c3_content_engine (daily Discord posts)
@@ -48,6 +50,8 @@ jobs:
           RUN=""
           # admin every 15 (matches */15)
           if [ "$((10#$MIN % 15))" -eq 0 ]; then RUN+=" a1-admin"; fi
+          # doctor every 15, offset by 10 min so it picks up incidents shortly after a1-admin creates them
+          if [ "$((10#$MIN % 15))" -eq 10 ]; then RUN+=" d1-doctor"; fi
           # role grant + concierge at :05 and :35
           if [ "$MIN" = "05" ] || [ "$MIN" = "35" ]; then RUN+=" e1-role-grant e2-concierge"; fi
           # revenue at :07
@@ -77,7 +81,7 @@ jobs:
             RUN="${{ inputs.agent }}"
           fi
           if [ "${{ inputs.agent }}" = "all" ]; then
-            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine e1-role-grant e2-concierge a1-admin m1-tickets m2-faq m3-polls m4-analytics m5-events"
+            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine e1-role-grant e2-concierge a1-admin d1-doctor m1-tickets m2-faq m3-polls m4-analytics m5-events"
           fi
           echo "list=$RUN" >> $GITHUB_OUTPUT
           echo "Agents to run: $RUN"
