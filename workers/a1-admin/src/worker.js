@@ -285,6 +285,28 @@ export default {
       if (!authorize(req, env)) return json({ error: "unauthorized" }, { status: 401 });
       return json(await handle(env));
     }
+    if (url.pathname === "/decisions") {
+      const rows = await env.DB.prepare("SELECT * FROM decisions ORDER BY decision_id DESC LIMIT 50").all().catch(() => ({results:[]}));
+      return json({ decisions: rows.results || [] });
+    }
+    if (url.pathname === "/decisions/log" && req.method === "POST") {
+      if (!authorize(req, env)) return json({ error: "unauthorized" }, { status: 401 });
+      const body = await req.json().catch(() => ({}));
+      if (!body.question || !body.chosen_option) return json({ error: "question + chosen_option required" }, { status: 400 });
+      const r = await env.DB.prepare(
+        `INSERT INTO decisions (question, context, options_considered, chosen_option, reasoning, expected_outcome, framework_score, decided_by) VALUES (?,?,?,?,?,?,?,?)`
+      ).bind(body.question, body.context || null, body.options_considered || null, body.chosen_option, body.reasoning || null, body.expected_outcome || null, body.framework_score || null, body.decided_by || "joshua").run();
+      return json({ ok: true, decision_id: r.meta.last_row_id });
+    }
+    if (url.pathname === "/decisions/outcome" && req.method === "POST") {
+      if (!authorize(req, env)) return json({ error: "unauthorized" }, { status: 401 });
+      const body = await req.json().catch(() => ({}));
+      if (!body.decision_id || !body.actual_outcome) return json({ error: "decision_id + actual_outcome required" }, { status: 400 });
+      await env.DB.prepare(
+        `UPDATE decisions SET actual_outcome=?, outcome_score=?, outcome_check_at=CURRENT_TIMESTAMP, status='outcome_logged' WHERE decision_id=?`
+      ).bind(body.actual_outcome, body.outcome_score || null, body.decision_id).run();
+      return json({ ok: true });
+    }
     if (url.pathname === "/health") {
       const fleet = await env.DB.prepare(`SELECT * FROM agent_status ORDER BY agent_group, agent_id`).all();
       const alerts = await env.DB.prepare(`SELECT * FROM agent_alerts WHERE resolved_at IS NULL ORDER BY raised_at DESC LIMIT 50`).all();
@@ -395,6 +417,13 @@ async function handle(env) {
             { name: "Anthropic spend (today)", value: `${fmt(anthropic.spent_cents)} ${anthropic.kill ? "🛑 KILL" : "✅"}` },
             { name: "Discord platform", value: platformStatus === "none" ? "✅" : `⚠️ ${platformStatus}` },
             { name: "Whop reconcile", value: whop.missing > 0 ? `⚠️ ${whop.missing} missing` : "✅" },
+            { name: "Agent autonomy (30d)", value: await (async () => {
+              try {
+                const r = await env.DB.prepare("SELECT COUNT(*) AS total, SUM(CASE WHEN status='success' THEN 1 ELSE 0 END) AS auto FROM agent_runs WHERE started_at > datetime('now','-30 days') AND triggered_by='cron'").first();
+                if (!r || !r.total) return "—";
+                return `${Math.round((r.auto/r.total)*100)}% (${r.auto}/${r.total} runs)`;
+              } catch { return "—"; }
+            })() },
           ],
           footer: { text: "Posted daily at 07:00 ET. Dashboard: /finance/health" }
         }]);

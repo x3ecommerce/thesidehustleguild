@@ -59,6 +59,17 @@ const POST_PLAYS = {
   }
 };
 
+// Read latest learned-patterns addendum from c4-grader (if available)
+async function getLearnedPatterns(env) {
+  try {
+    const r = await env.DB.prepare(
+      "SELECT prompt_text FROM prompt_versions WHERE agent_id='c3_content_engine' AND prompt_key='learned_patterns_addendum' ORDER BY version_id DESC LIMIT 1"
+    ).first();
+    return r?.prompt_text || null;
+  } catch { return null; }
+}
+
+
 // --- Discord helpers ---------------------------------------------------------
 async function listGuildChannels(env) {
   const r = await fetch(`https://discord.com/api/v10/guilds/${env.DISCORD_GUILD_ID}/channels`, {
@@ -92,8 +103,10 @@ async function discordCreateForumThread(env, channelId, name, content) {
 
 // --- Anthropic content generation -------------------------------------------
 async function generateContent(env, play, extraContext) {
+  const learned = await getLearnedPatterns(env);
   const prompt = [
     `${BRAND_VOICE}`,
+    learned ? `\n${learned}` : null,
     ``,
     `Task: ${play.brief}`,
     extraContext ? `Context: ${extraContext}` : null,

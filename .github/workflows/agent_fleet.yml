@@ -29,6 +29,8 @@ on:
     - cron: '*/15 * * * *'
     # Every 15 min offset 10: d1_doctor (sweeps incidents a1_admin opens)
     - cron: '10,25,40,55 * * * *'
+    # 09:00 ET / 13:00 UTC: c4_grader (grades c3 posts 24h after they fire)
+    - cron: '0 13 * * *'
     # Every 30 min: e1_role_grant, e2_concierge
     - cron: '5,35 * * * *'
     # 08:00 ET / 12:00 UTC: c3_content_engine (daily Discord posts)
@@ -75,13 +77,15 @@ jobs:
           if [ "$DOW" = "1" ] && [ "$HR" = "16" ] && [ "$MIN" = "00" ]; then RUN+=" f6-fpa"; fi
           # 12:00 UTC: c3_content_engine
           if [ "$HR" = "12" ] && [ "$MIN" = "00" ]; then RUN+=" c3-content-engine"; fi
+          # 13:00 UTC: c4_grader (grades c3 posts from prior day)
+          if [ "$HR" = "13" ] && [ "$MIN" = "00" ]; then RUN+=" c4-grader"; fi
 
           # Manual override
           if [ "${{ inputs.agent }}" != "" ] && [ "${{ inputs.agent }}" != "all" ]; then
             RUN="${{ inputs.agent }}"
           fi
           if [ "${{ inputs.agent }}" = "all" ]; then
-            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine e1-role-grant e2-concierge a1-admin d1-doctor m1-tickets m2-faq m3-polls m4-analytics m5-events"
+            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine c4-grader e1-role-grant e2-concierge a1-admin d1-doctor m1-tickets m2-faq m3-polls m4-analytics m5-events"
           fi
           echo "list=$RUN" >> $GITHUB_OUTPUT
           echo "Agents to run: $RUN"
