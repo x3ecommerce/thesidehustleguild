@@ -1,7 +1,9 @@
 name: Agent Fleet Cron
 
-# Fan-out scheduler. Each cron entry triggers the matching workflow_dispatch input.
-# Cloudflare account is at the 5-cron limit; GitHub Actions handles all worker scheduling.
+# Fan-out scheduler. Each cron entry triggers a workflow run with github.event.schedule set
+# to the exact cron expression that fired. We route on that — not on the actual minute —
+# because GitHub Actions cron has known drift (runs can land 5-15 min late) which broke
+# our previous "MIN=00" exact-match dispatch logic.
 
 on:
   workflow_dispatch:
@@ -11,30 +13,24 @@ on:
         required: false
         default: 'all'
   schedule:
-    # Hourly: f2_revenue
-    - cron: '7 * * * *'
-    # 04:00 ET / 08:00 UTC: c2_pricepool
-    - cron: '0 8 * * *'
-    # 06:00 ET / 10:00 UTC: f4_controller (slight offset from 0 6 to avoid overlap with daily recon)
-    - cron: '0 10 * * *'
-    # 07:00 ET / 11:00 UTC: f5_reporting
-    - cron: '0 11 * * *'
-    # 07:30 ET / 11:30 UTC: f1_cfo
-    - cron: '30 11 * * *'
-    # 09:00 ET / 13:00 UTC: c1_subcounter, f3_payouts
-    - cron: '0 13 * * *'
-    # 12:00 ET / 16:00 UTC Mon: f6_fpa
-    - cron: '0 16 * * 1'
-    # Every 15 min: a1_admin
+    # Every 15 min: a1_admin + d1_doctor + utility minute-modulo dispatcher
     - cron: '*/15 * * * *'
-    # Every 15 min offset 10: d1_doctor (sweeps incidents a1_admin opens)
-    - cron: '10,25,40,55 * * * *'
-    # 09:00 ET / 13:00 UTC: c4_grader (grades c3 posts 24h after they fire)
-    - cron: '0 13 * * *'
-    # Every 30 min: e1_role_grant, e2_concierge
-    - cron: '5,35 * * * *'
-    # 08:00 ET / 12:00 UTC: c3_content_engine (daily Discord posts)
+    # Hourly :07 — f2_revenue (offset so it doesn't collide with */15)
+    - cron: '7 * * * *'
+    # 08:00 UTC / 04:00 ET — c2_pricepool + m4_analytics
+    - cron: '0 8 * * *'
+    # 10:00 UTC / 06:00 ET — f4_controller
+    - cron: '0 10 * * *'
+    # 11:00 UTC / 07:00 ET — f5_reporting
+    - cron: '0 11 * * *'
+    # 11:30 UTC / 07:30 ET — f1_cfo
+    - cron: '30 11 * * *'
+    # 12:00 UTC / 08:00 ET — c3_content_engine (daily Discord content)
     - cron: '0 12 * * *'
+    # 13:00 UTC / 09:00 ET — c1_subcounter + f3_payouts + c4_grader (grades yesterday's c3)
+    - cron: '0 13 * * *'
+    # 16:00 UTC / 12:00 ET Mon — f6_fpa
+    - cron: '0 16 * * 1'
 
 jobs:
   dispatch:
@@ -42,55 +38,82 @@ jobs:
     steps:
       - name: Determine agents to run
         id: pick
+        env:
+          TRIGGER_SCHEDULE: ${{ github.event.schedule }}
+          MANUAL_AGENT: ${{ inputs.agent }}
         run: |
           set -euo pipefail
           MIN=$(date -u +%M)
           HR=$(date -u +%H)
           DOW=$(date -u +%u)   # 1..7 Mon..Sun
 
-          # Always-running fleet (always include a1_admin if minute is :15/:30/:45/:00)
           RUN=""
-          # admin every 15 (matches */15)
-          if [ "$((10#$MIN % 15))" -eq 0 ]; then RUN+=" a1-admin"; fi
-          # doctor every 15, offset by 10 min so it picks up incidents shortly after a1-admin creates them
-          if [ "$((10#$MIN % 15))" -eq 10 ]; then RUN+=" d1-doctor"; fi
-          # role grant + concierge at :05 and :35
-          if [ "$MIN" = "05" ] || [ "$MIN" = "35" ]; then RUN+=" e1-role-grant e2-concierge"; fi
-          # revenue at :07
-          if [ "$MIN" = "07" ]; then RUN+=" f2-revenue"; fi
-          # community workers: tickets + events every 10 min, polls every 5 min
-          if [ "$((10#$MIN % 10))" -eq 0 ]; then RUN+=" m1-tickets m5-events"; fi
-          if [ "$((10#$MIN % 5))" -eq 0 ]; then RUN+=" m3-polls"; fi
-          # faq health every 30
-          if [ "$((10#$MIN % 30))" -eq 0 ]; then RUN+=" m2-faq"; fi
-          # 08:00 UTC = pricepool + analytics
-          if [ "$HR" = "08" ] && [ "$MIN" = "00" ]; then RUN+=" c2-pricepool m4-analytics"; fi
-          # 10:00 UTC
-          if [ "$HR" = "10" ] && [ "$MIN" = "00" ]; then RUN+=" f4-controller"; fi
-          # 11:00 UTC
-          if [ "$HR" = "11" ] && [ "$MIN" = "00" ]; then RUN+=" f5-reporting"; fi
-          # 11:30 UTC
-          if [ "$HR" = "11" ] && [ "$MIN" = "30" ]; then RUN+=" f1-cfo"; fi
-          # 13:00 UTC
-          if [ "$HR" = "13" ] && [ "$MIN" = "00" ]; then RUN+=" c1-subcounter f3-payouts"; fi
-          # Mondays 16:00 UTC
-          if [ "$DOW" = "1" ] && [ "$HR" = "16" ] && [ "$MIN" = "00" ]; then RUN+=" f6-fpa"; fi
-          # 12:00 UTC: c3_content_engine
-          if [ "$HR" = "12" ] && [ "$MIN" = "00" ]; then RUN+=" c3-content-engine"; fi
-          # 13:00 UTC: c4_grader (grades c3 posts from prior day)
-          if [ "$HR" = "13" ] && [ "$MIN" = "00" ]; then RUN+=" c4-grader"; fi
 
-          # Manual override
-          if [ "${{ inputs.agent }}" != "" ] && [ "${{ inputs.agent }}" != "all" ]; then
-            RUN="${{ inputs.agent }}"
+          # ─────────────────────────────────────────────────────────────────────
+          # PRIMARY ROUTING: dispatch based on which cron expression triggered us.
+          # github.event.schedule is set by GH Actions to the exact cron string,
+          # so we route deterministically regardless of timing drift.
+          # ─────────────────────────────────────────────────────────────────────
+          case "$TRIGGER_SCHEDULE" in
+            "*/15 * * * *")
+              # Always-running minute-grained fleet. Compute by minute-modulo.
+              if [ "$((10#$MIN % 15))" -le 5 ]; then RUN+=" a1-admin"; fi
+              if [ "$((10#$MIN % 15))" -ge 10 ] && [ "$((10#$MIN % 15))" -le 14 ]; then RUN+=" d1-doctor"; fi
+              # role grant + concierge twice an hour (:00-:09 covers :00-:14, :30-:39 covers :30-:44)
+              if [ "$MIN" -le 9 ] || { [ "$MIN" -ge 30 ] && [ "$MIN" -le 39 ]; }; then
+                RUN+=" e1-role-grant e2-concierge"
+              fi
+              # Community workers: tickets+events every ~10min, polls every ~5min, faq every ~30min
+              # Simplified to fire on every */15 tick — these are idempotent and cheap.
+              RUN+=" m1-tickets m5-events m3-polls"
+              # FAQ health on the top-of-hour and half-hour ticks
+              if [ "$MIN" -le 14 ] || { [ "$MIN" -ge 30 ] && [ "$MIN" -le 44 ]; }; then RUN+=" m2-faq"; fi
+              ;;
+            "7 * * * *")
+              RUN+=" f2-revenue"
+              ;;
+            "0 8 * * *")
+              RUN+=" c2-pricepool m4-analytics"
+              ;;
+            "0 10 * * *")
+              RUN+=" f4-controller"
+              ;;
+            "0 11 * * *")
+              RUN+=" f5-reporting"
+              ;;
+            "30 11 * * *")
+              RUN+=" f1-cfo"
+              ;;
+            "0 12 * * *")
+              RUN+=" c3-content-engine"
+              ;;
+            "0 13 * * *")
+              RUN+=" c1-subcounter f3-payouts c4-grader"
+              ;;
+            "0 16 * * 1")
+              if [ "$DOW" = "1" ]; then RUN+=" f6-fpa"; fi
+              ;;
+          esac
+
+          # ─────────────────────────────────────────────────────────────────────
+          # MANUAL OVERRIDE (workflow_dispatch)
+          # ─────────────────────────────────────────────────────────────────────
+          if [ "$MANUAL_AGENT" != "" ] && [ "$MANUAL_AGENT" != "all" ]; then
+            RUN="$MANUAL_AGENT"
           fi
-          if [ "${{ inputs.agent }}" = "all" ]; then
+          if [ "$MANUAL_AGENT" = "all" ]; then
             RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine c4-grader e1-role-grant e2-concierge a1-admin d1-doctor m1-tickets m2-faq m3-polls m4-analytics m5-events"
           fi
+
+          # Trim leading/trailing whitespace
+          RUN=$(echo "$RUN" | xargs)
           echo "list=$RUN" >> $GITHUB_OUTPUT
+          echo "Triggered by schedule: '$TRIGGER_SCHEDULE'"
+          echo "Manual input: '$MANUAL_AGENT'"
           echo "Agents to run: $RUN"
 
       - name: Trigger each agent
+        if: steps.pick.outputs.list != ''
         env:
           AGENT_RUN_TOKEN: ${{ secrets.AGENT_RUN_TOKEN }}
         run: |
