@@ -1,0 +1,63 @@
+name: Apply D1 Migrations
+
+# Applies migrations/*.sql to the shg-ledger D1 database.
+# Triggered manually or when a new migration file lands.
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration:
+        description: 'Specific migration file (or "latest" for most recent)'
+        required: false
+        default: 'latest'
+  push:
+    branches: [main]
+    paths:
+      - 'migrations/*.sql'
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine migration(s) to apply
+        id: pick
+        run: |
+          set -euo pipefail
+          MANUAL='${{ inputs.migration }}'
+          if [ "$MANUAL" != "" ] && [ "$MANUAL" != "latest" ]; then
+            FILE="migrations/${MANUAL}"
+            [ -f "$FILE" ] || { echo "::error::$FILE not found"; exit 1; }
+            FILES="$FILE"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'migrations/*.sql' | sort)
+            [ -z "$FILES" ] && { echo "No migration changes; skipping."; echo "files=" >> $GITHUB_OUTPUT; exit 0; }
+          else
+            FILES=$(ls -1 migrations/*.sql | sort | tail -1)
+          fi
+          echo "Migrations to apply:"
+          printf '%s\n' $FILES
+          {
+            echo 'files<<EOF'
+            printf '%s\n' $FILES
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: Apply each migration
+        if: steps.pick.outputs.files != ''
+        run: |
+          set -euo pipefail
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            echo "→ Applying $f to shg-ledger (remote)"
+            npx wrangler@3 d1 execute shg-ledger --remote --file="$f"
+          done <<< "${{ steps.pick.outputs.files }}"
