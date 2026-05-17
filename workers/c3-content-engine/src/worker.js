@@ -59,6 +59,101 @@ const POST_PLAYS = {
   }
 };
 
+// --- Scheduled posts (one-shot timed announcements) -------------------------
+// Idempotent table bootstrap + Monday launch-day seed + sweep-and-fire.
+
+async function ensureScheduledPostsTable(env) {
+  try {
+    await env.DB.exec(
+      "CREATE TABLE IF NOT EXISTS scheduled_posts (id INTEGER PRIMARY KEY AUTOINCREMENT, fire_at_utc TEXT NOT NULL, channel_name TEXT NOT NULL, post_kind TEXT NOT NULL DEFAULT 'message', thread_title TEXT, body TEXT NOT NULL, tag TEXT, status TEXT NOT NULL DEFAULT 'pending', result TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+    );
+    await env.DB.exec(
+      "CREATE INDEX IF NOT EXISTS idx_scheduled_posts_pending ON scheduled_posts (status, fire_at_utc)"
+    );
+  } catch (e) { /* table or index may already exist with subtly different shape; ignore */ }
+}
+
+// Monday May 18 2026 12:00 UTC = 08:00 ET = LAUNCH HOUR.
+// First post out of the gate. Seeded once, then status flips to 'posted'.
+const LAUNCH_DAY_POSTS = [
+  {
+    tag: "launch-day-founder-seats-open",
+    fire_at_utc: "2026-05-18T12:00:00Z",
+    channel_name: "announcements",
+    post_kind: "message",
+    body: [
+      "**Founder seats are open.**",
+      "",
+      "The Side Hustle Guild is live. The first contest cycle starts today and pays out the last day of June.",
+      "",
+      "**$9/month — locked for life.** First 50 seats only. After that the door is $19 and stays there.",
+      "",
+      "Here's the deal: 25% of every subscription dollar becomes the monthly prize pool. You ship, judges vote, top builders get paid. The community funds the community. No guru in the middle.",
+      "",
+      "Joining is one click: <https://thesidehustleguild.com>",
+      "",
+      "If you've been on the fence, this is the fence.",
+      "Pick one thing this week. Ship it by Friday."
+    ].join("\n")
+  }
+];
+
+async function seedLaunchDayPosts(env) {
+  for (const p of LAUNCH_DAY_POSTS) {
+    try {
+      const existing = await env.DB
+        .prepare("SELECT id FROM scheduled_posts WHERE tag = ? LIMIT 1")
+        .bind(p.tag).first();
+      if (existing) continue;
+      await env.DB
+        .prepare("INSERT INTO scheduled_posts (fire_at_utc, channel_name, post_kind, thread_title, body, tag) VALUES (?, ?, ?, ?, ?, ?)")
+        .bind(p.fire_at_utc, p.channel_name, p.post_kind, p.thread_title || null, p.body, p.tag)
+        .run();
+    } catch (e) { /* idempotent — best effort */ }
+  }
+}
+
+async function fireDueScheduledPosts(env, channels) {
+  const nowIso = new Date().toISOString();
+  const fired = [];
+  let rows = [];
+  try {
+    const r = await env.DB
+      .prepare("SELECT id, fire_at_utc, channel_name, post_kind, thread_title, body, tag FROM scheduled_posts WHERE status='pending' AND fire_at_utc <= ? ORDER BY fire_at_utc ASC LIMIT 5")
+      .bind(nowIso).all();
+    rows = r.results || [];
+  } catch { rows = []; }
+
+  for (const row of rows) {
+    const chan = findChannel(channels, row.channel_name);
+    if (!chan) {
+      try {
+        await env.DB.prepare("UPDATE scheduled_posts SET status='failed', result=? WHERE id=?")
+          .bind(JSON.stringify({ error: `channel ${row.channel_name} not found`, at: nowIso }), row.id).run();
+      } catch {}
+      fired.push({ id: row.id, tag: row.tag, error: `channel ${row.channel_name} not found` });
+      continue;
+    }
+    try {
+      if (row.post_kind === "forum_thread") {
+        await discordCreateForumThread(env, chan.id, row.thread_title || "Announcement", row.body);
+      } else {
+        await discordPost(env, chan.id, row.body);
+      }
+      await env.DB.prepare("UPDATE scheduled_posts SET status='posted', result=? WHERE id=?")
+        .bind(JSON.stringify({ posted_at: nowIso, channel_id: chan.id }), row.id).run();
+      fired.push({ id: row.id, tag: row.tag, channel: row.channel_name, ok: true });
+    } catch (e) {
+      try {
+        await env.DB.prepare("UPDATE scheduled_posts SET status='failed', result=? WHERE id=?")
+          .bind(JSON.stringify({ error: String(e).slice(0, 300), at: nowIso }), row.id).run();
+      } catch {}
+      fired.push({ id: row.id, tag: row.tag, error: String(e).slice(0, 200) });
+    }
+  }
+  return fired;
+}
+
 // Read latest learned-patterns addendum from c4-grader (if available)
 async function getLearnedPatterns(env) {
   try {
@@ -164,6 +259,11 @@ async function handle(env) {
     }
 
     const channels = await listGuildChannels(env);
+    // Bootstrap + seed launch-day scheduled posts (idempotent) + fire any due.
+    await ensureScheduledPostsTable(env);
+    await seedLaunchDayPosts(env);
+    const scheduledFired = await fireDueScheduledPosts(env, channels);
+
     const now = new Date();
     const dow = now.getUTCDay();
     const weekOfYear = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - Date.UTC(now.getUTCFullYear(), 0, 1)) / (7 * 86400000));
@@ -220,8 +320,8 @@ async function handle(env) {
     const errs = results.filter(r => r.error).length;
     return {
       status: errs === 0 ? "success" : (ok > 0 ? "warn" : "error"),
-      summary: `posted=${ok} errors=${errs} dow=${dow} anchor=${anchorKey}`,
-      metadata: { results, dow, anchor: anchorKey }
+      summary: `posted=${ok} errors=${errs} scheduled=${scheduledFired.filter(f=>f.ok).length} dow=${dow} anchor=${anchorKey}`,
+      metadata: { results, dow, anchor: anchorKey, scheduled_fired: scheduledFired }
     };
   });
 }
