@@ -31,6 +31,8 @@ on:
     - cron: '0 13 * * *'
     # 16:00 UTC / 12:00 ET Mon — f6_fpa
     - cron: '0 16 * * 1'
+    # 22:00 UTC / 18:00 ET — m6_discord_pulse (daily health check, silent on success)
+    - cron: '0 22 * * *'
 
 jobs:
   dispatch:
@@ -93,6 +95,9 @@ jobs:
             "0 16 * * 1")
               if [ "$DOW" = "1" ]; then RUN+=" f6-fpa"; fi
               ;;
+            "0 22 * * *")
+              RUN+=" m6-discord-pulse"
+              ;;
           esac
 
           # ─────────────────────────────────────────────────────────────────────
@@ -102,7 +107,7 @@ jobs:
             RUN="$MANUAL_AGENT"
           fi
           if [ "$MANUAL_AGENT" = "all" ]; then
-            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine c4-grader e1-role-grant e2-concierge a1-admin d1-doctor m1-tickets m2-faq m3-polls m4-analytics m5-events"
+            RUN="f1-cfo f2-revenue f3-payouts f4-controller f5-reporting f6-fpa c1-subcounter c2-pricepool c3-content-engine c4-grader e1-role-grant e2-concierge a1-admin d1-doctor m1-tickets m2-faq m3-polls m4-analytics m5-events m6-discord-pulse"
           fi
 
           # Trim leading/trailing whitespace
