@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Every Hustle Card submitted to the Builders Marketplace. Sortable, filterable, public — see what members are actually building.">
+<meta property="og:title" content="Submissions — The Side Hustle Guild">
+<meta property="og:description" content="Every Hustle Card. Every season. Sortable, filterable, public.">
+<meta property="og:url" content="https://thesidehustleguild.com/submissions">
+<meta property="og:type" content="website">
+<title>Submissions — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F8F4ED;
+    --slate: #27384A;
+    --amber: #E89B3B;
+    --sage: #A8C9A0;
+    --charcoal: #1E1E1E;
+    --charcoal-soft: #1E1E1E99;
+    --line: rgba(39,56,74,0.08);
+    --line-strong: rgba(39,56,74,0.18);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.2; color: var(--slate); }
+  a { color: var(--slate); }
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav.site-nav { padding: 20px 0; border-bottom: 1px solid var(--line); background: var(--cream); }
+  nav.site-nav .container { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--slate); text-decoration: none; }
+  .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--amber); margin-right: 10px; vertical-align: middle; transform: rotate(45deg); }
+  .site-nav-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .site-nav-links a { text-decoration: none; font-weight: 500; font-size: 15px; color: var(--charcoal-soft); }
+  .site-nav-links a.current { color: var(--slate); }
+  .site-nav-links a:hover { color: var(--amber); }
+  .nav-cta { background: var(--amber); color: var(--cream) !important; padding: 10px 22px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 14px; }
+
+  /* HERO */
+  .hero { padding: 56px 0 32px; }
+  .hero h1 { font-size: clamp(32px, 5vw, 52px); margin-bottom: 16px; max-width: 920px; }
+  .hero h1 .accent { color: var(--amber); }
+  .hero p.lead { font-size: 18px; max-width: 720px; color: var(--charcoal-soft); margin-bottom: 12px; }
+  .hero .what-link { font-size: 14px; font-weight: 500; color: var(--slate); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 0;
+    box-shadow: 0 1px 0 rgba(39,56,74,0.04);
+  }
+  .filter-bar .container { display: flex; flex-direction: column; gap: 12px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+  .filter-label {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--charcoal-soft); font-weight: 600; margin-right: 6px;
+  }
+  .chip {
+    appearance: none; border: 1px solid var(--line-strong); background: transparent;
+    color: var(--slate); padding: 6px 12px; border-radius: 100px; font-size: 13px;
+    font-family: inherit; font-weight: 500; cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .chip:hover { border-color: var(--slate); }
+  .chip:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .chip[aria-pressed="true"] { background: var(--slate); color: var(--cream); border-color: var(--slate); }
+  .chip.tier-rookie[aria-pressed="true"]   { background: var(--sage); color: var(--slate); border-color: var(--sage); }
+  .chip.tier-builder[aria-pressed="true"]  { background: var(--amber); color: var(--cream); border-color: var(--amber); }
+  .chip.tier-operator[aria-pressed="true"] { background: var(--slate); color: var(--cream); border-color: var(--slate); }
+
+  .filter-controls {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    padding-top: 4px;
+  }
+  .verified-toggle {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    font-size: 13px; color: var(--slate); font-weight: 500;
+  }
+  .verified-toggle input { accent-color: var(--amber); width: 16px; height: 16px; }
+  .search-box, .sort-select {
+    border: 1px solid var(--line-strong); background: white; color: var(--slate);
+    padding: 8px 12px; border-radius: 4px; font-family: inherit; font-size: 14px;
+  }
+  .search-box { min-width: 200px; }
+  .search-box:focus, .sort-select:focus { outline: 2px solid var(--amber); outline-offset: 1px; border-color: var(--amber); }
+  .clear-btn {
+    background: transparent; border: none; color: var(--slate);
+    text-decoration: underline; cursor: pointer; font-family: inherit;
+    font-size: 13px; font-weight: 500; padding: 6px 4px;
+  }
+  .clear-btn:hover { color: var(--amber); }
+  .result-count { font-size: 13px; color: var(--charcoal-soft); margin-left: auto; }
+
+  /* GRID */
+  .grid-wrap { padding: 32px 0 56px; }
+  .grid {
+    display: grid; gap: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 860px)  { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px)  { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    position: relative; background: white; border: 1px solid var(--line);
+    border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px;
+    text-decoration: none; color: inherit; min-height: 260px;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover, .card:focus-visible {
+    border-color: var(--slate);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39,56,74,0.08);
+    outline: none;
+  }
+  .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 22px; }
+  .badge {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    font-weight: 700; padding: 4px 10px; border-radius: 100px;
+  }
+  .badge-rookie   { background: var(--sage);  color: var(--slate); }
+  .badge-builder  { background: var(--amber); color: var(--cream); }
+  .badge-operator { background: var(--slate); color: var(--cream); }
+  .badge-verified {
+    background: rgba(168,201,160,0.25); color: var(--slate);
+    border: 1px solid var(--sage); font-size: 11px; padding: 3px 8px;
+    border-radius: 100px; font-weight: 600;
+  }
+  .card-title {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem;
+    line-height: 1.25; color: var(--slate); margin-top: 2px;
+  }
+  .card-author { font-size: 13px; font-weight: 500; color: var(--sage); filter: brightness(0.78); }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    font-size: 11px; padding: 2px 8px; border-radius: 100px;
+    background: var(--cream); border: 1px solid var(--line-strong);
+    color: var(--charcoal-soft); font-weight: 500;
+  }
+  .card-excerpt {
+    font-size: 14px; color: var(--charcoal-soft); flex: 1;
+    -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+    overflow: hidden; max-height: 7.2em;
+  }
+  .card-foot {
+    display: flex; gap: 14px; font-size: 12px; color: var(--charcoal-soft);
+    border-top: 1px solid var(--line); padding-top: 10px; margin-top: 4px;
+  }
+  .card-foot span { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* SKELETON */
+  .skeleton {
+    background: white; border: 1px solid var(--line); border-radius: 8px;
+    padding: 20px; min-height: 260px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .sk-line {
+    background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
+    background-size: 200% 100%;
+    animation: pulse 1.4s ease-in-out infinite;
+    border-radius: 4px; height: 12px;
+  }
+  .sk-line.w-30 { width: 30%; height: 18px; }
+  .sk-line.w-90 { width: 90%; height: 22px; }
+  .sk-line.w-70 { width: 70%; }
+  .sk-line.w-100 { width: 100%; }
+  .sk-line.w-50 { width: 50%; }
+  @keyframes pulse {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* EMPTY + ERROR */
+  .empty, .error {
+    grid-column: 1/-1; text-align: center; padding: 56px 24px;
+    background: white; border: 1px dashed var(--line-strong); border-radius: 8px;
+  }
+  .empty h3, .error h3 { margin-bottom: 8px; font-size: 22px; }
+  .empty p, .error p { color: var(--charcoal-soft); max-width: 460px; margin: 0 auto; }
+
+  /* WHAT IS THIS */
+  .explainer { background: white; padding: 64px 0; border-top: 1px solid var(--line); }
+  .explainer h2 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 16px; }
+  .explainer p { max-width: 720px; color: var(--charcoal-soft); margin-bottom: 14px; font-size: 16px; }
+  .explainer .cta-row { margin-top: 24px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--slate); color: var(--cream); padding: 14px 26px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 15px; }
+  .btn-primary:hover { background: var(--charcoal); }
+  .btn-secondary { color: var(--slate); padding: 14px 20px; text-decoration: underline; font-weight: 500; font-size: 15px; }
+
+  /* FOOTER */
+  footer { background: var(--charcoal); color: var(--cream); padding: 48px 0 28px; font-size: 14px; }
+  footer .container { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  @media (max-width: 768px) { footer .container { grid-template-columns: 1fr; } }
+  footer h4 { color: var(--cream); font-size: 12px; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; font-family: 'Manrope', sans-serif; font-weight: 600; }
+  footer ul { list-style: none; }
+  footer ul li { padding: 4px 0; }
+  footer a { color: rgba(248,244,237,0.7); text-decoration: none; }
+  footer a:hover { color: var(--amber); }
+  footer .footer-tagline { font-family: 'Fraunces', serif; color: var(--cream); font-size: 18px; margin-bottom: 8px; }
+  .footer-disclaimer { border-top: 1px solid rgba(248,244,237,0.1); padding-top: 20px; margin-top: 30px; font-size: 11px; color: rgba(248,244,237,0.5); font-style: italic; }
+
+  /* sr-only */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  @media (max-width: 560px) {
+    .filter-bar { padding: 12px 0; }
+    .filter-row { gap: 6px 8px; }
+    .chip { padding: 5px 10px; font-size: 12px; }
+    .search-box { min-width: 0; flex: 1 1 100%; }
+    .result-count { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="container">
+    <a href="/" class="logo"><span class="logo-mark"></span>The Side Hustle Guild</a>
+    <div class="site-nav-links">
+      <a href="/">Home</a>
+      <a href="/submissions" class="current" aria-current="page">Submissions</a>
+      <a href="/affiliate">Affiliate</a>
+      <a href="/sponsors">Sponsors</a>
+      <a href="/#join" class="nav-cta">Join the Guild</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1>Every Hustle Card. Every season. <span class="accent">Sortable, filterable, public.</span></h1>
+    <p class="lead">Real submissions from members of the Builders Marketplace. Pick a tier, narrow by category, sort by what matters to you. Every card links to the full thread inside Discord.</p>
+    <a href="#explainer" class="what-link">What is this? &rarr;</a>
+  </div>
+</section>
+
+<section class="filter-bar" aria-label="Filter and sort submissions">
+  <div class="container">
+
+    <div class="filter-row" role="group" aria-label="Tier">
+      <span class="filter-label">Tier</span>
+      <button class="chip tier-all"      data-filter="tier" data-value="All"      aria-pressed="true">All</button>
+      <button class="chip tier-rookie"   data-filter="tier" data-value="Rookie"   aria-pressed="false">Rookie</button>
+      <button class="chip tier-builder"  data-filter="tier" data-value="Builder"  aria-pressed="false">Builder</button>
+      <button class="chip tier-operator" data-filter="tier" data-value="Operator" aria-pressed="false">Operator</button>
+    </div>
+
+    <div class="filter-row" role="group" aria-label="Category">
+      <span class="filter-label">Category</span>
+      <button class="chip" data-filter="category" data-value="All"         aria-pressed="true">All</button>
+      <button class="chip" data-filter="category" data-value="Digital"     aria-pressed="false">Digital</button>
+      <button class="chip" data-filter="category" data-value="Service"     aria-pressed="false">Service</button>
+      <button class="chip" data-filter="category" data-value="AI"          aria-pressed="false">AI</button>
+      <button class="chip" data-filter="category" data-value="Reselling"   aria-pressed="false">Reselling</button>
+      <button class="chip" data-filter="category" data-value="Local"       aria-pressed="false">Local</button>
+      <button class="chip" data-filter="category" data-value="Content"     aria-pressed="false">Content</button>
+      <button class="chip" data-filter="category" data-value="Real Estate" aria-pressed="false">Real Estate</button>
+      <button class="chip" data-filter="category" data-value="Education"   aria-pressed="false">Education</button>
+    </div>
+
+    <div class="filter-row" role="group" aria-label="Investment">
+      <span class="filter-label">Investment</span>
+      <button class="chip" data-filter="investment" data-value="All"         aria-pressed="true">All</button>
+      <button class="chip" data-filter="investment" data-value="$0-Start"    aria-pressed="false">$0-Start</button>
+      <button class="chip" data-filter="investment" data-value="Low-Cost"    aria-pressed="false">Low-Cost</button>
+      <button class="chip" data-filter="investment" data-value="Tools-Heavy" aria-pressed="false">Tools-Heavy</button>
+    </div>
+
+    <div class="filter-controls">
+      <label class="verified-toggle">
+        <input type="checkbox" id="verified-only" aria-label="Show only verified hustles">
+        Verified only
+      </label>
+      <label class="sr-only" for="sort-select">Sort</label>
+      <select id="sort-select" class="sort-select" aria-label="Sort">
+        <option value="recent">Most recent</option>
+        <option value="reactions">Most upvoted</option>
+        <option value="replies">Most replied to</option>
+        <option value="alpha">Alphabetical</option>
+      </select>
+      <label class="sr-only" for="search-box">Search</label>
+      <input id="search-box" class="search-box" type="search" placeholder="Search title or builder..." aria-label="Search submissions">
+      <button id="clear-btn" class="clear-btn" type="button">Clear filters</button>
+      <span class="result-count" id="result-count" aria-live="polite"></span>
+    </div>
+
+  </div>
+</section>
+
+<section class="grid-wrap">
+  <div class="container">
+    <div class="grid" id="grid">
+      <!-- Skeleton loaders -->
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="explainer" class="explainer">
+  <div class="container">
+    <h2>What is this?</h2>
+    <p>This is the public face of the Builders Marketplace, the monthly skill-based contest that runs inside The Side Hustle Guild. Every card here was submitted by a member of the Guild. The contest awards cash prizes per tier so a Rookie competing on their first dollar isn't matched against an Operator running a small machine. Same room, separate ladders.</p>
+    <p>You'll see Hustle Cards from real builders. Real numbers, real proof, real talk. We keep the threads in Discord because that's where the conversation actually happens. This page is the index.</p>
+    <p style="font-style: italic; font-size: 13px; padding-top: 8px;">Member results not typical. The Side Hustle Guild does not guarantee any specific income or outcome. Educational community for ambitious builders. No financial advice.</p>
+    <div class="cta-row">
+      <a href="/#join" class="btn-primary">Join the Guild &rarr;</a>
+      <a href="/#how-it-works" class="btn-secondary">How the Marketplace works</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div>
+      <div class="footer-tagline">The Side Hustle Guild</div>
+      <p>Every builder, every level.</p>
+      <p style="margin-top:12px;color:rgba(248,244,237,0.5);font-size:12px;">X3 E-Commerce LLC dba Side Hustle Guild</p>
+    </div>
+    <div>
+      <h4>The Lab</h4>
+      <ul>
+        <li><a href="/submissions">Submissions</a></li>
+        <li><a href="/marketplace">Builders Marketplace</a></li>
+        <li><a href="/affiliate">Affiliate Program</a></li>
+        <li><a href="/sponsors">Sponsorships</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/marketplace/rules">Contest Rules</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+    </div>
+    <div class="footer-disclaimer" style="grid-column: 1/-1;">
+      Member results not typical. The Side Hustle Guild is an educational community for ambitious builders. No financial advice. No income guarantees. Skill-based competition with cash awards funded by The Side Hustle Guild and our sponsors. &copy; 2026 X3 E-Commerce LLC dba Side Hustle Guild.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  var state = {
+    threads: [],
+    loaded: false,
+    tier: "All",
+    categories: new Set(["All"]),
+    investments: new Set(["All"]),
+    verifiedOnly: false,
+    sort: "recent",
+    query: ""
+  };
+
+  var grid = document.getElementById("grid");
+  var resultCount = document.getElementById("result-count");
+  var sortSelect = document.getElementById("sort-select");
+  var searchBox = document.getElementById("search-box");
+  var verifiedToggle = document.getElementById("verified-only");
+  var clearBtn = document.getElementById("clear-btn");
+
+  function escapeHtml(s) {
+    if (s == null) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function relativeTime(iso) {
+    if (!iso) return "";
+    var then = new Date(iso).getTime();
+    if (isNaN(then)) return "";
+    var diff = Math.floor((Date.now() - then) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+    if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+    if (diff < 86400 * 30) return Math.floor(diff / 86400) + "d ago";
+    if (diff < 86400 * 365) return Math.floor(diff / (86400 * 30)) + "mo ago";
+    return Math.floor(diff / (86400 * 365)) + "y ago";
+  }
+
+  function tierBadgeClass(tier) {
+    if (tier === "Rookie") return "badge-rookie";
+    if (tier === "Operator") return "badge-operator";
+    return "badge-builder";
+  }
+
+  function renderCard(t) {
+    var tags = (t.categoryTags || []).slice(0, 3)
+      .map(function(c) { return '<span class="pill">' + escapeHtml(c) + '</span>'; })
+      .join("");
+    var verifiedBadge = t.verified
+      ? '<span class="badge badge-verified" title="Verified Hustle">&#10003; Verified</span>'
+      : '<span></span>';
+    var foot =
+      '<span title="Posted">&#x23F0; ' + escapeHtml(relativeTime(t.createdAt)) + '</span>' +
+      '<span title="Replies">&#x1F4AC; ' + (t.messageCount || 0) + '</span>' +
+      (t.reactionCount > 0 ? '<span title="Reactions">&#x1F525; ' + t.reactionCount + '</span>' : '');
+    return (
+      '<a class="card" href="' + escapeHtml(t.discordUrl) + '" target="_blank" rel="noopener" aria-label="' + escapeHtml(t.title) + ' by ' + escapeHtml(t.authorHandle) + '">' +
+        '<div class="card-top">' +
+          '<span class="badge ' + tierBadgeClass(t.tier) + '">' + escapeHtml(t.tier) + '</span>' +
+          verifiedBadge +
+        '</div>' +
+        '<div class="card-title">' + escapeHtml(t.title) + '</div>' +
+        '<div class="card-author">' + escapeHtml(t.authorHandle) + '</div>' +
+        (tags ? '<div class="card-tags">' + tags + '</div>' : '') +
+        '<div class="card-excerpt">' + escapeHtml(t.bodyExcerpt || "") + '</div>' +
+        '<div class="card-foot">' + foot + '</div>' +
+      '</a>'
+    );
+  }
+
+  function passesFilters(t) {
+    if (state.tier !== "All" && t.tier !== state.tier) return false;
+
+    if (!state.categories.has("All")) {
+      var matchCat = (t.categoryTags || []).some(function(c) { return state.categories.has(c); });
+      if (!matchCat) return false;
+    }
+
+    if (!state.investments.has("All")) {
+      var matchInv = (t.investmentTags || []).some(function(i) { return state.investments.has(i); });
+      if (!matchInv) return false;
+    }
+
+    if (state.verifiedOnly && !t.verified) return false;
+
+    if (state.query) {
+      var q = state.query.toLowerCase();
+      var hay = (t.title + " " + (t.authorHandle || "")).toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+
+  function sortFn(a, b) {
+    if (state.sort === "alpha") return a.title.localeCompare(b.title);
+    if (state.sort === "replies") return (b.messageCount || 0) - (a.messageCount || 0);
+    if (state.sort === "reactions") return (b.reactionCount || 0) - (a.reactionCount || 0);
+    // recent
+    return (a.createdAt < b.createdAt ? 1 : -1);
+  }
+
+  function render() {
+    if (!state.loaded) return;
+
+    var visible = state.threads.filter(passesFilters).sort(sortFn);
+    resultCount.textContent = visible.length + (visible.length === 1 ? " entry" : " entries");
+
+    if (visible.length === 0) {
+      grid.innerHTML =
+        '<div class="empty">' +
+          '<h3>No entries match.</h3>' +
+          '<p>Reset filters or check back when this season opens. New Hustle Cards drop throughout the month.</p>' +
+        '</div>';
+      return;
+    }
+
+    grid.innerHTML = visible.map(renderCard).join("");
+  }
+
+  function bindChips() {
+    var chips = document.querySelectorAll(".chip");
+    chips.forEach(function(chip) {
+      chip.addEventListener("click", function() {
+        var filter = chip.getAttribute("data-filter");
+        var value = chip.getAttribute("data-value");
+
+        if (filter === "tier") {
+          // Single-select.
+          state.tier = value;
+          document.querySelectorAll('.chip[data-filter="tier"]').forEach(function(c) {
+            c.setAttribute("aria-pressed", c.getAttribute("data-value") === value ? "true" : "false");
+          });
+        } else {
+          // Multi-select.
+          var setRef = filter === "category" ? state.categories : state.investments;
+          if (value === "All") {
+            setRef.clear();
+            setRef.add("All");
+          } else {
+            setRef.delete("All");
+            if (setRef.has(value)) setRef.delete(value); else setRef.add(value);
+            if (setRef.size === 0) setRef.add("All");
+          }
+          document.querySelectorAll('.chip[data-filter="' + filter + '"]').forEach(function(c) {
+            var v = c.getAttribute("data-value");
+            c.setAttribute("aria-pressed", setRef.has(v) ? "true" : "false");
+          });
+        }
+        render();
+      });
+
+      chip.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); chip.click(); }
+      });
+    });
+  }
+
+  function bindControls() {
+    sortSelect.addEventListener("change", function() {
+      state.sort = sortSelect.value;
+      render();
+    });
+
+    var qTimer;
+    searchBox.addEventListener("input", function() {
+      clearTimeout(qTimer);
+      qTimer = setTimeout(function() {
+        state.query = searchBox.value.trim();
+        render();
+      }, 80);
+    });
+
+    verifiedToggle.addEventListener("change", function() {
+      state.verifiedOnly = verifiedToggle.checked;
+      render();
+    });
+
+    clearBtn.addEventListener("click", function() {
+      state.tier = "All";
+      state.categories = new Set(["All"]);
+      state.investments = new Set(["All"]);
+      state.verifiedOnly = false;
+      state.query = "";
+      state.sort = "recent";
+      sortSelect.value = "recent";
+      searchBox.value = "";
+      verifiedToggle.checked = false;
+      document.querySelectorAll(".chip").forEach(function(c) {
+        c.setAttribute("aria-pressed", c.getAttribute("data-value") === "All" ? "true" : "false");
+      });
+      render();
+    });
+  }
+
+  function showError(msg) {
+    grid.innerHTML =
+      '<div class="error">' +
+        '<h3>Couldn&rsquo;t load submissions.</h3>' +
+        '<p>' + escapeHtml(msg || "Try again in a minute.") + '</p>' +
+      '</div>';
+  }
+
+  function load() {
+    fetch("/submissions/api", { headers: { Accept: "application/json" } })
+      .then(function(r) { return r.json().then(function(j) { return { ok: r.ok, j: j }; }); })
+      .then(function(res) {
+        if (!res.ok || !res.j || !Array.isArray(res.j.threads)) {
+          showError(res.j && res.j.error ? res.j.error : "Server didn't return a thread list.");
+          return;
+        }
+        state.threads = res.j.threads;
+        state.loaded = true;
+        render();
+      })
+      .catch(function(err) { showError(String(err && err.message || err)); });
+  }
+
+  bindChips();
+  bindControls();
+  load();
+})();
+</script>
+
+<script src="/assets/cookie-banner.js" defer></script>
+</body>
+</html>

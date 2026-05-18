@@ -3,592 +3,283 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Every Hustle Card submitted to the Builders Marketplace. Sortable, filterable, public — see what members are actually building.">
+<title>Contest Submissions — The Side Hustle Guild</title>
+<meta name="description" content="Every Hustle Card submitted to the SHG monthly contest. Sortable, filterable, public — see what members are actually building.">
 <meta property="og:title" content="Submissions — The Side Hustle Guild">
-<meta property="og:description" content="Every Hustle Card. Every season. Sortable, filterable, public.">
+<meta property="og:description" content="Every Hustle Card. Every cycle. Real revenue, real proof.">
 <meta property="og:url" content="https://thesidehustleguild.com/submissions">
 <meta property="og:type" content="website">
-<title>Submissions — The Side Hustle Guild</title>
-<link rel="preconnect" href="https://fonts.bunny.net">
-<link href="https://fonts.bunny.net/css?family=fraunces:400,500,600,700|manrope:400,500,600,700" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #F8F4ED;
-    --slate: #27384A;
-    --amber: #E89B3B;
-    --sage: #A8C9A0;
-    --charcoal: #1E1E1E;
-    --charcoal-soft: #1E1E1E99;
-    --line: rgba(39,56,74,0.08);
-    --line-strong: rgba(39,56,74,0.18);
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Manrope', sans-serif;
-    background: var(--cream);
-    color: var(--charcoal);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-  h1, h2, h3, h4 { font-family: 'Fraunces', serif; font-weight: 600; line-height: 1.2; color: var(--slate); }
-  a { color: var(--slate); }
-  .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+:root {
+  --gold: #C9A961; --gold-light: #E5C982; --navy: #1a2238; --navy-light: #2a3553;
+  --cream: #f8f4ee; --cream-dark: #ebe5d8; --charcoal: #2a2a2a; --muted: #8a8a8a; --border: #e0dac8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--charcoal); line-height: 1.5; }
+.header { background: var(--navy); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: 'Fraunces', serif; font-weight: 600; color: var(--gold); font-size: 1.1rem; text-decoration: none; }
+.nav { display: flex; gap: 1.5rem; align-items: center; }
+.nav a { color: var(--cream); text-decoration: none; font-size: 0.9rem; opacity: 0.85; }
+.nav a.active { opacity: 1; color: var(--gold); }
+.btn-cta { background: var(--gold); color: var(--navy); padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+.hero { background: var(--navy); color: var(--cream); padding: 3rem 2rem; }
+.hero-inner { max-width: 1080px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
+.hero-left h1 { font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.hero-left .sub { opacity: 0.85; font-size: 1rem; max-width: 480px; }
+.hero-right { background: rgba(201,169,97,0.1); border: 1px solid rgba(201,169,97,0.4); padding: 1.25rem 1.75rem; border-radius: 12px; text-align: center; }
+.hero-right .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.25rem; }
+.hero-right .amount { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.hero-right .meta { font-size: 0.85rem; opacity: 0.8; margin-top: 0.4rem; }
 
-  /* NAV */
-  nav.site-nav { padding: 20px 0; border-bottom: 1px solid var(--line); background: var(--cream); }
-  nav.site-nav .container { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .logo { font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; color: var(--slate); text-decoration: none; }
-  .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--amber); margin-right: 10px; vertical-align: middle; transform: rotate(45deg); }
-  .site-nav-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
-  .site-nav-links a { text-decoration: none; font-weight: 500; font-size: 15px; color: var(--charcoal-soft); }
-  .site-nav-links a.current { color: var(--slate); }
-  .site-nav-links a:hover { color: var(--amber); }
-  .nav-cta { background: var(--amber); color: var(--cream) !important; padding: 10px 22px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 14px; }
+.container { max-width: 1080px; margin: 0 auto; padding: 2rem; }
+.filters { display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; background: white; padding: 1rem 1.25rem; border-radius: 8px; border: 1px solid var(--border); }
+.filter-group { display: flex; align-items: center; gap: 0.5rem; }
+.filter-label { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+.filter-select, .filter-search {
+  font-family: 'Inter', sans-serif; font-size: 0.875rem;
+  padding: 0.4rem 0.75rem; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--cream); cursor: pointer;
+}
+.filter-search { flex: 1; min-width: 200px; cursor: text; }
+.results-count { font-size: 0.85rem; color: var(--muted); }
 
-  /* HERO */
-  .hero { padding: 56px 0 32px; }
-  .hero h1 { font-size: clamp(32px, 5vw, 52px); margin-bottom: 16px; max-width: 920px; }
-  .hero h1 .accent { color: var(--amber); }
-  .hero p.lead { font-size: 18px; max-width: 720px; color: var(--charcoal-soft); margin-bottom: 12px; }
-  .hero .what-link { font-size: 14px; font-weight: 500; color: var(--slate); text-decoration: underline; text-underline-offset: 4px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+.card { background: white; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: all 0.2s ease; position: relative; text-decoration: none; color: inherit; display: block; }
+.card:hover { border-color: var(--gold); box-shadow: 0 8px 24px rgba(26,34,56,0.1); transform: translateY(-3px); }
+.card.winner { border: 2px solid var(--gold); }
+.card .winner-badge { position: absolute; top: 0.75rem; right: 0.75rem; background: var(--gold); color: var(--navy); font-size: 0.7rem; font-weight: 700; padding: 0.35rem 0.7rem; border-radius: 6px; letter-spacing: 0.05em; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(26,34,56,0.2); }
+.card .category-overlay { position: absolute; top: 0.75rem; left: 0.75rem; background: rgba(26,34,56,0.85); color: var(--gold); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; padding: 0.3rem 0.6rem; border-radius: 4px; z-index: 2; backdrop-filter: blur(8px); }
+.card-image { aspect-ratio: 16/10; width: 100%; overflow: hidden; background: var(--cream-dark); display: flex; align-items: center; justify-content: center; }
+.card-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-image-placeholder { font-family: 'Fraunces', serif; color: var(--gold); font-size: 2rem; opacity: 0.4; }
+.card-body { padding: 1.25rem 1.5rem 1.5rem; }
+.card .title { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 500; color: var(--navy); margin-bottom: 0.5rem; line-height: 1.3; }
+.card .meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.625rem; }
+.card .avatar { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light)); display: inline-flex; align-items: center; justify-content: center; color: var(--navy); font-size: 0.7rem; font-weight: 700; }
+.card .excerpt { font-size: 0.9rem; color: var(--charcoal); line-height: 1.5; margin-bottom: 1rem; opacity: 0.85; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 0.875rem; border-top: 1px solid var(--cream-dark); }
+.proof-stats { display: flex; gap: 0.875rem; font-size: 0.85rem; color: var(--charcoal); }
+.proof-stats .stat strong { font-family: 'Fraunces', serif; color: var(--navy); }
+.card-link { color: var(--gold); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
 
-  /* FILTER BAR */
-  .filter-bar {
-    position: sticky; top: 0; z-index: 50;
-    background: var(--cream);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 16px 0;
-    box-shadow: 0 1px 0 rgba(39,56,74,0.04);
-  }
-  .filter-bar .container { display: flex; flex-direction: column; gap: 12px; }
-  .filter-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
-  .filter-label {
-    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-    color: var(--charcoal-soft); font-weight: 600; margin-right: 6px;
-  }
-  .chip {
-    appearance: none; border: 1px solid var(--line-strong); background: transparent;
-    color: var(--slate); padding: 6px 12px; border-radius: 100px; font-size: 13px;
-    font-family: inherit; font-weight: 500; cursor: pointer;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
-  }
-  .chip:hover { border-color: var(--slate); }
-  .chip:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-  .chip[aria-pressed="true"] { background: var(--slate); color: var(--cream); border-color: var(--slate); }
-  .chip.tier-rookie[aria-pressed="true"]   { background: var(--sage); color: var(--slate); border-color: var(--sage); }
-  .chip.tier-builder[aria-pressed="true"]  { background: var(--amber); color: var(--cream); border-color: var(--amber); }
-  .chip.tier-operator[aria-pressed="true"] { background: var(--slate); color: var(--cream); border-color: var(--slate); }
+.empty-card { background: transparent; border: 2px dashed var(--border); padding: 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px; }
+.empty-card .label { font-family: 'Fraunces', serif; font-size: 1.1rem; color: var(--navy); margin-bottom: 0.5rem; }
+.empty-card .sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+.empty-card .btn { background: var(--gold); color: var(--navy); padding: 0.625rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 
-  .filter-controls {
-    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-    padding-top: 4px;
-  }
-  .verified-toggle {
-    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-    font-size: 13px; color: var(--slate); font-weight: 500;
-  }
-  .verified-toggle input { accent-color: var(--amber); width: 16px; height: 16px; }
-  .search-box, .sort-select {
-    border: 1px solid var(--line-strong); background: white; color: var(--slate);
-    padding: 8px 12px; border-radius: 4px; font-family: inherit; font-size: 14px;
-  }
-  .search-box { min-width: 200px; }
-  .search-box:focus, .sort-select:focus { outline: 2px solid var(--amber); outline-offset: 1px; border-color: var(--amber); }
-  .clear-btn {
-    background: transparent; border: none; color: var(--slate);
-    text-decoration: underline; cursor: pointer; font-family: inherit;
-    font-size: 13px; font-weight: 500; padding: 6px 4px;
-  }
-  .clear-btn:hover { color: var(--amber); }
-  .result-count { font-size: 13px; color: var(--charcoal-soft); margin-left: auto; }
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.empty-state h3 { font-family: 'Fraunces', serif; color: var(--navy); margin-bottom: 0.5rem; }
+.empty-state .btn { display: inline-block; margin-top: 1rem; background: var(--gold); color: var(--navy); padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
 
-  /* GRID */
-  .grid-wrap { padding: 32px 0 56px; }
-  .grid {
-    display: grid; gap: 20px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 860px)  { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 560px)  { .grid { grid-template-columns: 1fr; } }
-
-  .card {
-    position: relative; background: white; border: 1px solid var(--line);
-    border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px;
-    text-decoration: none; color: inherit; min-height: 260px;
-    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-  }
-  .card:hover, .card:focus-visible {
-    border-color: var(--slate);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(39,56,74,0.08);
-    outline: none;
-  }
-  .card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 22px; }
-  .badge {
-    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-    font-weight: 700; padding: 4px 10px; border-radius: 100px;
-  }
-  .badge-rookie   { background: var(--sage);  color: var(--slate); }
-  .badge-builder  { background: var(--amber); color: var(--cream); }
-  .badge-operator { background: var(--slate); color: var(--cream); }
-  .badge-verified {
-    background: rgba(168,201,160,0.25); color: var(--slate);
-    border: 1px solid var(--sage); font-size: 11px; padding: 3px 8px;
-    border-radius: 100px; font-weight: 600;
-  }
-  .card-title {
-    font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.25rem;
-    line-height: 1.25; color: var(--slate); margin-top: 2px;
-  }
-  .card-author { font-size: 13px; font-weight: 500; color: var(--sage); filter: brightness(0.78); }
-  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .pill {
-    font-size: 11px; padding: 2px 8px; border-radius: 100px;
-    background: var(--cream); border: 1px solid var(--line-strong);
-    color: var(--charcoal-soft); font-weight: 500;
-  }
-  .card-excerpt {
-    font-size: 14px; color: var(--charcoal-soft); flex: 1;
-    -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
-    mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
-    overflow: hidden; max-height: 7.2em;
-  }
-  .card-foot {
-    display: flex; gap: 14px; font-size: 12px; color: var(--charcoal-soft);
-    border-top: 1px solid var(--line); padding-top: 10px; margin-top: 4px;
-  }
-  .card-foot span { display: inline-flex; align-items: center; gap: 4px; }
-
-  /* SKELETON */
-  .skeleton {
-    background: white; border: 1px solid var(--line); border-radius: 8px;
-    padding: 20px; min-height: 260px; display: flex; flex-direction: column; gap: 12px;
-  }
-  .sk-line {
-    background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
-    background-size: 200% 100%;
-    animation: pulse 1.4s ease-in-out infinite;
-    border-radius: 4px; height: 12px;
-  }
-  .sk-line.w-30 { width: 30%; height: 18px; }
-  .sk-line.w-90 { width: 90%; height: 22px; }
-  .sk-line.w-70 { width: 70%; }
-  .sk-line.w-100 { width: 100%; }
-  .sk-line.w-50 { width: 50%; }
-  @keyframes pulse {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-
-  /* EMPTY + ERROR */
-  .empty, .error {
-    grid-column: 1/-1; text-align: center; padding: 56px 24px;
-    background: white; border: 1px dashed var(--line-strong); border-radius: 8px;
-  }
-  .empty h3, .error h3 { margin-bottom: 8px; font-size: 22px; }
-  .empty p, .error p { color: var(--charcoal-soft); max-width: 460px; margin: 0 auto; }
-
-  /* WHAT IS THIS */
-  .explainer { background: white; padding: 64px 0; border-top: 1px solid var(--line); }
-  .explainer h2 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 16px; }
-  .explainer p { max-width: 720px; color: var(--charcoal-soft); margin-bottom: 14px; font-size: 16px; }
-  .explainer .cta-row { margin-top: 24px; display: flex; gap: 14px; flex-wrap: wrap; }
-  .btn-primary { background: var(--slate); color: var(--cream); padding: 14px 26px; text-decoration: none; font-weight: 600; border-radius: 4px; font-size: 15px; }
-  .btn-primary:hover { background: var(--charcoal); }
-  .btn-secondary { color: var(--slate); padding: 14px 20px; text-decoration: underline; font-weight: 500; font-size: 15px; }
-
-  /* FOOTER */
-  footer { background: var(--charcoal); color: var(--cream); padding: 48px 0 28px; font-size: 14px; }
-  footer .container { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
-  @media (max-width: 768px) { footer .container { grid-template-columns: 1fr; } }
-  footer h4 { color: var(--cream); font-size: 12px; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; font-family: 'Manrope', sans-serif; font-weight: 600; }
-  footer ul { list-style: none; }
-  footer ul li { padding: 4px 0; }
-  footer a { color: rgba(248,244,237,0.7); text-decoration: none; }
-  footer a:hover { color: var(--amber); }
-  footer .footer-tagline { font-family: 'Fraunces', serif; color: var(--cream); font-size: 18px; margin-bottom: 8px; }
-  .footer-disclaimer { border-top: 1px solid rgba(248,244,237,0.1); padding-top: 20px; margin-top: 30px; font-size: 11px; color: rgba(248,244,237,0.5); font-style: italic; }
-
-  /* sr-only */
-  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-  @media (max-width: 560px) {
-    .filter-bar { padding: 12px 0; }
-    .filter-row { gap: 6px 8px; }
-    .chip { padding: 5px 10px; font-size: 12px; }
-    .search-box { min-width: 0; flex: 1 1 100%; }
-    .result-count { margin-left: 0; }
-  }
+.loading { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.loading::after { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); animation: pulse 1.4s ease-in-out infinite; margin-left: 8px; vertical-align: middle; }
+@keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 </style>
 </head>
 <body>
 
-<nav class="site-nav">
-  <div class="container">
-    <a href="/" class="logo"><span class="logo-mark"></span>The Side Hustle Guild</a>
-    <div class="site-nav-links">
-      <a href="/">Home</a>
-      <a href="/submissions" class="current" aria-current="page">Submissions</a>
-      <a href="/affiliate">Affiliate</a>
-      <a href="/sponsors">Sponsors</a>
-      <a href="/#join" class="nav-cta">Join the Guild</a>
-    </div>
-  </div>
-</nav>
+<header class="header">
+  <a class="logo" href="/">⚜ The Side Hustle Guild</a>
+  <nav class="nav">
+    <a href="/submissions/" class="active">Browse</a>
+    <a href="/">Discord</a>
+    <a class="btn-cta" href="/submit/">Submit your hustle →</a>
+  </nav>
+</header>
 
 <section class="hero">
-  <div class="container">
-    <h1>Every Hustle Card. Every season. <span class="accent">Sortable, filterable, public.</span></h1>
-    <p class="lead">Real submissions from members of the Builders Marketplace. Pick a tier, narrow by category, sort by what matters to you. Every card links to the full thread inside Discord.</p>
-    <a href="#explainer" class="what-link">What is this? &rarr;</a>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <h1 id="cycle-title">Loading…</h1>
+      <p class="sub">Every Hustle Card from this month's contest. Updated live. Top three split the prize pool at month-end.</p>
+    </div>
+    <div class="hero-right">
+      <div class="label">Current prize pool</div>
+      <div class="amount" id="pool-amount">$—</div>
+      <div class="meta" id="pool-meta">—</div>
+    </div>
   </div>
 </section>
 
-<section class="filter-bar" aria-label="Filter and sort submissions">
-  <div class="container">
+<div class="container">
 
-    <div class="filter-row" role="group" aria-label="Tier">
-      <span class="filter-label">Tier</span>
-      <button class="chip tier-all"      data-filter="tier" data-value="All"      aria-pressed="true">All</button>
-      <button class="chip tier-rookie"   data-filter="tier" data-value="Rookie"   aria-pressed="false">Rookie</button>
-      <button class="chip tier-builder"  data-filter="tier" data-value="Builder"  aria-pressed="false">Builder</button>
-      <button class="chip tier-operator" data-filter="tier" data-value="Operator" aria-pressed="false">Operator</button>
-    </div>
-
-    <div class="filter-row" role="group" aria-label="Category">
+  <div class="filters">
+    <div class="filter-group">
       <span class="filter-label">Category</span>
-      <button class="chip" data-filter="category" data-value="All"         aria-pressed="true">All</button>
-      <button class="chip" data-filter="category" data-value="Digital"     aria-pressed="false">Digital</button>
-      <button class="chip" data-filter="category" data-value="Service"     aria-pressed="false">Service</button>
-      <button class="chip" data-filter="category" data-value="AI"          aria-pressed="false">AI</button>
-      <button class="chip" data-filter="category" data-value="Reselling"   aria-pressed="false">Reselling</button>
-      <button class="chip" data-filter="category" data-value="Local"       aria-pressed="false">Local</button>
-      <button class="chip" data-filter="category" data-value="Content"     aria-pressed="false">Content</button>
-      <button class="chip" data-filter="category" data-value="Real Estate" aria-pressed="false">Real Estate</button>
-      <button class="chip" data-filter="category" data-value="Education"   aria-pressed="false">Education</button>
-    </div>
-
-    <div class="filter-row" role="group" aria-label="Investment">
-      <span class="filter-label">Investment</span>
-      <button class="chip" data-filter="investment" data-value="All"         aria-pressed="true">All</button>
-      <button class="chip" data-filter="investment" data-value="$0-Start"    aria-pressed="false">$0-Start</button>
-      <button class="chip" data-filter="investment" data-value="Low-Cost"    aria-pressed="false">Low-Cost</button>
-      <button class="chip" data-filter="investment" data-value="Tools-Heavy" aria-pressed="false">Tools-Heavy</button>
-    </div>
-
-    <div class="filter-controls">
-      <label class="verified-toggle">
-        <input type="checkbox" id="verified-only" aria-label="Show only verified hustles">
-        Verified only
-      </label>
-      <label class="sr-only" for="sort-select">Sort</label>
-      <select id="sort-select" class="sort-select" aria-label="Sort">
-        <option value="recent">Most recent</option>
-        <option value="reactions">Most upvoted</option>
-        <option value="replies">Most replied to</option>
-        <option value="alpha">Alphabetical</option>
+      <select class="filter-select" id="filter-category">
+        <option value="">All</option>
+        <option value="digital_product">Digital product</option>
+        <option value="service">Service</option>
+        <option value="saas_app">SaaS / app</option>
+        <option value="content">Content</option>
+        <option value="physical_product">Physical product</option>
+        <option value="other">Other</option>
       </select>
-      <label class="sr-only" for="search-box">Search</label>
-      <input id="search-box" class="search-box" type="search" placeholder="Search title or builder..." aria-label="Search submissions">
-      <button id="clear-btn" class="clear-btn" type="button">Clear filters</button>
-      <span class="result-count" id="result-count" aria-live="polite"></span>
     </div>
-
+    <div class="filter-group">
+      <span class="filter-label">Sort</span>
+      <select class="filter-select" id="filter-sort">
+        <option value="reactions">Most reactions</option>
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
+    <input class="filter-search" id="filter-search" type="search" placeholder="Search titles, builders, tags…">
+    <span class="results-count" id="results-count">—</span>
   </div>
-</section>
 
-<section class="grid-wrap">
-  <div class="container">
-    <div class="grid" id="grid">
-      <!-- Skeleton loaders -->
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-      <div class="skeleton"><div class="sk-line w-30"></div><div class="sk-line w-90"></div><div class="sk-line w-50"></div><div class="sk-line w-100"></div><div class="sk-line w-100"></div><div class="sk-line w-70"></div></div>
-    </div>
-  </div>
-</section>
+  <div id="grid-wrap"><div class="loading">Loading submissions</div></div>
 
-<section id="explainer" class="explainer">
-  <div class="container">
-    <h2>What is this?</h2>
-    <p>This is the public face of the Builders Marketplace, the monthly skill-based contest that runs inside The Side Hustle Guild. Every card here was submitted by a member of the Guild. The contest awards cash prizes per tier so a Rookie competing on their first dollar isn't matched against an Operator running a small machine. Same room, separate ladders.</p>
-    <p>You'll see Hustle Cards from real builders. Real numbers, real proof, real talk. We keep the threads in Discord because that's where the conversation actually happens. This page is the index.</p>
-    <p style="font-style: italic; font-size: 13px; padding-top: 8px;">Member results not typical. The Side Hustle Guild does not guarantee any specific income or outcome. Educational community for ambitious builders. No financial advice.</p>
-    <div class="cta-row">
-      <a href="/#join" class="btn-primary">Join the Guild &rarr;</a>
-      <a href="/#how-it-works" class="btn-secondary">How the Marketplace works</a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="container">
-    <div>
-      <div class="footer-tagline">The Side Hustle Guild</div>
-      <p>Every builder, every level.</p>
-      <p style="margin-top:12px;color:rgba(248,244,237,0.5);font-size:12px;">X3 E-Commerce LLC dba Side Hustle Guild</p>
-    </div>
-    <div>
-      <h4>The Lab</h4>
-      <ul>
-        <li><a href="/submissions">Submissions</a></li>
-        <li><a href="/marketplace">Builders Marketplace</a></li>
-        <li><a href="/affiliate">Affiliate Program</a></li>
-        <li><a href="/sponsors">Sponsorships</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Company</h4>
-      <ul>
-        <li><a href="/about">About</a></li>
-        <li><a href="/faq">FAQ</a></li>
-        <li><a href="/marketplace/rules">Contest Rules</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-        <li><a href="/terms">Terms</a></li>
-      </ul>
-    </div>
-    <div class="footer-disclaimer" style="grid-column: 1/-1;">
-      Member results not typical. The Side Hustle Guild is an educational community for ambitious builders. No financial advice. No income guarantees. Skill-based competition with cash awards funded by The Side Hustle Guild and our sponsors. &copy; 2026 X3 E-Commerce LLC dba Side Hustle Guild.
-    </div>
-  </div>
-</footer>
+</div>
 
 <script>
-(function() {
-  var state = {
-    threads: [],
-    loaded: false,
-    tier: "All",
-    categories: new Set(["All"]),
-    investments: new Set(["All"]),
-    verifiedOnly: false,
-    sort: "recent",
-    query: ""
-  };
+const $ = s => document.querySelector(s);
+let allSubs = [];
+const CATEGORY_LABEL = {
+  digital_product: "Digital Product",
+  service: "Service",
+  saas_app: "SaaS / App",
+  content: "Content",
+  physical_product: "Physical Product",
+  other: "Hustle"
+};
 
-  var grid = document.getElementById("grid");
-  var resultCount = document.getElementById("result-count");
-  var sortSelect = document.getElementById("sort-select");
-  var searchBox = document.getElementById("search-box");
-  var verifiedToggle = document.getElementById("verified-only");
-  var clearBtn = document.getElementById("clear-btn");
+function htmlEscape(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 
-  function escapeHtml(s) {
-    if (s == null) return "";
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
+function formatDate(iso) {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  } catch { return ""; }
+}
 
-  function relativeTime(iso) {
-    if (!iso) return "";
-    var then = new Date(iso).getTime();
-    if (isNaN(then)) return "";
-    var diff = Math.floor((Date.now() - then) / 1000);
-    if (diff < 60) return "just now";
-    if (diff < 3600) return Math.floor(diff / 60) + "m ago";
-    if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
-    if (diff < 86400 * 30) return Math.floor(diff / 86400) + "d ago";
-    if (diff < 86400 * 365) return Math.floor(diff / (86400 * 30)) + "mo ago";
-    return Math.floor(diff / (86400 * 365)) + "y ago";
-  }
+function renderCard(s) {
+  const cat = CATEGORY_LABEL[s.category] || "Hustle";
+  const initial = (s.display_name || "?")[0].toUpperCase();
+  const excerpt = (s.outcome || s.problem || "").slice(0, 130);
+  const isWinner = s.winner_rank != null;
+  const winnerLabel = s.winner_rank === 1 ? "🏆 Winner" : s.winner_rank === 2 ? "🥈 2nd" : s.winner_rank === 3 ? "🥉 3rd" : "🏆 Leading";
+  const heroImage = s.hero_url || null;
 
-  function tierBadgeClass(tier) {
-    if (tier === "Rookie") return "badge-rookie";
-    if (tier === "Operator") return "badge-operator";
-    return "badge-builder";
-  }
+  return `
+    <a class="card ${isWinner ? 'winner' : ''}" href="/submissions/${encodeURIComponent(s.slug)}">
+      ${isWinner ? `<span class="winner-badge">${winnerLabel}</span>` : ''}
+      <span class="category-overlay">${htmlEscape(cat)}</span>
+      <div class="card-image">
+        ${heroImage
+          ? `<img src="${htmlEscape(heroImage)}" alt="${htmlEscape(s.title)}" loading="lazy">`
+          : `<div class="card-image-placeholder">⚜</div>`}
+      </div>
+      <div class="card-body">
+        <h2 class="title">${htmlEscape(s.title)}</h2>
+        <div class="meta">
+          <div class="avatar">${htmlEscape(initial)}</div>
+          <span>${htmlEscape(s.display_name)} · ${formatDate(s.created_at)}</span>
+        </div>
+        <p class="excerpt">${htmlEscape(excerpt)}${excerpt.length === 130 ? "…" : ""}</p>
+        <div class="card-footer">
+          <div class="proof-stats">
+            <span class="stat">⭐ <strong>${s.reaction_count || 0}</strong></span>
+          </div>
+          <span class="card-link">Read entry →</span>
+        </div>
+      </div>
+    </a>`;
+}
 
-  function renderCard(t) {
-    var tags = (t.categoryTags || []).slice(0, 3)
-      .map(function(c) { return '<span class="pill">' + escapeHtml(c) + '</span>'; })
-      .join("");
-    var verifiedBadge = t.verified
-      ? '<span class="badge badge-verified" title="Verified Hustle">&#10003; Verified</span>'
-      : '<span></span>';
-    var foot =
-      '<span title="Posted">&#x23F0; ' + escapeHtml(relativeTime(t.createdAt)) + '</span>' +
-      '<span title="Replies">&#x1F4AC; ' + (t.messageCount || 0) + '</span>' +
-      (t.reactionCount > 0 ? '<span title="Reactions">&#x1F525; ' + t.reactionCount + '</span>' : '');
-    return (
-      '<a class="card" href="' + escapeHtml(t.discordUrl) + '" target="_blank" rel="noopener" aria-label="' + escapeHtml(t.title) + ' by ' + escapeHtml(t.authorHandle) + '">' +
-        '<div class="card-top">' +
-          '<span class="badge ' + tierBadgeClass(t.tier) + '">' + escapeHtml(t.tier) + '</span>' +
-          verifiedBadge +
-        '</div>' +
-        '<div class="card-title">' + escapeHtml(t.title) + '</div>' +
-        '<div class="card-author">' + escapeHtml(t.authorHandle) + '</div>' +
-        (tags ? '<div class="card-tags">' + tags + '</div>' : '') +
-        '<div class="card-excerpt">' + escapeHtml(t.bodyExcerpt || "") + '</div>' +
-        '<div class="card-foot">' + foot + '</div>' +
-      '</a>'
+function renderEmptyCard(cycle) {
+  return `
+    <div class="empty-card">
+      <div class="label">Got something to submit?</div>
+      <div class="sub">${cycle} contest open. Top 3 split the pool.</div>
+      <a class="btn" href="/submit/">Submit your hustle →</a>
+    </div>`;
+}
+
+function applyFilters(subs) {
+  const cat = $("#filter-category").value;
+  const sort = $("#filter-sort").value;
+  const search = $("#filter-search").value.toLowerCase().trim();
+
+  let filtered = subs.slice();
+  if (cat) filtered = filtered.filter(s => s.category === cat);
+  if (search) {
+    filtered = filtered.filter(s =>
+      (s.title || "").toLowerCase().includes(search)
+      || (s.display_name || "").toLowerCase().includes(search)
+      || (s.target_audience || "").toLowerCase().includes(search)
     );
   }
+  if (sort === "newest") filtered.sort((a,b) => (b.created_at||"").localeCompare(a.created_at||""));
+  else if (sort === "oldest") filtered.sort((a,b) => (a.created_at||"").localeCompare(b.created_at||""));
+  else filtered.sort((a,b) => (b.reaction_count||0) - (a.reaction_count||0));
+  return filtered;
+}
 
-  function passesFilters(t) {
-    if (state.tier !== "All" && t.tier !== state.tier) return false;
+function render() {
+  const filtered = applyFilters(allSubs);
+  const cycle = allSubs[0]?.cycle_month || new Date().toISOString().slice(0,7);
+  $("#results-count").textContent = `${filtered.length} ${filtered.length === 1 ? "entry" : "entries"}`;
 
-    if (!state.categories.has("All")) {
-      var matchCat = (t.categoryTags || []).some(function(c) { return state.categories.has(c); });
-      if (!matchCat) return false;
+  const grid = filtered.length
+    ? filtered.map(renderCard).join("") + renderEmptyCard(cycle)
+    : `<div class="empty-state" style="grid-column: 1 / -1;">
+         <h3>No entries yet this cycle</h3>
+         <p>Be the first to submit. Top 3 split the prize pool.</p>
+         <a class="btn" href="/submit/">Submit your hustle →</a>
+       </div>`;
+  $("#grid-wrap").innerHTML = `<div class="grid">${grid}</div>`;
+}
+
+async function loadPool() {
+  try {
+    const r = await fetch("/api/public/stats");
+    const d = await r.json();
+    if (d?.prize_pool_cents != null) {
+      $("#pool-amount").textContent = `$${(d.prize_pool_cents / 100).toFixed(0)}`;
     }
-
-    if (!state.investments.has("All")) {
-      var matchInv = (t.investmentTags || []).some(function(i) { return state.investments.has(i); });
-      if (!matchInv) return false;
+    if (d?.member_count != null) {
+      $("#pool-meta").textContent = `${d.member_count} members`;
     }
+  } catch (_) {}
+}
 
-    if (state.verifiedOnly && !t.verified) return false;
+async function loadSubs() {
+  try {
+    const r = await fetch("/api/submissions");
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    allSubs = data.submissions || [];
 
-    if (state.query) {
-      var q = state.query.toLowerCase();
-      var hay = (t.title + " " + (t.authorHandle || "")).toLowerCase();
-      if (hay.indexOf(q) === -1) return false;
-    }
-    return true;
+    // Update title
+    const cycleMonth = data.cycle || new Date().toISOString().slice(0,7);
+    const cycleDate = new Date(cycleMonth + "-01");
+    const cycleLabel = cycleDate.toLocaleString("en-US", { month: "long", year: "numeric" });
+    $("#cycle-title").textContent = `${cycleLabel} Submissions`;
+    document.title = `${cycleLabel} Submissions — The Side Hustle Guild`;
+
+    render();
+  } catch (e) {
+    $("#grid-wrap").innerHTML = `
+      <div class="empty-state">
+        <h3>Couldn't load submissions</h3>
+        <p>${htmlEscape(e.message)}. Refresh in a moment.</p>
+      </div>`;
   }
+}
 
-  function sortFn(a, b) {
-    if (state.sort === "alpha") return a.title.localeCompare(b.title);
-    if (state.sort === "replies") return (b.messageCount || 0) - (a.messageCount || 0);
-    if (state.sort === "reactions") return (b.reactionCount || 0) - (a.reactionCount || 0);
-    // recent
-    return (a.createdAt < b.createdAt ? 1 : -1);
-  }
+["#filter-category", "#filter-sort", "#filter-search"].forEach(sel => {
+  document.querySelector(sel).addEventListener("input", render);
+});
 
-  function render() {
-    if (!state.loaded) return;
-
-    var visible = state.threads.filter(passesFilters).sort(sortFn);
-    resultCount.textContent = visible.length + (visible.length === 1 ? " entry" : " entries");
-
-    if (visible.length === 0) {
-      grid.innerHTML =
-        '<div class="empty">' +
-          '<h3>No entries match.</h3>' +
-          '<p>Reset filters or check back when this season opens. New Hustle Cards drop throughout the month.</p>' +
-        '</div>';
-      return;
-    }
-
-    grid.innerHTML = visible.map(renderCard).join("");
-  }
-
-  function bindChips() {
-    var chips = document.querySelectorAll(".chip");
-    chips.forEach(function(chip) {
-      chip.addEventListener("click", function() {
-        var filter = chip.getAttribute("data-filter");
-        var value = chip.getAttribute("data-value");
-
-        if (filter === "tier") {
-          // Single-select.
-          state.tier = value;
-          document.querySelectorAll('.chip[data-filter="tier"]').forEach(function(c) {
-            c.setAttribute("aria-pressed", c.getAttribute("data-value") === value ? "true" : "false");
-          });
-        } else {
-          // Multi-select.
-          var setRef = filter === "category" ? state.categories : state.investments;
-          if (value === "All") {
-            setRef.clear();
-            setRef.add("All");
-          } else {
-            setRef.delete("All");
-            if (setRef.has(value)) setRef.delete(value); else setRef.add(value);
-            if (setRef.size === 0) setRef.add("All");
-          }
-          document.querySelectorAll('.chip[data-filter="' + filter + '"]').forEach(function(c) {
-            var v = c.getAttribute("data-value");
-            c.setAttribute("aria-pressed", setRef.has(v) ? "true" : "false");
-          });
-        }
-        render();
-      });
-
-      chip.addEventListener("keydown", function(e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); chip.click(); }
-      });
-    });
-  }
-
-  function bindControls() {
-    sortSelect.addEventListener("change", function() {
-      state.sort = sortSelect.value;
-      render();
-    });
-
-    var qTimer;
-    searchBox.addEventListener("input", function() {
-      clearTimeout(qTimer);
-      qTimer = setTimeout(function() {
-        state.query = searchBox.value.trim();
-        render();
-      }, 80);
-    });
-
-    verifiedToggle.addEventListener("change", function() {
-      state.verifiedOnly = verifiedToggle.checked;
-      render();
-    });
-
-    clearBtn.addEventListener("click", function() {
-      state.tier = "All";
-      state.categories = new Set(["All"]);
-      state.investments = new Set(["All"]);
-      state.verifiedOnly = false;
-      state.query = "";
-      state.sort = "recent";
-      sortSelect.value = "recent";
-      searchBox.value = "";
-      verifiedToggle.checked = false;
-      document.querySelectorAll(".chip").forEach(function(c) {
-        c.setAttribute("aria-pressed", c.getAttribute("data-value") === "All" ? "true" : "false");
-      });
-      render();
-    });
-  }
-
-  function showError(msg) {
-    grid.innerHTML =
-      '<div class="error">' +
-        '<h3>Couldn&rsquo;t load submissions.</h3>' +
-        '<p>' + escapeHtml(msg || "Try again in a minute.") + '</p>' +
-      '</div>';
-  }
-
-  function load() {
-    fetch("/submissions/api", { headers: { Accept: "application/json" } })
-      .then(function(r) { return r.json().then(function(j) { return { ok: r.ok, j: j }; }); })
-      .then(function(res) {
-        if (!res.ok || !res.j || !Array.isArray(res.j.threads)) {
-          showError(res.j && res.j.error ? res.j.error : "Server didn't return a thread list.");
-          return;
-        }
-        state.threads = res.j.threads;
-        state.loaded = true;
-        render();
-      })
-      .catch(function(err) { showError(String(err && err.message || err)); });
-  }
-
-  bindChips();
-  bindControls();
-  load();
-})();
+loadPool();
+loadSubs();
 </script>
-
-<script src="/assets/cookie-banner.js" defer></script>
 </body>
 </html>

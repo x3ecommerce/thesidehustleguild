@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin · Judging — The Side Hustle Guild</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --gold:#C9A961; --gold-light:#E5C982; --navy:#1a2238; --navy-light:#2a3553; --cream:#f8f4ee; --cream-dark:#ebe5d8; --charcoal:#2a2a2a; --muted:#8a8a8a; --border:#e0dac8; --green:#2d6e2d; --red:#c54a3e; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--charcoal); line-height:1.5; }
+.header { background:var(--navy); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+.logo { font-family:'Fraunces',serif; font-weight:600; color:var(--gold); font-size:1.1rem; text-decoration:none; }
+.header-right { display:flex; gap:1rem; align-items:center; font-size:0.85rem; color:var(--cream); opacity:0.85; }
+.header-right a { color:var(--gold); text-decoration:none; }
+
+.container { max-width:1200px; margin:0 auto; padding:2rem; }
+.toolbar { background:white; border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+.tool-label { font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); font-weight:600; }
+.toolbar select { padding:0.4rem 0.75rem; border:1px solid var(--border); border-radius:6px; background:var(--cream); font-size:0.9rem; font-family:'Inter',sans-serif; }
+.stats-strip { display:flex; gap:1.5rem; margin-left:auto; }
+.stat-pill { font-size:0.85rem; color:var(--charcoal); }
+.stat-pill strong { font-family:'Fraunces',serif; color:var(--navy); font-size:1.1rem; margin-right:0.25rem; }
+
+h1 { font-family:'Fraunces',serif; font-size:1.8rem; color:var(--navy); margin-bottom:0.25rem; }
+.subtitle { font-size:0.95rem; color:var(--muted); margin-bottom:1.5rem; }
+
+.submissions-table { background:white; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.row-header, .row {
+  display:grid;
+  grid-template-columns: 80px 1.5fr 120px 100px 90px 110px 110px;
+  gap:0.5rem; padding:0.875rem 1rem; align-items:center;
+  border-bottom:1px solid var(--cream-dark); font-size:0.875rem;
+}
+.row-header { background:var(--navy); color:var(--cream); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:600; }
+.row:hover { background:var(--cream); }
+.row:last-child { border-bottom:none; }
+.row .thumb { aspect-ratio:4/3; border-radius:4px; background:var(--cream-dark); overflow:hidden; }
+.row .thumb img { width:100%; height:100%; object-fit:cover; }
+.row .thumb-placeholder { font-family:'Fraunces',serif; color:var(--gold); font-size:1.2rem; display:flex; align-items:center; justify-content:center; opacity:0.5; height:100%; }
+.row .title-cell { display:flex; flex-direction:column; gap:0.25rem; }
+.row .title-cell .title-text { font-weight:500; color:var(--navy); line-height:1.3; }
+.row .title-cell a { color:var(--gold); font-size:0.78rem; text-decoration:none; }
+.row .title-cell a:hover { text-decoration:underline; }
+.row .author { font-size:0.85rem; color:var(--charcoal); }
+.row .author small { color:var(--muted); font-size:0.75rem; display:block; }
+.row select { padding:0.3rem 0.5rem; border:1px solid var(--border); border-radius:4px; background:var(--cream); font-size:0.8rem; font-family:'Inter',sans-serif; width:100%; }
+.row .rank-cell select { font-weight:600; }
+.row .stats { display:flex; gap:0.5rem; font-size:0.85rem; color:var(--charcoal); }
+.row .stats strong { font-family:'Fraunces',serif; color:var(--navy); }
+.row .actions { display:flex; gap:0.4rem; flex-wrap:wrap; }
+.btn { font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; padding:0.3rem 0.625rem; border-radius:4px; border:1px solid var(--border); background:white; color:var(--charcoal); cursor:pointer; }
+.btn:hover { border-color:var(--navy); }
+.btn.primary { background:var(--gold); color:var(--navy); border-color:var(--gold); font-weight:600; }
+.btn.danger { color:var(--red); border-color:#f5c7c1; }
+
+.notes-modal { position:fixed; inset:0; background:rgba(26,34,56,0.6); display:none; align-items:center; justify-content:center; z-index:50; padding:2rem; }
+.notes-modal.active { display:flex; }
+.notes-modal .panel { background:white; border-radius:12px; max-width:560px; width:100%; padding:1.75rem; }
+.notes-modal h2 { font-family:'Fraunces',serif; color:var(--navy); margin-bottom:0.25rem; }
+.notes-modal .ctx { font-size:0.85rem; color:var(--muted); margin-bottom:1rem; }
+.notes-modal textarea { width:100%; min-height:160px; font-family:'Inter',sans-serif; font-size:0.95rem; padding:0.75rem; border:1.5px solid var(--border); border-radius:6px; background:var(--cream); }
+.notes-modal .actions { display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem; }
+
+.loading, .empty { padding:3rem 2rem; text-align:center; color:var(--muted); }
+.loading::after { content:'…'; }
+
+.toast { position:fixed; bottom:2rem; right:2rem; background:var(--navy); color:var(--cream); padding:0.875rem 1.5rem; border-radius:8px; font-size:0.9rem; box-shadow:0 8px 24px rgba(26,34,56,0.3); opacity:0; transform:translateY(20px); transition:all 0.3s ease; }
+.toast.show { opacity:1; transform:translateY(0); }
+.toast.error { background:var(--red); }
+
+.login-gate { max-width:380px; margin:8rem auto; background:white; border:1px solid var(--border); border-radius:12px; padding:2rem; text-align:center; }
+.login-gate a { background:var(--gold); color:var(--navy); padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; display:inline-block; margin-top:1rem; }
+
+.judging-status { font-size:0.65rem; padding:0.15rem 0.4rem; border-radius:3px; font-weight:700; text-transform:uppercase; }
+.judging-status.submitted { background:var(--cream-dark); color:var(--navy); }
+.judging-status.judging { background:#fef3e8; color:#a05a17; }
+.judging-status.winner { background:var(--gold); color:var(--navy); }
+.judging-status.nonwinner { background:var(--cream); color:var(--muted); }
+.judging-status.hidden { background:#fcebe8; color:#8b2d22; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="/admin/judging/">⚜ SHG · Admin · Judging</a>
+  <div class="header-right">
+    <a href="/finance/">← CFO Suite</a>
+    <span>·</span>
+    <a href="/submissions/">Public browse</a>
+  </div>
+</header>
+
+<div class="container" id="app">
+
+  <h1>Contest Judging</h1>
+  <p class="subtitle">Set status, mark winners, capture judging notes. All changes save to D1 immediately.</p>
+
+  <div class="toolbar">
+    <div>
+      <div class="tool-label">Cycle</div>
+      <select id="filter-cycle"><option value="">All cycles</option></select>
+    </div>
+    <div>
+      <div class="tool-label">Status</div>
+      <select id="filter-status">
+        <option value="">All</option>
+        <option value="submitted">Submitted</option>
+        <option value="judging">Judging</option>
+        <option value="winner">Winner</option>
+        <option value="nonwinner">Non-winner</option>
+        <option value="hidden">Hidden</option>
+      </select>
+    </div>
+    <div class="stats-strip" id="stats-strip"></div>
+  </div>
+
+  <div class="submissions-table">
+    <div class="row-header">
+      <div>Thumb</div>
+      <div>Title / Author / Email</div>
+      <div>Status</div>
+      <div>Rank</div>
+      <div>Stats</div>
+      <div>Notes</div>
+      <div>Actions</div>
+    </div>
+    <div id="rows"><div class="loading">Loading</div></div>
+  </div>
+
+</div>
+
+<!-- Notes modal -->
+<div class="notes-modal" id="notes-modal">
+  <div class="panel">
+    <h2>Judging notes</h2>
+    <div class="ctx" id="notes-context"></div>
+    <textarea id="notes-text" placeholder="Internal notes — never rendered publicly. Use for judging rationale, calibration notes, follow-up flags."></textarea>
+    <div class="actions">
+      <button class="btn" id="notes-cancel">Cancel</button>
+      <button class="btn primary" id="notes-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let allSubs = [];
+let activeNotesId = null;
+
+function $(s) { return document.querySelector(s); }
+function htmlEscape(s) { if (s==null) return ""; return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function toast(msg, isError=false) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.className = "toast show" + (isError ? " error" : "");
+  setTimeout(() => { t.className = "toast"; }, 2400);
+}
+
+function statusBadge(s) {
+  return `<span class="judging-status ${s}">${s}</span>`;
+}
+
+function renderRow(s) {
+  const heroImg = s.hero_url
+    ? `<img src="${htmlEscape(s.hero_url)}" alt="">`
+    : `<div class="thumb-placeholder">⚜</div>`;
+  return `
+    <div class="row" data-id="${s.submission_id}">
+      <div class="thumb">${heroImg}</div>
+      <div class="title-cell">
+        <span class="title-text">${htmlEscape(s.title)}</span>
+        <span>${statusBadge(s.status)} <small style="color:var(--muted)">· ${s.cycle_month}</small></span>
+        <a href="/submissions/${encodeURIComponent(s.slug)}" target="_blank">View public →</a>
+      </div>
+      <div>
+        <select class="js-status" data-id="${s.submission_id}">
+          <option value="submitted"${s.status === "submitted" ? " selected" : ""}>Submitted</option>
+          <option value="judging"${s.status === "judging" ? " selected" : ""}>Judging</option>
+          <option value="winner"${s.status === "winner" ? " selected" : ""}>Winner</option>
+          <option value="nonwinner"${s.status === "nonwinner" ? " selected" : ""}>Non-winner</option>
+          <option value="hidden"${s.status === "hidden" ? " selected" : ""}>Hidden</option>
+        </select>
+      </div>
+      <div class="rank-cell">
+        <select class="js-rank" data-id="${s.submission_id}">
+          <option value="">—</option>
+          <option value="1"${s.winner_rank === 1 ? " selected" : ""}>🏆 1st</option>
+          <option value="2"${s.winner_rank === 2 ? " selected" : ""}>🥈 2nd</option>
+          <option value="3"${s.winner_rank === 3 ? " selected" : ""}>🥉 3rd</option>
+        </select>
+      </div>
+      <div class="stats">
+        <span>⭐<strong>${s.reaction_count || 0}</strong></span>
+        <span>📸<strong>${s.image_count || 0}</strong></span>
+      </div>
+      <div>
+        <button class="btn js-notes" data-id="${s.submission_id}">
+          ${s.judge_notes ? "📝 Edit" : "+ Add"}
+        </button>
+      </div>
+      <div class="actions">
+        ${s.discord_thread_id
+          ? `<a class="btn" href="https://discord.com/channels/1502424732702871642/${s.discord_thread_id}" target="_blank">Discord</a>`
+          : ""}
+        <a class="btn" href="mailto:${encodeURIComponent(s.email)}" title="${htmlEscape(s.email)}">Email</a>
+      </div>
+    </div>`;
+}
+
+function renderStats(counts) {
+  const totals = {};
+  for (const c of counts) {
+    totals[c.status] = (totals[c.status] || 0) + c.n;
+  }
+  const pills = [];
+  if (totals.submitted) pills.push(`<span class="stat-pill"><strong>${totals.submitted}</strong>submitted</span>`);
+  if (totals.judging) pills.push(`<span class="stat-pill"><strong>${totals.judging}</strong>judging</span>`);
+  if (totals.winner) pills.push(`<span class="stat-pill"><strong>${totals.winner}</strong>winners</span>`);
+  $("#stats-strip").innerHTML = pills.join("") || `<span class="stat-pill" style="color:var(--muted);">No submissions yet</span>`;
+}
+
+function populateCycleFilter(subs) {
+  const cycles = [...new Set(subs.map(s => s.cycle_month))].sort().reverse();
+  const sel = $("#filter-cycle");
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All cycles</option>' + cycles.map(c => `<option value="${c}"${c === current ? " selected" : ""}>${c}</option>`).join("");
+}
+
+function applyFilters() {
+  const cycle = $("#filter-cycle").value;
+  const status = $("#filter-status").value;
+  let filtered = allSubs;
+  if (cycle) filtered = filtered.filter(s => s.cycle_month === cycle);
+  if (status) filtered = filtered.filter(s => s.status === status);
+  return filtered;
+}
+
+function render() {
+  const rows = applyFilters();
+  $("#rows").innerHTML = rows.length
+    ? rows.map(renderRow).join("")
+    : `<div class="empty">No submissions match these filters.</div>`;
+}
+
+async function load() {
+  try {
+    const r = await fetch("/api/admin/submissions", { credentials: "same-origin" });
+    if (r.status === 401) {
+      document.getElementById("app").innerHTML = `
+        <div class="login-gate">
+          <h2 style="font-family:'Fraunces',serif; color:var(--navy); margin-bottom:0.5rem;">Sign in required</h2>
+          <p style="color:var(--muted); font-size:0.9rem;">Admin judging uses the same login as the CFO Suite.</p>
+          <a href="/finance/login.html">Sign in →</a>
+        </div>`;
+      return;
+    }
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    allSubs = data.submissions || [];
+    populateCycleFilter(allSubs);
+    renderStats(data.counts || []);
+    render();
+  } catch (e) {
+    $("#rows").innerHTML = `<div class="empty">Error loading: ${htmlEscape(e.message)}</div>`;
+  }
+}
+
+async function patch(id, body) {
+  const r = await fetch(`/api/admin/submissions/${id}`, {
+    method: "PATCH",
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({}));
+    throw new Error(err.error || `HTTP ${r.status}`);
+  }
+  return r.json();
+}
+
+document.addEventListener("change", async (e) => {
+  if (e.target.classList.contains("js-status")) {
+    const id = +e.target.dataset.id;
+    try {
+      await patch(id, { status: e.target.value });
+      const idx = allSubs.findIndex(s => s.submission_id === id);
+      if (idx >= 0) allSubs[idx].status = e.target.value;
+      toast("Status updated");
+      render();
+    } catch (err) { toast(err.message, true); }
+  }
+  if (e.target.classList.contains("js-rank")) {
+    const id = +e.target.dataset.id;
+    const rank = e.target.value === "" ? null : +e.target.value;
+    try {
+      await patch(id, { winner_rank: rank });
+      const idx = allSubs.findIndex(s => s.submission_id === id);
+      if (idx >= 0) allSubs[idx].winner_rank = rank;
+      toast(rank ? `Marked as ${rank === 1 ? "1st" : rank === 2 ? "2nd" : "3rd"} place` : "Rank cleared");
+    } catch (err) { toast(err.message, true); }
+  }
+});
+
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("js-notes")) {
+    const id = +e.target.dataset.id;
+    const sub = allSubs.find(s => s.submission_id === id);
+    if (!sub) return;
+    activeNotesId = id;
+    $("#notes-context").textContent = `${sub.title} — ${sub.display_name}`;
+    $("#notes-text").value = sub.judge_notes || "";
+    $("#notes-modal").classList.add("active");
+    $("#notes-text").focus();
+  }
+});
+
+$("#notes-cancel").addEventListener("click", () => { $("#notes-modal").classList.remove("active"); });
+$("#notes-save").addEventListener("click", async () => {
+  if (!activeNotesId) return;
+  const text = $("#notes-text").value;
+  try {
+    await patch(activeNotesId, { judge_notes: text });
+    const idx = allSubs.findIndex(s => s.submission_id === activeNotesId);
+    if (idx >= 0) allSubs[idx].judge_notes = text;
+    $("#notes-modal").classList.remove("active");
+    toast("Notes saved");
+    render();
+  } catch (err) { toast(err.message, true); }
+});
+
+["#filter-cycle", "#filter-status"].forEach(sel => document.querySelector(sel).addEventListener("change", render));
+
+load();
+</script>
+</body>
+</html>
