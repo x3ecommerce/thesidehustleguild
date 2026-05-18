@@ -2,7 +2,6 @@
 -- Fired via /faq <name> slash command, auto-trigger keywords, or mod /tag/post.
 
 -- Idempotent re-seed: clear any previous seed values then insert fresh.
-DELETE FROM faq_tags WHERE created_by = 'shg_launch_seed';
 
 INSERT INTO faq_tags (name, title, content, embed_color, created_by) VALUES
 
@@ -208,7 +207,14 @@ Mods follow Discord''s Community Guidelines + the Server Rules pinned in #rules.
 **Joshua direct:** the Wednesday Office Hours stage. Bring your stuck thing. 30 minutes of his time, every week, free.
 
 **Don''t DM Joshua cold** — he reads them but can''t respond to all. A ticket gets a real reply every time.',
-2701384, 'shg_launch_seed');
+2701384, 'shg_launch_seed')
+ON CONFLICT(name) DO UPDATE SET
+  title       = excluded.title,
+  content     = excluded.content,
+  embed_color = excluded.embed_color,
+  created_by  = excluded.created_by,
+  updated_at  = CURRENT_TIMESTAMP,
+  enabled     = 1;
 
 -- Verify count
 SELECT 'Seeded ' || COUNT(*) || ' FAQ tags' AS result FROM faq_tags WHERE created_by = 'shg_launch_seed';
