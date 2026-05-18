@@ -307,6 +307,33 @@ export default {
       ).bind(body.actual_outcome, body.outcome_score || null, body.decision_id).run();
       return json({ ok: true });
     }
+    // Proxy endpoint: lets other workers (e.g. m6-discord-pulse) send a brief
+    // to the founder channel WITHOUT carrying their own DISCORD_BOT_TOKEN.
+    // POST body: { content: "...", title?: "...", color?: 0xC9A961 }
+    if (url.pathname === "/post-to-owner" && req.method === "POST") {
+      if (!authorize(req, env)) return json({ error: "unauthorized" }, { status: 401 });
+      const body = await req.json().catch(() => ({}));
+      const content = (body.content || "").toString();
+      if (!content) return json({ error: "content required" }, { status: 400 });
+      if (!env.FINANCE_CHANNEL_ID || !env.DISCORD_BOT_TOKEN) {
+        return json({ error: "channel not configured" }, { status: 503 });
+      }
+      try {
+        if (body.title) {
+          await discordPost(env, env.FINANCE_CHANNEL_ID, "", [{
+            title: body.title.slice(0, 256),
+            description: content.slice(0, 4000),
+            color: body.color || 0xC9A961,
+            footer: { text: `via ${body.from || "agent"} · ${new Date().toISOString()}` }
+          }]);
+        } else {
+          await discordPost(env, env.FINANCE_CHANNEL_ID, content.slice(0, 1900), []);
+        }
+        return json({ ok: true });
+      } catch (e) {
+        return json({ error: String(e).slice(0, 300) }, { status: 502 });
+      }
+    }
     if (url.pathname === "/health") {
       const fleet = await env.DB.prepare(`SELECT * FROM agent_status ORDER BY agent_group, agent_id`).all();
       const alerts = await env.DB.prepare(`SELECT * FROM agent_alerts WHERE resolved_at IS NULL ORDER BY raised_at DESC LIMIT 50`).all();
