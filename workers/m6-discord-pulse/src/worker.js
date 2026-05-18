@@ -67,14 +67,14 @@ async function computeMetrics(env) {
     submissions_this_cycle = r?.n ?? null;
   } catch (_) {}
 
-  // c3 fired successfully today?
+  // c3 fired successfully in the last 26 hours? (26h window absorbs UTC midnight transition)
   let c3_fired_today = null;
   try {
     const r = await env.DB.prepare(
       `SELECT COUNT(*) AS n FROM agent_runs
          WHERE agent_id='c3_content_engine'
            AND status='success'
-           AND date(started_at) = date('now')`
+           AND started_at >= datetime('now', '-26 hours')`
     ).first().catch(() => null);
     c3_fired_today = (r?.n ?? 0) > 0;
   } catch (_) {}
