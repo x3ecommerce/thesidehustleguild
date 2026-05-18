@@ -13,7 +13,7 @@
 // Bindings: DB (shg-ledger), ANTHROPIC_API_KEY, DISCORD_PUBLIC_KEY, DISCORD_BOT_TOKEN.
 
 import { runAgent, json, authorize } from "./_runtime.js";
-import * as ed from "https://esm.sh/@noble/[email protected]";
+import * as ed from "./_ed25519.js";
 
 ed.etc.sha512Async = async (...messages) => {
   const data = ed.etc.concatBytes(...messages);
