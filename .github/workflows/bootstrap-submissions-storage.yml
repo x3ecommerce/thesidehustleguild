@@ -1,0 +1,99 @@
+name: Bootstrap Submissions Storage
+
+# One-shot: create R2 bucket + bind to Pages project for the new submissions system.
+# Idempotent — safe to re-run.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    env:
+      CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      BUCKET_NAME: shg-submissions
+      PAGES_PROJECT: thesidehustleguild
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create R2 bucket (idempotent)
+        run: |
+          set -e
+          echo "Creating R2 bucket $BUCKET_NAME..."
+          STATUS=$(curl -sS -o /tmp/r2_create.json -w "%{http_code}" -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/r2/buckets" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "{\"name\":\"$BUCKET_NAME\"}")
+          echo "HTTP $STATUS"
+          cat /tmp/r2_create.json | python3 -m json.tool || cat /tmp/r2_create.json
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "409" ]; then
+            # 409 = already exists. anything else surfaces error but doesn't fail —
+            # some API responses use 200 with success=false for "already exists" too.
+            if ! grep -q '"name":"shg-submissions"' /tmp/r2_create.json && \
+               ! grep -qi 'already exists\|exists' /tmp/r2_create.json; then
+              echo "::warning::Unexpected response; check above. Continuing."
+            fi
+          fi
+
+      - name: List current Pages project (find current bindings)
+        run: |
+          curl -sS -X GET \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects/$PAGES_PROJECT" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -o /tmp/pages_project.json
+          echo "Pages project deployment_configs:"
+          python3 -c "
+import json
+d = json.load(open('/tmp/pages_project.json'))
+prod = d.get('result',{}).get('deployment_configs',{}).get('production',{})
+print('  D1:', list((prod.get('d1_databases') or {}).keys()))
+print('  R2:', list((prod.get('r2_buckets') or {}).keys()))
+print('  Vars:', list((prod.get('env_vars') or {}).keys()))
+"
+
+      - name: Bind R2 bucket to Pages project (production + preview)
+        run: |
+          # PATCH adds the SUBMISSIONS_BUCKET binding to both production + preview deployment configs.
+          # Existing bindings are preserved — the API does a partial merge for the deployment_configs key.
+          PAYLOAD=$(python3 -c "
+import json
+d = json.load(open('/tmp/pages_project.json'))
+configs = d['result']['deployment_configs']
+for env_key in ('production','preview'):
+    cfg = configs.setdefault(env_key, {})
+    r2 = cfg.setdefault('r2_buckets', {}) or {}
+    r2['SUBMISSIONS_BUCKET'] = { 'name': 'shg-submissions' }
+    cfg['r2_buckets'] = r2
+print(json.dumps({'deployment_configs': configs}))
+")
+          echo "$PAYLOAD" > /tmp/patch.json
+          echo "Patch body bytes: $(wc -c < /tmp/patch.json)"
+          STATUS=$(curl -sS -o /tmp/patch_resp.json -w "%{http_code}" -X PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects/$PAGES_PROJECT" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data @/tmp/patch.json)
+          echo "HTTP $STATUS"
+          python3 -m json.tool < /tmp/patch_resp.json || cat /tmp/patch_resp.json
+
+      - name: Verify binding is now present
+        run: |
+          curl -sS -X GET \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects/$PAGES_PROJECT" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -o /tmp/verify.json
+          python3 -c "
+import json, sys
+d = json.load(open('/tmp/verify.json'))
+prod = d.get('result',{}).get('deployment_configs',{}).get('production',{})
+r2 = prod.get('r2_buckets') or {}
+if 'SUBMISSIONS_BUCKET' in r2:
+    print('✓ SUBMISSIONS_BUCKET bound to', r2['SUBMISSIONS_BUCKET'].get('name'))
+else:
+    print('✗ binding NOT found'); sys.exit(1)
+"
