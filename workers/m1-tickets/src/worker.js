@@ -28,8 +28,8 @@ async function verifyDiscordSignature(req, rawBody, publicKeyHex) {
 
 // ─── Ticket panel + lifecycle ─────────────────────────────────────────────
 const TICKET_PANEL_EMBED = {
-  title: "🎟  Need Help? Open a Ticket.",
-  description: "Pick a category below — we'll spin up a private thread with the right people.\n\n**Use a ticket for:**\n• Billing & payouts (W-9, missing payment, refund)\n• Contest questions (judging, eligibility, prize disputes)\n• Bug reports (site, Discord, Whop)\n• Sponsor inquiries (brands wanting to sponsor a season)\n• Anything else private\n\n*General questions go in #submit-questions instead.*",
+  title: "🎟  Get unstuck — open a private ticket.",
+  description: "Pick a category below. We spin up a private thread; only you and staff can see it. Most tickets resolve in one back-and-forth.\n\n**Open a ticket for:**\n🧾  Billing & payouts (subscription, W-9, missing payment, refund)\n🏆  Contest questions (eligibility, judging, prize claim)\n🐛  Bug reports (site, Discord, Whop — anything broken)\n🤝  Sponsor inquiries (brands sponsoring a season or contest)\n💬  Anything else private\n\n*General builder questions belong in #the-exchange — you'll get more eyes there.*",
   color: 2701384,
   footer: { text: "All tickets are private. Only you and staff can see them." },
 };
@@ -54,14 +54,14 @@ async function createTicket(env, { category, discord_id, panel_channel_id }) {
     `INSERT INTO tickets (ticket_number, category, discord_id, thread_id, channel_id, status) VALUES (?, ?, ?, ?, ?, 'open')`
   ).bind(next, category, discord_id, thread.id, panel_channel_id).run();
   const intro = {
-    billing:  "🧾 **Billing**: Tell us — Whop email used, transaction ID if available, what went wrong.",
-    contest:  "🏆 **Contest**: Which contest period, Hustle Card link or submission ID, what's the question.",
-    bug:      "🐛 **Bug**: URL/channel, what you tried, what happened, screenshot if possible.",
-    sponsor:  "🤝 **Sponsor**: Brand name, what you're hoping to do, season interest, budget range.",
-    other:    "💬 **Anything else**: Just tell us what's up.",
+    billing:  "🧾 **Billing question** — give us:\n• The email you used on Whop\n• Transaction ID if you have it (Whop dashboard → Payments)\n• What went wrong, in your own words\n\nMost billing things resolve in one back-and-forth. If it's urgent (you've been double-charged, sub didn't activate), say so and we'll jump.",
+    contest:  "🏆 **Contest question** — give us:\n• Which month's contest\n• Your Hustle Card link or submission ID\n• What you're trying to figure out\n\nThe rubric and pool math are pinned in #monthly-contests. If you're contesting a judging decision, that's a different conversation and we'll move it to DM.",
+    bug:      "🐛 **Bug report** — give us:\n• Where it happened (URL, channel name)\n• What you were trying to do\n• What happened instead\n• Screenshot if you have one (huge help)\n\nIf it's blocking you from a paid feature, flag that — those move to the front.",
+    sponsor:  "🤝 **Sponsor inquiry** — give us:\n• Brand name and one-line on what you do\n• What you're hoping to do with SHG (custom contest, prize sponsorship, founder shout-out, something else)\n• Rough budget range\n• Season you're thinking about\n\nJoshua handles sponsorships personally. Expect a real reply, not a media-kit auto-response.",
+    other:    "💬 **Anything else** — just tell us what's up. Real people read every ticket. If it's sensitive, you can keep it short here and we'll move to DM.",
   };
   await discordPost(env, thread.id,
-    `<@${discord_id}> Thanks for opening Ticket #${String(next).padStart(4,'0')}.\n\n${intro[category] || intro.other}\n\nA team member will respond within 24 hours (usually faster).`);
+    `<@${discord_id}> Got it — Ticket #${String(next).padStart(4,'0')} is open. This thread is private; only you and staff can see it.\n\n${intro[category] || intro.other}\n\nResponse within 24 hours, usually faster. If nothing here in 24, ping <@&MOD_ROLE_ID>.`);
   return { ticket_number: next, thread_id: thread.id };
 }
 
@@ -75,7 +75,7 @@ async function closeTicket(env, { thread_id, closed_by, resolution_note }) {
     headers: { "Authorization": `Bot ${env.DISCORD_BOT_TOKEN}`, "Content-Type": "application/json" },
     body: JSON.stringify({ archived: true, locked: true }),
   });
-  await discordPost(env, thread_id, `✅ Ticket #${String(t.ticket_number).padStart(4,'0')} closed.${resolution_note ? `\n\n**Resolution:** ${resolution_note}` : ""}`);
+  await discordPost(env, thread_id, `✅ Ticket #${String(t.ticket_number).padStart(4,'0')} resolved.${resolution_note ? `\n\n**What we did:** ${resolution_note}` : ""}\n\nIf this comes back up, open a new ticket and reference this number — we'll have the context.`);
   return { ticket_number: t.ticket_number };
 }
 

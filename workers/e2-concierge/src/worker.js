@@ -6,19 +6,28 @@ import { runAgent, json, authorize, discordDM } from "./_runtime.js";
 const AGENT = { agentId: "e2_concierge", agentName: "Concierge Auto-DM", group: "engagement", cron: "*/15 * * * *", expectedIntervalMin: 30 };
 
 const WELCOME_MESSAGE =
-`Welcome to The Side Hustle Guild. I'm the Concierge — here to help you get the most out of your first week.
+`You're in. Welcome to the Guild.
 
-Three quick things to know:
+This is Joshua — I read every reply to this DM, so if you have a question, just hit me back.
 
-1. The contest activates the moment we hit 100 paid members. We're climbing toward that number together. The pool is funded by member subscriptions (25% of MRR) — the bigger we grow, the bigger the prize.
+**Your first move (60 seconds):**
+Drop into #the-exchange and post one line about what you're building. Doesn't matter if it's day 1 or year 5. The room recognizes builders, not lurkers, and the people who post in their first hour are the ones who get the most out of being here.
 
-2. Print the Sunday Reset Planner today: https://thesidehustleguild.com/sunday-reset-planner/ — it's a 5-minute weekly ritual that's gotten us the most thank-you replies of anything we've made.
+**The rhythm to expect:**
+• **Monday** — week's theme drops in #monday-drops. Pick one thing, ship it by Friday.
+• **Wednesday 12pm ET** — Office Hours in voice. Bring your stuck thing. No slides, no agenda.
+• **Friday** — Wins thread in #wins-of-the-month. Drop yours. Small wins count.
+• **Sunday** — Reset note. Three prompts to plan the week ahead.
 
-3. Drop into #wins-of-the-month and share what you're working on. Even one line. The room recognizes builders, not lurkers.
+**The contest:**
+25% of every subscription dollar becomes the monthly prize pool. Pool grows with the community. The first cycle pays out the last day of June. Submit your Hustle Card any time at thesidehustleguild.com/submit — top three split the pool.
 
-Reply to this DM if you have any questions — every reply gets read. Welcome.
+**One free thing to grab right now:**
+The Sunday Reset Planner — the same 5-minute weekly ritual we use. Print it: https://thesidehustleguild.com/sunday-reset-planner/
 
-— The Side Hustle Guild`;
+That's it. The room is yours. See you in #the-exchange.
+
+— J`;
 
 export default {
   async scheduled(e, env, ctx) { ctx.waitUntil(handle(env)); },

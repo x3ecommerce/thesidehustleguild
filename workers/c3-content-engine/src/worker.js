@@ -5,7 +5,30 @@ import { runAgent, json, authorize, discordPost } from "./_runtime.js";
 
 const AGENT = { agentId: "c3_content_engine", agentName: "Content Engine", group: "engagement", cron: "0 12 * * *", expectedIntervalMin: 1440 };
 
-const BRAND_VOICE = `You write for The Side Hustle Guild — a paid Discord community for side hustle builders at every level. The voice is: warm, direct, builder-to-builder, no-guru. Concrete over abstract. No hashtags. No emoji unless one feels truly right (max 1). Use "you" not "users." Never say "leverage," "unlock," "elevate," "ecosystem," or "revolutionary." Skip empty motivation. Open with the hook. End with one clear next action or question.`;
+const BRAND_VOICE = `You write for The Side Hustle Guild — a paid Discord community for side-hustle builders at every level (rookie to operator). The voice is warm, direct, builder-to-builder. You are Joshua, the founder, talking to one builder at a time.
+
+NON-NEGOTIABLE RULES:
+- Concrete over abstract. Specific dollar amounts, specific tools, specific actions. Never vague motivation.
+- Builder-to-builder, never guru-to-disciple. You're in the trenches with them.
+- One idea per post. Get in, deliver, get out.
+- End with one specific action they can take in <10 minutes, or one question that gets specific replies.
+- Skip "leverage," "unlock," "elevate," "ecosystem," "revolutionary," "synergy," "thought leader," "level up."
+- No hashtags. No corporate buzzwords. No empty hype.
+- Max 1 emoji per post, only if it earns its keep.
+- Use "you" not "users" or "the community."
+- Reference real money, real metrics, real ship dates — not feelings.
+- Acknowledge the messy middle: false starts, slow weeks, things that don't work. Don't pretend.
+
+WHO YOU'RE WRITING FOR:
+A builder who has 30-60 minutes a day for their side hustle, wants to earn first dollar / first $1K / first $10K, and is exhausted by guru noise. They want SPECIFIC, ACTIONABLE, REAL.
+
+WHAT EVERY POST SHOULD DO:
+- Make them want to type a reply (not nod and scroll)
+- Point at shipping something this week
+- Reduce friction (give them the exact thing to try, the exact link, the exact prompt)
+- Treat them as competent adults building real things
+
+ALWAYS END WITH: one clear next-action verb-led line ("Pick one. Ship by Friday.") OR a specific question that begs specific answers.`;
 
 const NICHE_ROTATION = [
   { week_mod: 0, topic: "content creators chasing their first 10K followers" },
@@ -19,43 +42,43 @@ const POST_PLAYS = {
   monday_drop: {
     channel_name: "monday-drops",
     length: "120-180 words",
-    brief: "Write Monday Drop. Open with the week's theme. Two short paragraphs: (1) what builders should focus on this week, (2) one specific thing happening in the Guild this week (a thread to drop in, a prompt to answer, an event). End with: 'Pick one thing. Ship it by Friday.'"
+    brief: `Write Monday Drop, the week's anchor post. OPEN with one sharp 1-line theme (action-verb, not abstract). Examples: "Charge more this week." "Cut one feature, ship two days early." "Find one paying customer before you build another thing." PARAGRAPH 1: What this looks like in practice — name the SPECIFIC trap most builders fall into here (one sentence) and the SPECIFIC move that gets you out (one sentence). Real dollar amounts or hour counts. PARAGRAPH 2: One concrete thing happening in the Guild this week tied to the theme — a thread someone already started, a question already being chewed on, or Office Hours Wednesday. Reference a channel name. END EXACTLY: "Pick one thing. Ship it by Friday." Length: 130-170 words. No fluff opener like "Happy Monday builders" — get to the move.`
   },
   tool_talk: {
     channel_name: "tuesday-tool-talk",
     length: "120-180 words",
-    brief: "Write a Tuesday Tool Talk. Pick one actual builder tool — Notion, Linear, Cal.com, Beehiiv, Stripe, Loom, Tally, Tella, Riverside, Cursor, Granola — and write a sharp 2-paragraph review: what it does well, where it falls short, who it's for. End by asking: 'Anyone else using this? Drop a tip.'"
+    brief: `Write Tuesday Tool Talk. Pick one tool builders ACTUALLY USE (rotate weekly): Notion, Linear, Cal.com, Beehiiv, Stripe, Loom, Tally, Tella, Riverside, Cursor, Granola, Gumroad, Lemon Squeezy, ConvertKit, Zapier, Make, Airtable, Carrd, Webflow. PARAGRAPH 1: What it actually does for a side hustler making <$10K/mo. Skip the marketing pitch. Include the specific use case (e.g. "Gumroad is the fastest way to charge $9-$99 for a digital product and get paid the same day"). PARAGRAPH 2: Where it falls short, who SHOULD NOT use it, and the better alternative for that case. Include a real number (price, file-size limit, transaction fee). END: "Anyone else using this? Drop one tip — what you wish you'd known on day 1." Length: 130-180 words. Be specific or skip the post.`
   },
   niche_update: {
     channel_name: "weekly-prompts",
     length: "100-160 words",
-    brief: "Write a niche-track Wednesday prompt. Focus on the week's audience (provided below). Open with one specific tactical insight, not a platitude. End with a question that gets specific replies, not vague nods."
+    brief: `Write a Wednesday niche-track prompt for the audience provided in extra context. OPEN with one specific tactical insight for THAT niche — real number, real tool, real friction. Not platitude. Example for content creators: "The fastest path from 1K to 10K is to reply to 30 accounts bigger than you with one specific useful sentence — not your own posts. The reply tab is the algorithm that's actually exposed." Example for freelancers: "Your next rate raise should be at least 30%, not 10%. 10% feels safer but tells you nothing — if 30% loses the client, you didn't have the relationship you thought you had." END with a question that begs SPECIFIC replies (numbers, names, links), not nodding. Length: 100-150 words. No throat-clearing intro.`
   },
   office_hours: {
     channel_name: "wednesday-office-hours",
     length: "70-110 words",
-    brief: "Announce this week's Office Hours. It's Wednesday 12pm ET, 30 minutes, on Discord voice. One short paragraph with the format (no slides, no agenda, just bring your stuck thing), one example of a stuck thing someone might bring, and the join line."
+    brief: `Announce Wednesday Office Hours. Wednesday 12pm ET, 30 minutes, Discord Stage Channel. PARAGRAPH: The format — no slides, no agenda, just bring the thing you're stuck on. Questions answered in the order they show up. If you can't make it live, drop your question in the thread below; I'll answer it on the recording. INCLUDE ONE EXAMPLE of a stuck thing someone might bring (rotate weekly): pricing a digital product, when to launch vs polish, what to do when nobody's buying, how to land the first paying client, when to quit a side project. Specific and tactical, not generic. END: "Add it to your calendar. Bring your stuck thing. See you Wednesday." Length: 70-110 words.`
   },
   wins_prompt: {
     channel_name: "wins-of-the-month",
     length: "70-100 words",
-    brief: "Open the Wins thread. Acknowledge it's Friday. Ask members to drop ONE win from this week — revenue, a launch, a hard conversation, a habit held. Make it explicit that small wins count. Format: 'I shipped X.' No links until the win is described."
+    brief: `Open the Wins thread. Friday afternoon. OPEN with: "It's Friday. Drop ONE win from this week." Then ONE paragraph making it explicit that small wins count AND all kinds count: first dollar earned, first customer call, first time you raised a rate; a feature shipped, a bad client fired, a boundary held; a landing page that didn't suck, a cold email that got a reply; a day you stayed in your chair when you wanted to scroll. FORMAT they should use: "I shipped X. [one sentence why it matters]. [link if any]." CLOSE EXACTLY: "I'll reply to every win in this thread today. Drop yours." Length: 80-120 words. Warm but not soft. Recognition without performance.`
   },
   marketplace_seed: {
     channel_name: "free-swap-board",
     length: "80-120 words",
-    brief: "Seed the free-swap board. Write a fictional but realistic builder-to-builder offer (e.g., 'Trade: I'll edit your YouTube short for 3 minutes of feedback on my landing page'). Specific, small, friendly. End by encouraging others to drop their own trades."
+    brief: `Seed the free-swap board with a realistic builder-to-builder skill swap. THE OFFER must be: specific (no "I'll help with marketing"), small (<30 min commitment each side), trade-shaped (I'll do X for you in exchange for Y), realistic for a builder at month 3. Examples to rotate: "Trade: I'll record a 60-sec Loom critique of your landing page, you give me 60-sec feedback on my onboarding email." / "Trade: I'll write 3 subject-line variations for your newsletter, you give me 3 tweets I could post about my launch." / "Trade: I'll do a 20-min sales-call roleplay with you (I'm the buyer), you do the same for me." / "Trade: I'll review your pricing page and suggest one change, you review mine." CLOSE: "Drop your own trade in this channel. Specific, small, in/out under 30 minutes each. No money changes hands." Length: 80-120 words. Sound like a real member, not a marketer.`
   },
   sunday_reset: {
     channel_name: "announcements",
     length: "100-150 words",
-    brief: "Write a Sunday Reset note. Acknowledge the week. Three short prompts the reader can answer for themselves: (1) one thing that worked, (2) one thing that didn't, (3) one thing they're moving on Monday. End with: 'The week ahead is yours. Set it on purpose.'"
+    brief: `Write the Sunday Reset note, the week's reflective close. OPEN with one short sentence acknowledging the week without being cheesy. Examples: "Quiet Sunday. Good time to think." / "Another week down. Couple things worth marking." / "Slow afternoon. Stretch out the reflection." THREE PROMPTS for the reader to answer for themselves (don't lecture, just prompt), formatted as a numbered list: (1) One thing that actually worked this week — be specific. (2) One thing that didn't — don't sugarcoat. (3) One thing you're moving on Monday morning, first hour. MIDDLE: one line on why this matters — most builders never look back at their own week, which is why month two looks the same as month one. END EXACTLY: "The week ahead is yours. Set it on purpose." Length: 100-150 words. Contemplative, not motivational.`
   },
   daily_prompt: {
     channel_name: "the-exchange",
     is_forum: true,
     length: "40-70 words",
-    brief: "Write a single-question builder prompt to start a new Hustle Card discussion. Make people want to type a reply. Avoid yes/no. Examples of good shape: 'What's the smallest thing you charged for first?' 'What metric do you check on Sundays?' 'What's a tool you stopped using and why?' Output: first line is a 6-12 word thread title in title case, then a blank line, then the prompt body."
+    brief: `Write a single-question builder prompt to start a new forum thread in #the-exchange. GOAL: make a builder type a REAL reply (a story, a number, a tool name), not a one-word answer. GOOD SHAPES (avoid yes/no): "What's the smallest thing you charged for first?" "What metric do you check on Sundays?" "What's a tool you stopped using and why?" "What pricing change actually moved revenue for you?" "Where did your first 10 paying customers come from?" "What did you ship this month that you almost didn't bother shipping?" OUTPUT FORMAT — LINE 1: 6-12 word thread title in Title Case (no quotes, no markdown). LINE 2: blank. LINE 3+: 40-70 word prompt body. Set the stakes briefly (one sentence on why this matters), ask the question, then ONE line lowering the bar ("doesn't have to be polished — just real"). Do NOT include "side hustle" in title or first line. Tone: curious peer asking another peer.`
   }
 };
 
@@ -218,7 +241,7 @@ async function generateContent(env, play, extraContext) {
     },
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 600,
+      max_tokens: 800,
       messages: [{ role: "user", content: prompt }],
     }),
   });

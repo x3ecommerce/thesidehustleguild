@@ -104,17 +104,17 @@ async function syndicateToDiscord(env, submission, heroImageUrl) {
   const publicUrl = `https://thesidehustleguild.com/submissions/${submission.slug}`;
 
   const description = [
-    `**${submission.title}**`,
+    `**Submitted by ${submission.display_name}** · ${catLabel}`,
     "",
-    `*By ${submission.display_name} · ${catLabel}*`,
+    "**What they were stuck on:**",
+    submission.problem.slice(0, 400),
     "",
-    "**The problem**",
-    submission.problem.slice(0, 500),
-    "",
-    "**Outcome**",
+    "**What they built and what happened:**",
     submission.outcome.slice(0, 400),
     "",
-    `🔗 Full entry: ${publicUrl}`
+    `🔗 Full entry + screenshots: ${publicUrl}`,
+    "",
+    `_React below to vote. Comments welcome — ask the builder anything you'd want to know if you were about to ship the same thing._`
   ].join("\n").slice(0, 3900);
 
   const embed = {
