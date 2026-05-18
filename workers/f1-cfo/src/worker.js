@@ -73,10 +73,41 @@ async function handle(env) {
       try { await discordPost(env, env.FINANCE_CHANNEL_ID, "", [embed]); } catch {}
     }
 
+    // Founder DM: when there's a real pending founder queue, ping owner via a1-admin proxy.
+    // Silent on empty queue. Top reason inferred from approvals.reason field when available.
+    let founderDmSent = false;
+    if ((founderQueue?.n || 0) >= 1) {
+      let topReason = "—";
+      try {
+        const tr = await env.DB.prepare(
+          `SELECT COALESCE(reason,'other') AS reason, COUNT(*) AS n FROM approvals
+           WHERE status='pending' AND amount_cents > 100000
+           GROUP BY reason ORDER BY n DESC LIMIT 1`
+        ).first();
+        if (tr && tr.reason) topReason = String(tr.reason);
+      } catch {}
+      try {
+        const r = await fetch("https://shg-a1-admin.joshuakovarik.workers.dev/post-to-owner", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${env.AGENT_RUN_TOKEN || ""}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "f1_cfo",
+            title: "CFO daily — founder approvals waiting",
+            content: `💰 CFO daily — ${founderQueue.n} items in your queue. Total ${fmt(founderQueue.total)}. Top reason: ${topReason}.`,
+            color: 0xC9A961,
+          }),
+        });
+        founderDmSent = r.ok;
+      } catch {}
+    }
+
     return {
       status: reds.length > 0 ? "warn" : "success",
-      summary: `auto=${autoApprovable.n}/${fmt(autoApprovable.total)} founder_queue=${founderQueue.n}/${fmt(founderQueue.total)} reds=${reds.length}`,
-      metadata: { reds: reds.map(r => r.agent_id), pool_cents: pool?.pool_cents, contest_active: pool?.contest_active }
+      summary: `auto=${autoApprovable.n}/${fmt(autoApprovable.total)} founder_queue=${founderQueue.n}/${fmt(founderQueue.total)} reds=${reds.length}${founderDmSent ? " dm=sent" : ""}`,
+      metadata: { reds: reds.map(r => r.agent_id), pool_cents: pool?.pool_cents, contest_active: pool?.contest_active, founder_dm_sent: founderDmSent, founder_queue_n: founderQueue?.n || 0 }
     };
   });
 }

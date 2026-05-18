@@ -8,6 +8,9 @@
 //   3. Write a reconciliation_runs row with status 'clean' or 'drift_detected'.
 //   4. Write an audit_log row with the same hash-chain rules used by the Pages Functions.
 //   5. If drift > $50 or > 0.5%, log an alert (Phase 2: Discord DM to founder).
+//   6. NEW: scan for partial refunds, chargebacks (Stripe charge.disputed), and currency
+//      drift (non-USD transactions). Each lands as a row in `reconcile_anomalies` (or
+//      falls back to the run metadata if the table doesn't exist).
 //
 // Section 6 thresholds: drift > $50 OR drift_pct > 0.5% triggers alert.
 
@@ -39,6 +42,141 @@ function mintRunId(now) {
   return `recon_${yyyy}${mm}${dd}_${HH}${MM}${SS}`;
 }
 
+// ---------- Anomaly detectors ----------------------------------------------
+// Each detector returns a list of {kind, txn_id?, member_id?, amount_cents?, detail}.
+// We try to write each to `reconcile_anomalies`; if that table doesn't exist
+// the rows go into the run metadata only.
+
+async function detectPartialRefunds(db, periodStart, periodEnd) {
+  // A partial refund is a refund row whose abs(amount_cents) is less than the
+  // matching original transaction's amount. Schema-tolerant: we look for either
+  // a `refund_of_txn_id` column or `refund_for` column; otherwise we treat any
+  // 'refund' row whose magnitude < median sale as candidate.
+  const out = [];
+  try {
+    const rows = await db.prepare(
+      `SELECT r.txn_id AS refund_id, r.amount_cents AS refund_amt, r.refund_of_txn_id AS orig_id, r.occurred_at, r.member_id,
+              o.amount_cents AS orig_amt
+         FROM transactions r
+         LEFT JOIN transactions o ON o.txn_id = r.refund_of_txn_id
+        WHERE r.kind='refund'
+          AND r.occurred_at >= ? AND r.occurred_at < ?
+          AND r.refund_of_txn_id IS NOT NULL`
+    ).bind(periodStart, periodEnd).all();
+    for (const row of (rows.results || [])) {
+      if (row.orig_amt && Math.abs(row.refund_amt) < Math.abs(row.orig_amt)) {
+        out.push({
+          kind: "partial_refund",
+          txn_id: row.refund_id,
+          member_id: row.member_id || null,
+          amount_cents: row.refund_amt,
+          detail: `Partial refund ${row.refund_id}: $${Math.abs(row.refund_amt)/100} on original $${Math.abs(row.orig_amt)/100}`,
+        });
+      }
+    }
+  } catch {
+    // Schema doesn't have refund_of_txn_id — best-effort fallback: refunds whose
+    // amount magnitude is suspicious (< $1 indicates likely partial).
+    try {
+      const rows = await db.prepare(
+        `SELECT txn_id, amount_cents, occurred_at, member_id
+           FROM transactions
+          WHERE kind='refund' AND occurred_at >= ? AND occurred_at < ?`
+      ).bind(periodStart, periodEnd).all();
+      for (const row of (rows.results || [])) {
+        if (Math.abs(row.amount_cents) > 0 && Math.abs(row.amount_cents) < 100) {
+          out.push({
+            kind: "partial_refund",
+            txn_id: row.txn_id,
+            member_id: row.member_id || null,
+            amount_cents: row.amount_cents,
+            detail: `Suspiciously small refund ${row.txn_id}: $${Math.abs(row.amount_cents)/100} — verify against original`,
+          });
+        }
+      }
+    } catch {}
+  }
+  return out;
+}
+
+async function detectChargebacks(db, periodStart, periodEnd) {
+  // Stripe sends `charge.disputed` and `charge.dispute.created`. We surface any
+  // transaction that arrived with kind='dispute' OR raw_event_type LIKE 'charge.disputed%'.
+  const out = [];
+  try {
+    const rows = await db.prepare(
+      `SELECT txn_id, amount_cents, member_id, source, occurred_at, raw_event_type
+         FROM transactions
+        WHERE occurred_at >= ? AND occurred_at < ?
+          AND (kind = 'dispute' OR raw_event_type LIKE 'charge.disputed%' OR raw_event_type LIKE 'charge.dispute%')`
+    ).bind(periodStart, periodEnd).all();
+    for (const row of (rows.results || [])) {
+      out.push({
+        kind: "chargeback",
+        txn_id: row.txn_id,
+        member_id: row.member_id || null,
+        amount_cents: row.amount_cents,
+        detail: `Chargeback ${row.txn_id} on ${row.source}: $${Math.abs(row.amount_cents)/100}`,
+      });
+      // Mark the txn as disputed; freeze any pending payout to that member.
+      try {
+        await db.prepare("UPDATE transactions SET status='disputed' WHERE txn_id=?").bind(row.txn_id).run();
+      } catch {}
+      if (row.member_id) {
+        try {
+          await db.prepare(
+            `UPDATE payouts SET status='frozen', notes=COALESCE(notes,'')||' [frozen by reconcile: chargeback ' || ? || ']' WHERE member_id=? AND status IN ('pending','queued')`
+          ).bind(row.txn_id, row.member_id).run();
+        } catch {}
+      }
+    }
+  } catch {}
+  return out;
+}
+
+async function detectCurrencyDrift(db, periodStart, periodEnd) {
+  // Anything that arrives with currency != USD is flagged. We don't auto-convert
+  // — we want a human to confirm the FX number on the books.
+  const out = [];
+  try {
+    const rows = await db.prepare(
+      `SELECT txn_id, amount_cents, currency, source, member_id, occurred_at
+         FROM transactions
+        WHERE occurred_at >= ? AND occurred_at < ?
+          AND currency IS NOT NULL
+          AND UPPER(currency) <> 'USD'`
+    ).bind(periodStart, periodEnd).all();
+    for (const row of (rows.results || [])) {
+      out.push({
+        kind: "currency_drift",
+        txn_id: row.txn_id,
+        member_id: row.member_id || null,
+        amount_cents: row.amount_cents,
+        detail: `Non-USD txn ${row.txn_id}: ${row.amount_cents} ${row.currency} on ${row.source}`,
+      });
+    }
+  } catch {}
+  return out;
+}
+
+async function persistAnomalies(db, runId, anomalies) {
+  if (!anomalies.length) return { persisted: 0, fell_back_to_metadata: false };
+  let persisted = 0;
+  let fellBack = false;
+  for (const a of anomalies) {
+    try {
+      await db.prepare(
+        `INSERT INTO reconcile_anomalies (run_id, kind, txn_id, member_id, amount_cents, detail, detected_at)
+         VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
+      ).bind(runId, a.kind, a.txn_id || null, a.member_id || null, a.amount_cents || null, a.detail || null).run();
+      persisted++;
+    } catch {
+      fellBack = true; // table doesn't exist — caller stores in metadata
+    }
+  }
+  return { persisted, fell_back_to_metadata: fellBack };
+}
+
 async function runReconciliation(env) {
   const db = env.DB;
   const ranAt = new Date().toISOString();
@@ -67,7 +205,14 @@ async function runReconciliation(env) {
 
   const driftCentsAbs = drift;
   const isDrift = driftCentsAbs > 5000 || driftPct > 0.5;
-  const status = isDrift ? "drift_detected" : "clean";
+
+  // ---- Edge-case anomaly detectors -----------------------------------------
+  const partialRefunds = await detectPartialRefunds(db, periodStart, periodEnd);
+  const chargebacks    = await detectChargebacks(db, periodStart, periodEnd);
+  const currencyDrift  = await detectCurrencyDrift(db, periodStart, periodEnd);
+  const anomalies = [...partialRefunds, ...chargebacks, ...currencyDrift];
+
+  const status = (isDrift || anomalies.length > 0) ? "drift_detected" : "clean";
   const alerts = [];
   if (isDrift) {
     alerts.push({
@@ -76,6 +221,13 @@ async function runReconciliation(env) {
       stripe_total_cents: stripeTotal,
       whop_total_cents: whopTotal,
       d1_total_cents: d1Total
+    });
+  }
+  if (anomalies.length > 0) {
+    alerts.push({
+      level: chargebacks.length > 0 ? "error" : "warn",
+      message: `Anomalies: ${partialRefunds.length} partial_refund · ${chargebacks.length} chargeback · ${currencyDrift.length} currency_drift`,
+      counts: { partial_refund: partialRefunds.length, chargeback: chargebacks.length, currency_drift: currencyDrift.length },
     });
   }
 
@@ -90,9 +242,12 @@ async function runReconciliation(env) {
     driftCentsAbs, driftPct, status, JSON.stringify(alerts), null, null, null
   ).run();
 
+  // Persist anomalies (table is optional — falls back to metadata)
+  const anomalyResult = await persistAnomalies(db, runId, anomalies);
+
   // audit_log row
   const prevA = await getPrevAuditHash(db);
-  const stateHash = await sha256Hex(`recon|${runId}|${status}|${driftCentsAbs}|${d1Total}`);
+  const stateHash = await sha256Hex(`recon|${runId}|${status}|${driftCentsAbs}|${d1Total}|anom=${anomalies.length}`);
   const entryHash = await computeAuditHash({
     agentId: "F4_CONTROLLER",
     action: "reconciliation_run",
@@ -109,12 +264,31 @@ async function runReconciliation(env) {
   ).bind(
     "F4_CONTROLLER", "reconciliation_run", "reconciliation_runs", runId,
     null, stateHash,
-    JSON.stringify({ stripe_total_cents: stripeTotal, whop_total_cents: whopTotal, d1_total_cents: d1Total, drift_cents: driftCentsAbs, drift_pct: driftPct, status, period_start: periodStart, period_end: periodEnd }),
+    JSON.stringify({
+      stripe_total_cents: stripeTotal, whop_total_cents: whopTotal, d1_total_cents: d1Total,
+      drift_cents: driftCentsAbs, drift_pct: driftPct, status,
+      period_start: periodStart, period_end: periodEnd,
+      anomaly_counts: { partial_refund: partialRefunds.length, chargeback: chargebacks.length, currency_drift: currencyDrift.length },
+      // Embed full anomaly list when the dedicated table didn't accept the writes,
+      // so the data lives somewhere durable either way.
+      anomalies_inline: anomalyResult.fell_back_to_metadata ? anomalies : undefined,
+    }),
     ranAt, entryHash, prevA
   ).run();
 
-  console.log(`[reconcile] run=${runId} status=${status} stripe=${stripeTotal} whop=${whopTotal} d1=${d1Total} drift=${driftCentsAbs} drift_pct=${driftPct.toFixed(3)}`);
-  return { runId, status, stripe_total_cents: stripeTotal, whop_total_cents: whopTotal, d1_total_cents: d1Total, drift_cents: driftCentsAbs, drift_pct: driftPct, alerts };
+  console.log(`[reconcile] run=${runId} status=${status} stripe=${stripeTotal} whop=${whopTotal} d1=${d1Total} drift=${driftCentsAbs} drift_pct=${driftPct.toFixed(3)} anomalies=${anomalies.length}`);
+  return {
+    runId, status,
+    stripe_total_cents: stripeTotal, whop_total_cents: whopTotal, d1_total_cents: d1Total,
+    drift_cents: driftCentsAbs, drift_pct: driftPct, alerts,
+    anomalies: {
+      partial_refund: partialRefunds.length,
+      chargeback: chargebacks.length,
+      currency_drift: currencyDrift.length,
+      persisted: anomalyResult.persisted,
+      fell_back_to_metadata: anomalyResult.fell_back_to_metadata,
+    },
+  };
 }
 
 export default {

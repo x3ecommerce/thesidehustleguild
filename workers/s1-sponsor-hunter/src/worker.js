@@ -68,8 +68,31 @@ export default {
   },
 };
 
+// Pause guard: don't send sponsor outreach until we have at least 50 paying
+// members. The Whop bill is too small to talk to brands honestly below that.
+async function activeMemberCount(env) {
+  try {
+    const r = await env.DB.prepare("SELECT COUNT(*) AS n FROM members WHERE status='active'").first();
+    return Number(r?.n) || 0;
+  } catch {
+    // members table missing — assume below threshold so we stay paused.
+    return 0;
+  }
+}
+
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
+    // ---- Pause guard: <50 active members → skip outreach entirely ----------
+    const memberCount = await activeMemberCount(env);
+    if (memberCount < 50) {
+      console.log(`[s1] skipped_below_threshold active_members=${memberCount}`);
+      return {
+        status: "success",
+        summary: `paused: <50 paying members (active=${memberCount})`,
+        metadata: { reason: "skipped_below_threshold", active_members: memberCount, threshold: 50 },
+      };
+    }
+
     // Seed any missing leads
     const seeded = await seedLeads(env);
 
@@ -88,7 +111,9 @@ async function handle(env) {
       }
       try {
         const body = await generatePersonalizedEmail(env, { kind: "sponsor", lead, sender_name: senderName, mailing_address: mailingAddress, unsub_url: unsubUrl });
-        const subject = `Sponsor a Side Hustle Guild season — 3 tiers, monthly cash contest`;
+        // Builder-to-builder voice: specific stake (monthly contest, real builders),
+        // no guru-flavor, no "passive income," no "scale your brand."
+        const subject = `Quick one — would ${(lead.company_name || 'your team').split(/\s+/)[0]} sponsor a builder contest at SHG?`;
         const unsubToken = makeUnsubToken(lead.contact_email);
 
         const r = await sendOutreachEmail(env, {

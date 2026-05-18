@@ -20,14 +20,22 @@ export default {
 
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
+    // Active + paused members both count toward prize-pool funding (founder rate
+    // stays locked while paused). Cancelled is excluded.
     const counts = await env.DB.prepare(
       `SELECT
-         COUNT(*) AS total,
-         SUM(CASE WHEN tier='founders_circle' THEN 1 ELSE 0 END) AS founders,
-         SUM(CASE WHEN tier!='founders_circle' THEN 1 ELSE 0 END) AS lab
-       FROM members WHERE status='active'`
+         SUM(CASE WHEN status IN ('active','paused') THEN 1 ELSE 0 END) AS total,
+         SUM(CASE WHEN status='active' THEN 1 ELSE 0 END) AS active,
+         SUM(CASE WHEN status='paused' THEN 1 ELSE 0 END) AS paused,
+         SUM(CASE WHEN status='cancelled' THEN 1 ELSE 0 END) AS cancelled,
+         SUM(CASE WHEN status IN ('active','paused') AND tier='founders_circle' THEN 1 ELSE 0 END) AS founders,
+         SUM(CASE WHEN status IN ('active','paused') AND tier!='founders_circle' THEN 1 ELSE 0 END) AS lab
+       FROM members`
     ).first();
     const total = counts?.total || 0;
+    const activeCount = counts?.active || 0;
+    const pausedCount = counts?.paused || 0;
+    const cancelledCount = counts?.cancelled || 0;
 
     // Compute deltas vs prior snapshot
     const prior24 = await env.DB.prepare(
@@ -104,8 +112,8 @@ async function handle(env) {
 
     return {
       status: "success",
-      summary: `total=${total} +24h=${delta24} +7d=${delta7} active=${isActive ? "yes" : "no"}${activated ? " · ACTIVATED" : ""}`,
-      metadata: { total, delta24, delta7, activated, isActive }
+      summary: `total=${total} active=${activeCount} paused=${pausedCount} cancelled=${cancelledCount} +24h=${delta24} +7d=${delta7} contest=${isActive ? "yes" : "no"}${activated ? " · ACTIVATED" : ""}`,
+      metadata: { total, active: activeCount, paused: pausedCount, cancelled: cancelledCount, delta24, delta7, activated, isActive }
     };
   });
 }

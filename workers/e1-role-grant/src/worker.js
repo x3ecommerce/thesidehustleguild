@@ -8,6 +8,33 @@ const AGENT = { agentId: "e1_role_grant", agentName: "Whop→Discord Role Grant"
 const ROLE_FOUNDER = null;        // set via env if available; otherwise pulls from env.DISCORD_ROLE_FOUNDER
 const ROLE_LAB     = null;        // env.DISCORD_ROLE_LAB
 
+async function verifyWhopSignature(req, rawBody, env) {
+  // If no secret configured, allow but warn (preserves existing behavior).
+  if (!env.WHOP_WEBHOOK_SECRET) {
+    return { ok: true, warned: true, reason: "no_secret_configured" };
+  }
+  const header = req.headers.get("Whop-Signature") || req.headers.get("whop-signature") || "";
+  const provided = header.startsWith("sha256=") ? header.slice(7).trim().toLowerCase() : header.trim().toLowerCase();
+  if (!provided) return { ok: false, reason: "missing_signature_header" };
+  try {
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(env.WHOP_WEBHOOK_SECRET),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(rawBody));
+    const expected = [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, "0")).join("");
+    if (expected.length !== provided.length) return { ok: false, reason: "length_mismatch" };
+    let mismatch = 0;
+    for (let i = 0; i < expected.length; i++) mismatch |= expected.charCodeAt(i) ^ provided.charCodeAt(i);
+    return mismatch === 0 ? { ok: true } : { ok: false, reason: "hmac_mismatch" };
+  } catch (e) {
+    return { ok: false, reason: "verify_error", error: String(e) };
+  }
+}
+
 export default {
   async scheduled(e, env, ctx) { ctx.waitUntil(handle(env)); },
   async fetch(req, env) {
@@ -17,8 +44,29 @@ export default {
       return json(await handle(env));
     }
     if (url.pathname === "/grant" && req.method === "POST") {
+      // Verify Whop webhook HMAC. If WHOP_WEBHOOK_SECRET unset, allow (log warn).
+      const rawBody = await req.text();
+      const verdict = await verifyWhopSignature(req, rawBody, env);
+      if (!verdict.ok) {
+        try {
+          const nowIso = new Date().toISOString();
+          await env.DB.prepare(
+            `INSERT INTO agent_runs (agent_id, agent_name, started_at, finished_at, duration_ms, status, output_summary, triggered_by) VALUES (?, ?, ?, ?, 0, 'warn', ?, 'webhook')`
+          ).bind(AGENT.agentId, AGENT.agentName, nowIso, nowIso, `invalid_signature: ${verdict.reason}`).run();
+        } catch {}
+        return json({ error: "invalid_signature", reason: verdict.reason }, { status: 401 });
+      }
+      if (verdict.warned) {
+        try {
+          const nowIso = new Date().toISOString();
+          await env.DB.prepare(
+            `INSERT INTO agent_runs (agent_id, agent_name, started_at, finished_at, duration_ms, status, output_summary, triggered_by) VALUES (?, ?, ?, ?, 0, 'warn', ?, 'webhook')`
+          ).bind(AGENT.agentId, AGENT.agentName, nowIso, nowIso, "WHOP_WEBHOOK_SECRET not set — signature check skipped", "webhook").run();
+        } catch {}
+      }
       if (!authorize(req, env)) return json({ error: "unauthorized" }, { status: 401 });
-      const body = await req.json().catch(() => null);
+      let body = null;
+      try { body = JSON.parse(rawBody); } catch { body = null; }
       if (!body || !body.discord_id || !body.tier) return json({ error: "missing discord_id or tier" }, { status: 400 });
       const roleId = body.tier === "founders_circle" ? env.DISCORD_ROLE_FOUNDER : env.DISCORD_ROLE_LAB;
       try {

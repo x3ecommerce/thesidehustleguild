@@ -20,6 +20,22 @@ async function discoverCreators(env, max=30) {
   return 0;
 }
 
+// Sweet-spot filter: when signals_json includes a follower count, prefer
+// 5,000-50,000 creators (highest fit for the SHG audience). Returns true if
+// the signals JSON either doesn't include a follower count or the count is
+// inside the band. Leads outside the band still come through but are deprioritized
+// by score in the SQL ORDER BY (caller is responsible for setting score on ingest).
+function inCreatorSweetSpot(signalsJson) {
+  if (!signalsJson) return true;
+  const m = String(signalsJson).match(/([0-9][0-9.,]{2,7})\s*(k|K|m|M)?\s*(followers|subs|subscribers|fans)/);
+  if (!m) return true;
+  let n = parseFloat(m[1].replace(/,/g, ""));
+  const unit = (m[2] || "").toLowerCase();
+  if (unit === "k") n *= 1000;
+  if (unit === "m") n *= 1_000_000;
+  return n >= 5000 && n <= 50000;
+}
+
 async function pickTodayQuota(env, quota) {
   return env.DB.prepare(
     `SELECT * FROM leads WHERE kind='creator' AND status IN ('new','enriched','queued')
@@ -61,8 +77,31 @@ export default {
   },
 };
 
+// Pause guard: don't pitch creators to join the Marketplace before we have
+// enough buyers (active members) to make a listing worth their time. 50 active
+// keeps this honest with the creator on the other end.
+async function activeMemberCount(env) {
+  try {
+    const r = await env.DB.prepare("SELECT COUNT(*) AS n FROM members WHERE status='active'").first();
+    return Number(r?.n) || 0;
+  } catch {
+    return 0;
+  }
+}
+
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
+    // ---- Pause guard: <50 active members → skip outreach -------------------
+    const memberCount = await activeMemberCount(env);
+    if (memberCount < 50) {
+      console.log(`[s2] skipped_below_threshold active_members=${memberCount}`);
+      return {
+        status: "success",
+        summary: `paused: <50 paying members (active=${memberCount})`,
+        metadata: { reason: "skipped_below_threshold", active_members: memberCount, threshold: 50 },
+      };
+    }
+
     const discovered = await discoverCreators(env);
     const quota = parseInt(await getSetting(env, "daily_creator_quota", "20"), 10);
     const senderName = await getSetting(env, "sender_name", "Joshua at The Side Hustle Guild");
@@ -79,7 +118,9 @@ async function handle(env) {
       }
       try {
         const body = await generatePersonalizedEmail(env, { kind: "creator", lead, sender_name: senderName, mailing_address: mailingAddress, unsub_url: unsubUrl });
-        const subject = `Free listing on the Side Hustle Guild Marketplace`;
+        // Builder-to-builder, no guru-flavor. Targets creators in the 5K-50K
+        // follower band (indie side-hustle audience overlap is highest there).
+        const subject = `Free Marketplace listing — would this fit ${(lead.contact_name || lead.company_name || 'your audience').split(/\s+/)[0]}?`;
         const unsubToken = makeUnsubToken(lead.contact_email);
         const r = await sendOutreachEmail(env, {
           to: lead.contact_email, subject, body,

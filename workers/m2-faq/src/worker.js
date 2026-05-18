@@ -64,8 +64,47 @@ export default {
         await postTag(env, b.channel_id, tag, b.requested_by);
         return json({ ok: true });
       }
+      // Keyword-trigger interaction: caller POSTs { message_id, content, channel_id, member_id? }
+      // Worker scans the faq_triggers table, returns the first matching tag (rate-limited per member).
+      if (url.pathname === "/interaction/keyword" && req.method === "POST") {
+        const b = await req.json().catch(() => ({}));
+        const content = (b.content || "").toString().toLowerCase();
+        const memberId = b.member_id || b.user_id || null;
+        if (!content) return json({ matched: false, reason: "no_content" });
+        let triggers = [];
+        try {
+          const r = await env.DB.prepare(
+            "SELECT keyword, tag_name FROM faq_triggers WHERE enabled=1"
+          ).all();
+          triggers = r.results || [];
+        } catch { return json({ matched: false, reason: "no_table" }); }
+        const hit = triggers.find(t => t.keyword && content.includes(String(t.keyword).toLowerCase()));
+        if (!hit) return json({ matched: false });
+        // Per-member rate-limit: max 1 auto-trigger fire per hour. Skip if no member context.
+        if (memberId) {
+          try {
+            const rl = await env.DB.prepare(
+              `SELECT COUNT(*) AS n FROM faq_trigger_fires
+               WHERE member_id=? AND fired_at >= datetime('now','-1 hour')`
+            ).bind(memberId).first();
+            if (Number(rl?.n || 0) > 0) {
+              return json({ matched: true, tag_name: hit.tag_name, rate_limited: true });
+            }
+          } catch { /* table may not exist; fall through and serve */ }
+        }
+        const tag = await getTag(env.DB, hit.tag_name);
+        if (!tag) return json({ matched: true, tag_name: hit.tag_name, served: false, reason: "tag_disabled" });
+        // Record the fire (best-effort)
+        try {
+          await env.DB.prepare(
+            `INSERT INTO faq_trigger_fires (member_id, keyword, tag_name, message_id, channel_id, fired_at)
+             VALUES (?, ?, ?, ?, ?, ?)`
+          ).bind(memberId, hit.keyword, hit.tag_name, b.message_id || null, b.channel_id || null, new Date().toISOString()).run();
+        } catch {}
+        return json({ matched: true, tag_name: hit.tag_name, served: true, tag: { title: tag.title, content: tag.content, embed_color: tag.embed_color } });
+      }
       if (url.pathname === "/run") return json(await handle(env));
-      return json({ ok: true, agent: AGENT.agentId, endpoints: ["/tag/create","/tag/edit","/tag/delete","/tag/list","/tag/post","/run"] });
+      return json({ ok: true, agent: AGENT.agentId, endpoints: ["/tag/create","/tag/edit","/tag/delete","/tag/list","/tag/post","/interaction/keyword","/run"] });
     } catch (e) { return json({ error: String(e) }, { status: 500 }); }
   },
 };
@@ -73,10 +112,28 @@ export default {
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
     const counts = await env.DB.prepare("SELECT COUNT(*) AS n, COALESCE(SUM(use_count),0) AS uses FROM faq_tags WHERE enabled=1").first();
+    // Sweep faq_triggers — surface count + recent fire rate so we can tune.
+    // Actual keyword matching happens via /interaction/keyword (called by the Discord
+    // interaction worker). The cron sweep just reports + prunes very old fires.
+    let triggerCount = 0, firesLast24h = 0;
+    try {
+      const tc = await env.DB.prepare("SELECT COUNT(*) AS n FROM faq_triggers WHERE enabled=1").first();
+      triggerCount = Number(tc?.n || 0);
+    } catch {}
+    try {
+      const fc = await env.DB.prepare(
+        "SELECT COUNT(*) AS n FROM faq_trigger_fires WHERE fired_at >= datetime('now','-1 day')"
+      ).first();
+      firesLast24h = Number(fc?.n || 0);
+      // Prune fires older than 30 days
+      await env.DB.prepare(
+        "DELETE FROM faq_trigger_fires WHERE fired_at < datetime('now','-30 days')"
+      ).run();
+    } catch {}
     return {
       status: "success",
-      summary: `tags=${counts?.n || 0} total_uses=${counts?.uses || 0}`,
-      metadata: { tag_count: counts?.n, total_uses: counts?.uses }
+      summary: `tags=${counts?.n || 0} total_uses=${counts?.uses || 0} triggers=${triggerCount} fires_24h=${firesLast24h}`,
+      metadata: { tag_count: counts?.n, total_uses: counts?.uses, trigger_count: triggerCount, fires_last_24h: firesLast24h }
     };
   });
 }

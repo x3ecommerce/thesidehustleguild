@@ -68,6 +68,24 @@ export default {
 
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
+    // Auto-reset on day 1 of each month: if today is the 1st and no row exists
+    // for the current period, insert a fresh zeroed row before computing.
+    try {
+      const now = new Date();
+      if (now.getUTCDate() === 1) {
+        const label = periodLabel();
+        const periodId = `period_${label}`;
+        const existing = await env.DB.prepare("SELECT period_id FROM prize_pool_state WHERE period_id=?").bind(periodId).first().catch(() => null);
+        if (!existing) {
+          const { start, end } = periodBounds();
+          await env.DB.prepare(
+            `INSERT INTO prize_pool_state (period_id, period_label, period_start, period_end, paid_member_count, gross_mrr_cents, pool_cents, rookie_alloc_cents, builder_alloc_cents, operator_alloc_cents, peoples_choice_cents, lucky_sponsor_cents, contest_active, funded, computed_at, computed_by_agent, notes)
+             VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ?, 'c2_pricepool', 'auto-reset day 1')`
+          ).bind(periodId, label, start, end, new Date().toISOString()).run().catch(() => {});
+        }
+      }
+    } catch {}
+
     const memberCount = await countPaid(env.DB);
     const mrr = await computeMrrCents(env.DB);
     const pool = Math.floor(mrr * POOL_BPS / 10000);

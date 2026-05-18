@@ -70,20 +70,26 @@ async function gradeForumThreads(env) {
 
 async function generatePatternAddendum(env) {
   const total = await env.DB.prepare("SELECT COUNT(*) AS n FROM content_quality_signals").first().catch(() => ({ n: 0 }));
-  if ((total?.n || 0) < 20) return { skipped: true, reason: `need 20+ signals; have ${total?.n || 0}` };
-  const top = await env.DB.prepare("SELECT play_key, content_length, engagement_score FROM content_quality_signals ORDER BY engagement_score DESC LIMIT 10").all().catch(() => ({ results: [] }));
-  const bot = await env.DB.prepare("SELECT play_key, content_length, engagement_score FROM content_quality_signals ORDER BY engagement_score ASC LIMIT 10").all().catch(() => ({ results: [] }));
-  const topRows = top.results || [];
-  const botRows = bot.results || [];
-  const topAvgLen = topRows.length ? Math.round(topRows.reduce((s, r) => s + (r.content_length || 0), 0) / topRows.length) : 0;
-  const botAvgLen = botRows.length ? Math.round(botRows.reduce((s, r) => s + (r.content_length || 0), 0) / botRows.length) : 0;
-  const addendum = `LEARNED PATTERNS (from ${total.n} graded posts):\n- Winning posts average ${topAvgLen} chars vs losing posts at ${botAvgLen} chars.\n- Bias length toward winning side.\n- Best plays: ${topRows.map(r => r.play_key).slice(0,5).join(", ")}`;
+  const signals = total?.n || 0;
+  if (signals < 10) return { skipped: true, reason: `need 10+ signals; have ${signals}` };
+  const confidence = signals < 25 ? "low" : (signals <= 50 ? "medium" : "high");
   try {
-    await env.DB.prepare(
-      `INSERT INTO prompt_versions (agent_id, prompt_key, prompt_text, performance_score, notes) VALUES ('c3_content_engine','learned_patterns_addendum',?,?,?)`
-    ).bind(addendum, topRows[0]?.engagement_score || 0, `Generated from ${total.n} signals`).run();
-  } catch {}
-  return { generated: true, top_avg_len: topAvgLen, bottom_avg_len: botAvgLen, signals: total.n };
+    const top = await env.DB.prepare("SELECT play_key, content_length, engagement_score FROM content_quality_signals ORDER BY engagement_score DESC LIMIT 10").all().catch(() => ({ results: [] }));
+    const bot = await env.DB.prepare("SELECT play_key, content_length, engagement_score FROM content_quality_signals ORDER BY engagement_score ASC LIMIT 10").all().catch(() => ({ results: [] }));
+    const topRows = top.results || [];
+    const botRows = bot.results || [];
+    const topAvgLen = topRows.length ? Math.round(topRows.reduce((s, r) => s + (r.content_length || 0), 0) / topRows.length) : 0;
+    const botAvgLen = botRows.length ? Math.round(botRows.reduce((s, r) => s + (r.content_length || 0), 0) / botRows.length) : 0;
+    const addendum = `LEARNED PATTERNS (from ${signals} graded posts, confidence=${confidence}):\n- Winning posts average ${topAvgLen} chars vs losing posts at ${botAvgLen} chars.\n- Bias length toward winning side.\n- Best plays: ${topRows.map(r => r.play_key).slice(0,5).join(", ")}`;
+    try {
+      await env.DB.prepare(
+        `INSERT INTO prompt_versions (agent_id, prompt_key, prompt_text, performance_score, notes) VALUES ('c3_content_engine','learned_patterns_addendum',?,?,?)`
+      ).bind(addendum, topRows[0]?.engagement_score || 0, `Generated from ${signals} signals (confidence=${confidence})`).run();
+    } catch {}
+    return { generated: true, top_avg_len: topAvgLen, bottom_avg_len: botAvgLen, signals, confidence };
+  } catch (e) {
+    return { skipped: true, reason: "no patterns yet", error: String(e), signals, confidence };
+  }
 }
 
 export default {

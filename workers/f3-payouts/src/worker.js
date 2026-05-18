@@ -30,7 +30,8 @@ async function handle(env) {
       approved = r.results || [];
     } catch { approved = []; }
 
-    let dispatched = 0, blocked_form = 0, blocked_method = 0;
+    let dispatched = 0, blocked_form = 0, blocked_method = 0, blocked_w9 = 0;
+    const yearStart = new Date().toISOString().slice(0,4) + "-01-01";
     for (const p of approved) {
       // Tax-form gate: require W-9 (US) or W-8BEN (non-US) for any commission/prize > $600 lifetime
       const formCheck = await env.DB.prepare(
@@ -43,6 +44,54 @@ async function handle(env) {
         blocked_form++;
         continue;
       }
+
+      // IRS hard guard: if cumulative prize/payout this calendar year (incl. this one) >= $1,800
+      // and no W-9 on file, BLOCK and queue a DM to the member requesting W-9.
+      // Sum prior calendar-year payouts (transactions.type='payout', amount stored negative).
+      let cumulativeCents = Math.abs(p.amount_cents || 0);
+      try {
+        const ytd = await env.DB.prepare(
+          `SELECT COALESCE(SUM(ABS(amount_cents)),0) AS sumc FROM transactions
+           WHERE member_id=? AND type='payout' AND occurred_at >= ?`
+        ).bind(p.member_id, yearStart).first();
+        cumulativeCents += Number(ytd?.sumc || 0);
+      } catch {}
+      // Look up w9_received_at on member row OR fall back to w9_forms.status='complete'
+      let w9OnFile = (formCheck.n || 0) > 0;
+      if (!w9OnFile) {
+        try {
+          const m = await env.DB.prepare(`SELECT w9_received_at FROM members WHERE member_id=?`).bind(p.member_id).first();
+          if (m && m.w9_received_at) w9OnFile = true;
+        } catch {}
+      }
+      if (cumulativeCents >= 180000 && !w9OnFile) {
+        console.warn(`f3_payouts: blocked_w9 member=${p.member_id} cumulative_cents=${cumulativeCents} approval=${p.approval_id}`);
+        await env.DB.prepare(
+          `UPDATE approvals SET status='blocked_w9', blocked_reason='Cumulative >= $1,800/yr; W-9 required by IRS' WHERE approval_id=?`
+        ).bind(p.approval_id).run().catch(() => {});
+        // Queue a DM ask: write to dm_queue if it exists, else best-effort founder ping via a1-admin.
+        try {
+          await env.DB.prepare(
+            `INSERT INTO dm_queue (member_id, kind, body, created_at) VALUES (?, 'w9_request', ?, ?)`
+          ).bind(p.member_id, `You're over $1,800 in prize/payout earnings this year. Please submit a W-9 before we can release this payout.`, new Date().toISOString()).run();
+        } catch {
+          try {
+            await fetch("https://shg-a1-admin.joshuakovarik.workers.dev/post-to-owner", {
+              method: "POST",
+              headers: { "Authorization": `Bearer ${env.AGENT_RUN_TOKEN || ""}`, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                from: "f3_payouts",
+                title: "W-9 required — payout blocked",
+                content: `Member ${p.member_id} crossed $1,800/year. Approval ${p.approval_id} blocked. DM the member to collect W-9.`,
+                color: 0xC23B22,
+              }),
+            });
+          } catch {}
+        }
+        blocked_w9++;
+        continue;
+      }
+
       if (!p.payment_method || (!p.stripe_connect_id && !p.wise_recipient_id)) {
         await env.DB.prepare(
           `UPDATE approvals SET status='blocked_method_missing', blocked_reason='No payout method on file' WHERE approval_id=?`
@@ -70,7 +119,7 @@ async function handle(env) {
       } catch {}
     }
 
-    if ((dispatched + blocked_form + blocked_method) > 0 && env.DISCORD_BOT_TOKEN && env.FINANCE_CHANNEL_ID) {
+    if ((dispatched + blocked_form + blocked_method + blocked_w9) > 0 && env.DISCORD_BOT_TOKEN && env.FINANCE_CHANNEL_ID) {
       try {
         await discordPost(env, env.FINANCE_CHANNEL_ID, "", [{
           title: "💸 Payouts Manager",
@@ -79,15 +128,16 @@ async function handle(env) {
             { name: "Dispatched", value: String(dispatched), inline: true },
             { name: "Blocked (form missing)", value: String(blocked_form), inline: true },
             { name: "Blocked (method missing)", value: String(blocked_method), inline: true },
+            { name: "Blocked (W-9 >$1.8K/yr)", value: String(blocked_w9), inline: true },
           ]
         }]);
       } catch {}
     }
 
     return {
-      status: blocked_form + blocked_method > 0 ? "warn" : "success",
-      summary: `dispatched=${dispatched} blocked_form=${blocked_form} blocked_method=${blocked_method}`,
-      metadata: { dispatched, blocked_form, blocked_method }
+      status: blocked_form + blocked_method + blocked_w9 > 0 ? "warn" : "success",
+      summary: `dispatched=${dispatched} blocked_form=${blocked_form} blocked_method=${blocked_method} blocked_w9=${blocked_w9}`,
+      metadata: { dispatched, blocked_form, blocked_method, blocked_w9 }
     };
   });
 }

@@ -15,17 +15,88 @@ import { runAgent, json, authorize, discordPost, discordDM, resendSend } from ".
 const AGENT = { agentId: "d1_doctor", agentName: "Doctor", group: "admin", cron: "manual", expectedIntervalMin: 1440 };
 const LEARN_THRESHOLD = 2; // after 2 sightings of same unknown pattern, propose a playbook
 
+// Map worker agent_id → the GH Actions workflow file responsible for its cron.
+// Used by the cron-recovery playbook's GitHub-dispatch fallback. Edit when new
+// workers are added to .github/workflows/.
+const GH_WORKFLOW_BY_AGENT = {
+  f1_cfo: "cron-f1-cfo.yml",
+  f2_revenue: "cron-f2-revenue.yml",
+  f3_payouts: "cron-f3-payouts.yml",
+  f4_controller: "cron-f4-controller.yml",
+  f5_reporting: "cron-f5-reporting.yml",
+  f6_fpa: "cron-f6-fpa.yml",
+  c1_subcounter: "cron-c1-subcounter.yml",
+  c2_pricepool: "cron-c2-pricepool.yml",
+  c3_content_engine: "cron-c3-content-engine.yml",
+  c4_grader: "cron-c4-grader.yml",
+  m1_tickets: "cron-m1-tickets.yml",
+  m2_faq: "cron-m2-faq.yml",
+  m3_polls: "cron-m3-polls.yml",
+  m4_analytics: "cron-m4-analytics.yml",
+  m5_events: "cron-m5-events.yml",
+  m6_discord_pulse: "cron-m6-discord-pulse.yml",
+  s1_sponsor_hunter: "cron-s1-sponsor-hunter.yml",
+  s2_creator_hunter: "cron-s2-creator-hunter.yml",
+  s3_reply_handler: "cron-s3-reply-handler.yml",
+  e1_role_grant: "cron-e1-role-grant.yml",
+  e2_concierge: "cron-e2-concierge.yml",
+  reconcile: "cron-reconcile.yml",
+};
+
+// Tertiary recovery path: trigger a GH Actions workflow_dispatch so the workflow
+// fires the worker via its standard /run path. This sidesteps Cloudflare's
+// Worker-to-Worker routing limit when a1/d1-doctor are on the same zone.
+// Returns {ok, detail, used}. No-op (used:false) if GITHUB_DISPATCH_TOKEN unset.
+async function triggerGithubDispatch(env, agentId) {
+  if (!env.GITHUB_DISPATCH_TOKEN) return { ok: false, used: false, detail: "GITHUB_DISPATCH_TOKEN not configured" };
+  const wf = GH_WORKFLOW_BY_AGENT[agentId];
+  if (!wf) return { ok: false, used: false, detail: `no workflow mapped for ${agentId}` };
+  const owner = env.GITHUB_OWNER || "joshuakovarik";
+  const repo  = env.GITHUB_REPO  || "shg-repo";
+  const ref   = env.GITHUB_REF   || "main";
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${wf}/dispatches`;
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "shg-d1-doctor",
+      },
+      body: JSON.stringify({ ref, inputs: { reason: "d1_doctor_cron_recovery" } }),
+    });
+    if (r.status === 204) return { ok: true, used: true, detail: `dispatched ${wf}@${ref}` };
+    const text = await r.text().catch(() => "");
+    return { ok: false, used: true, detail: `gh dispatch ${wf} → ${r.status}: ${text.slice(0,200)}` };
+  } catch (e) {
+    return { ok: false, used: true, detail: `gh dispatch threw: ${String(e).slice(0,200)}` };
+  }
+}
+
 // ---- PLAYBOOK REGISTRY ------------------------------------------------------
 // Each playbook: name, matches(incident) → bool, run(env, incident) → {ok, detail}
 const PLAYBOOKS = [
   {
     name: "cron-recovery",
-    description: "When a worker's cron has missed 2+ expected intervals, trigger /run as tertiary path.",
+    description: "When a worker's cron has missed 2+ expected intervals, try GH workflow_dispatch as tertiary path (W2W routing is blocked).",
     matches: (inc) => inc.failure_class === "missed_cron",
     run: async (env, inc) => {
-      // Worker-to-Worker routing limit applies same as a1-admin — log & defer to GH Actions
       const ctx = JSON.parse(inc.context_json || "{}");
-      return { ok: true, detail: `Cron miss logged for ${ctx.agent_id || inc.signal}. Primary path (GH Actions) will re-trigger on next scheduled fire. Doctor takes no further action.` };
+      const agentId = ctx.agent_id || inc.signal;
+      // Tertiary path: ask GitHub Actions to fire the matching workflow_dispatch.
+      // This bypasses Cloudflare's W2W routing limit (which would otherwise
+      // require Service Bindings). If GITHUB_DISPATCH_TOKEN isn't set, we fall
+      // back to the original behavior: log and wait for the next scheduled cron.
+      const dispatch = await triggerGithubDispatch(env, agentId);
+      if (dispatch.used && dispatch.ok) {
+        return { ok: true, detail: `Cron miss for ${agentId}: tertiary GH workflow_dispatch fired (${dispatch.detail}). Path: github_workflow_dispatch.` };
+      }
+      if (dispatch.used && !dispatch.ok) {
+        return { ok: false, detail: `Cron miss for ${agentId}: GH dispatch attempted but failed (${dispatch.detail}). Primary GH Actions cron will re-fire on next schedule. Path: github_workflow_dispatch_failed.` };
+      }
+      // GITHUB_DISPATCH_TOKEN not configured — keep existing behavior.
+      return { ok: true, detail: `Cron miss logged for ${agentId}. Primary path (GH Actions) will re-trigger on next scheduled fire. Doctor takes no further action. Path: log_only (no GITHUB_DISPATCH_TOKEN).` };
     },
   },
   {

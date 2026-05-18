@@ -5,7 +5,16 @@
 //   POST /event/rsvp    → record a member RSVP (going/maybe/cant)
 //   POST /event/cancel  → cancel a scheduled event
 //   GET  /event/list    → list upcoming events
-//   POST /run           → every 10 min — send T-1h DM reminders, mark events as completed
+//   POST /run           → every 10 min — 24h reminders, 1h reminders, "starting soon", post-event thanks
+//
+// Sesh integration (future enhancement): Sesh is a 3rd-party Discord bot with its own API
+// and OAuth dance. Until we have an API key + OAuth wired, this worker handles event
+// lifecycle natively against the `events` + `event_rsvps` tables. The cron sweeps for
+// upcoming events and posts to each event's channel at the right time:
+//   - T-24h  : "tomorrow!" reminder (channel post)
+//   - T-1h   : "starts in 1h" reminder (channel post + DM to going RSVPs — existing)
+//   - T-5m   : "starting soon" reminder (channel post)
+//   - T+(end+1h): "thanks for joining" + ask for recording link (channel post)
 
 import { runAgent, json, authorize, discordPost, discordDM } from "./_runtime.js";
 
@@ -51,6 +60,34 @@ async function rsvp(env, { event_id, discord_id, status }) {
   return { ok: true };
 }
 
+// Best-effort table touch — adds columns we rely on for staged reminders.
+// We don't want to fail the whole run if these columns don't yet exist; we catch
+// each failure and treat the corresponding reminder as a no-op for now.
+async function safeMark(env, sql, params) {
+  try { await env.DB.prepare(sql).bind(...params).run(); return true; } catch { return false; }
+}
+
+// --- T-24h channel reminder --------------------------------------------------
+async function sendDayBefore(env) {
+  const start = new Date(Date.now() + 23 * 3600 * 1000).toISOString();
+  const end   = new Date(Date.now() + 25 * 3600 * 1000).toISOString();
+  // reminder_24h_sent is a new column; if it doesn't exist, this query throws and we skip.
+  const events = await env.DB.prepare(
+    "SELECT * FROM events WHERE status='scheduled' AND COALESCE(reminder_24h_sent,0)=0 AND starts_at BETWEEN ? AND ?"
+  ).bind(start, end).all().catch(() => ({ results: [] }));
+  let posted = 0;
+  for (const ev of (events.results || [])) {
+    const ts = Math.floor(new Date(ev.starts_at).getTime()/1000);
+    try {
+      await discordPost(env, ev.channel_id, `📅 **${ev.title}** is tomorrow — <t:${ts}:F> (<t:${ts}:R>). Hit RSVP above if you haven't yet.`);
+      await safeMark(env, "UPDATE events SET reminder_24h_sent=1 WHERE event_id=?", [ev.event_id]);
+      posted++;
+    } catch {}
+  }
+  return posted;
+}
+
+// --- T-1h channel + DM reminders --------------------------------------------
 async function sendReminders(env) {
   // Find events starting in ~1h that haven't sent reminders yet
   const oneHr   = new Date(Date.now() + 60*60*1000).toISOString();
@@ -61,10 +98,13 @@ async function sendReminders(env) {
 
   let sent = 0;
   for (const ev of (events.results || [])) {
+    const ts = Math.floor(new Date(ev.starts_at).getTime()/1000);
+    // Channel ping so non-RSVP'd members see it too
+    try { await discordPost(env, ev.channel_id, `⏰ **${ev.title}** starts in 1 hour — <t:${ts}:R>. ${ev.location_or_url || ''}`); } catch {}
+
     const rsvps = await env.DB.prepare("SELECT discord_id FROM event_rsvps WHERE event_id=? AND status='going'").bind(ev.event_id).all();
     for (const r of (rsvps.results || [])) {
       try {
-        const ts = Math.floor(new Date(ev.starts_at).getTime()/1000);
         await discordDM(env, r.discord_id, `🔔 Reminder: **${ev.title}** starts in 1 hour (<t:${ts}:R>). ${ev.location_or_url || ''}`);
         await env.DB.prepare("UPDATE event_rsvps SET reminded_at=? WHERE event_id=? AND discord_id=?")
           .bind(new Date().toISOString(), ev.event_id, r.discord_id).run();
@@ -74,6 +114,46 @@ async function sendReminders(env) {
     await env.DB.prepare("UPDATE events SET reminder_sent=1 WHERE event_id=?").bind(ev.event_id).run();
   }
   return sent;
+}
+
+// --- T-5m "starting soon" channel ping --------------------------------------
+async function sendStartingSoon(env) {
+  const now = new Date(Date.now()).toISOString();
+  const tenMin = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  const events = await env.DB.prepare(
+    "SELECT * FROM events WHERE status='scheduled' AND COALESCE(reminder_soon_sent,0)=0 AND starts_at BETWEEN ? AND ?"
+  ).bind(now, tenMin).all().catch(() => ({ results: [] }));
+  let posted = 0;
+  for (const ev of (events.results || [])) {
+    try {
+      await discordPost(env, ev.channel_id, `🟢 **${ev.title}** is starting soon. ${ev.location_or_url || 'Jump in!'}`);
+      await safeMark(env, "UPDATE events SET reminder_soon_sent=1 WHERE event_id=?", [ev.event_id]);
+      posted++;
+    } catch {}
+  }
+  return posted;
+}
+
+// --- T+(end+1h) "thanks for joining" + recording-link ask --------------------
+async function sendPostEvent(env) {
+  // Pick events that ended at least 1h ago and we haven't thanked yet.
+  const events = await env.DB.prepare(
+    `SELECT * FROM events
+       WHERE status='scheduled'
+         AND COALESCE(thanks_sent,0)=0
+         AND COALESCE(ends_at, datetime(starts_at, '+1 hour')) < datetime('now','-1 hour')
+       LIMIT 25`
+  ).all().catch(() => ({ results: [] }));
+  let posted = 0;
+  for (const ev of (events.results || [])) {
+    try {
+      const msg = `🙏 Thanks to everyone who joined **${ev.title}**. If anyone caught a recording, drop the link in this thread and we'll archive it.`;
+      await discordPost(env, ev.channel_id, msg);
+      await safeMark(env, "UPDATE events SET thanks_sent=1 WHERE event_id=?", [ev.event_id]);
+      posted++;
+    } catch {}
+  }
+  return posted;
 }
 
 export default {
@@ -101,14 +181,17 @@ export default {
 
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
-    const sent = await sendReminders(env);
+    const dayBefore = await sendDayBefore(env);
+    const sent      = await sendReminders(env);
+    const soon      = await sendStartingSoon(env);
+    const thanks    = await sendPostEvent(env);
     // Mark events that ended >1h ago as completed
-    const completed = await env.DB.prepare("UPDATE events SET status='completed' WHERE status='scheduled' AND COALESCE(ends_at, datetime(starts_at, '+1 hour')) < datetime('now','-1 hour')").run();
+    await env.DB.prepare("UPDATE events SET status='completed' WHERE status='scheduled' AND COALESCE(ends_at, datetime(starts_at, '+1 hour')) < datetime('now','-1 hour')").run();
     const upcoming = await env.DB.prepare("SELECT COUNT(*) AS n FROM events WHERE status='scheduled' AND starts_at > ?").bind(new Date().toISOString()).first();
     return {
       status: "success",
-      summary: `reminders_sent=${sent} upcoming=${upcoming?.n || 0}`,
-      metadata: { reminders_sent: sent, upcoming_events: upcoming?.n }
+      summary: `24h=${dayBefore} 1h_dm=${sent} soon=${soon} thanks=${thanks} upcoming=${upcoming?.n || 0}`,
+      metadata: { reminders_24h: dayBefore, reminders_1h_dm: sent, reminders_starting_soon: soon, post_event_thanks: thanks, upcoming_events: upcoming?.n, sesh_integration: "future-enhancement" }
     };
   });
 }

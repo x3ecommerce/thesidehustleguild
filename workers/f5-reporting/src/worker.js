@@ -17,11 +17,61 @@ export default {
   },
 };
 
+// Build a plain-text weekly digest covering revenue, members, churn, and top performers.
+// Safe against missing tables — every query has a catch.
+export async function generateWeeklyDigestText(env) {
+  const today = todayET();
+  const fmt = (c) => `$${((c||0)/100).toFixed(2)}`;
+  // Week-to-date revenue (Mon..today inclusive). SQLite weekday('now'): 0=Sun..6=Sat,
+  // so 'weekday 1' anchors to Monday-of-this-week semantics via date arithmetic below.
+  const wk = await env.DB.prepare(
+    `SELECT
+       COALESCE(SUM(net_cents),0) AS net,
+       COALESCE(SUM(new_paid_members),0) AS new_m,
+       COALESCE(SUM(churned_members),0) AS ch
+     FROM money_in_daily WHERE date >= date('now','weekday 0','-7 days')`
+  ).first().catch(() => ({ net: 0, new_m: 0, ch: 0 }));
+
+  let topChannel = "—";
+  try {
+    const tc = await env.DB.prepare(
+      `SELECT channel_name, SUM(msg_count) AS m FROM channel_stats_daily
+       WHERE date >= date('now','-7 days')
+       GROUP BY channel_name ORDER BY m DESC LIMIT 1`
+    ).first();
+    if (tc && tc.channel_name) topChannel = `#${tc.channel_name} (${tc.m} msgs)`;
+  } catch {}
+
+  let topHustle = "—";
+  try {
+    const th = await env.DB.prepare(
+      `SELECT title, COALESCE(score,0) AS s FROM hustle_cards
+       WHERE created_at >= date('now','-7 days') ORDER BY s DESC LIMIT 1`
+    ).first();
+    if (th && th.title) topHustle = `"${th.title}" (score ${th.s})`;
+  } catch {}
+
+  const lines = [
+    `SHG Weekly Digest — week ending ${today}`,
+    ``,
+    `• Revenue (WTD): ${fmt(wk?.net)}`,
+    `• New paid members: ${wk?.new_m || 0}`,
+    `• Churned: ${wk?.ch || 0}`,
+    `• Top channel: ${topChannel}`,
+    `• Top hustle card: ${topHustle}`,
+    ``,
+    `Open the dashboard: https://thesidehustleguild.com/finance/`,
+  ];
+  return lines.join("\n");
+}
+
 async function handle(env) {
   return runAgent(env, AGENT, async ({ env }) => {
     const today = todayET();
-    const dow = new Date().getUTCDay(); // 0 Sun..6 Sat
-    const dom = new Date().getUTCDate();
+    const now = new Date();
+    const dow = now.getUTCDay(); // 0 Sun..6 Sat
+    const utcHour = now.getUTCHours();
+    const dom = now.getUTCDate();
 
     const dailyRow = await env.DB.prepare(`SELECT * FROM money_in_daily WHERE date=?`).bind(today).first();
     const fmt = (c) => `$${((c||0)/100).toFixed(2)}`;
@@ -63,6 +113,28 @@ async function handle(env) {
       weeklyEmailed = r.status === 200;
     }
 
+    // Monday founder DM via a1-admin /post-to-owner — runs once in the 11:00–11:59 UTC window.
+    let founderWeeklyPosted = false;
+    if (dow === 1 && utcHour === 11) {
+      try {
+        const text = await generateWeeklyDigestText(env);
+        const r2 = await fetch("https://shg-a1-admin.joshuakovarik.workers.dev/post-to-owner", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${env.AGENT_RUN_TOKEN || ""}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "f5_reporting",
+            title: `SHG weekly digest — ${today}`,
+            content: text,
+            color: 0x27384A,
+          }),
+        });
+        founderWeeklyPosted = r2.ok;
+      } catch {}
+    }
+
     // Monthly close — 1st of month, prior month
     let monthlyClosed = false;
     if (dom === 1) {
@@ -81,8 +153,8 @@ async function handle(env) {
 
     return {
       status: "success",
-      summary: `${summary}${weeklyEmailed ? " | weekly_email_sent" : ""}${monthlyClosed ? " | month_closed" : ""}`,
-      metadata: { weeklyEmailed, monthlyClosed, daily: dailyRow }
+      summary: `${summary}${weeklyEmailed ? " | weekly_email_sent" : ""}${founderWeeklyPosted ? " | weekly_dm_sent" : ""}${monthlyClosed ? " | month_closed" : ""}`,
+      metadata: { weeklyEmailed, founderWeeklyPosted, monthlyClosed, daily: dailyRow }
     };
   });
 }
