@@ -104,7 +104,7 @@ async function handle(env) {
 
     const discovered = await discoverCreators(env);
     const quota = parseInt(await getSetting(env, "daily_creator_quota", "20"), 10);
-    const senderName = await getSetting(env, "sender_name", "Joshua at The Side Hustle Guild");
+    const senderName = await getSetting(env, "sender_name", "The Guild Team");
     const mailingAddress = await getSetting(env, "mailing_address", "X3 E-Commerce LLC");
     const unsubUrl = await getSetting(env, "unsub_url", "https://thesidehustleguild.com/unsubscribe");
 

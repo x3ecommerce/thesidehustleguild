@@ -5,7 +5,7 @@ import { runAgent, json, authorize, discordPost } from "./_runtime.js";
 
 const AGENT = { agentId: "c3_content_engine", agentName: "Content Engine", group: "engagement", cron: "0 12 * * *", expectedIntervalMin: 1440 };
 
-const BRAND_VOICE = `You write for The Side Hustle Guild — a paid Discord community for side-hustle builders at every level (rookie to operator). The voice is warm, direct, builder-to-builder. You are Joshua, the founder, talking to one builder at a time.
+const BRAND_VOICE = `You write for The Side Hustle Guild — a paid Discord community for side-hustle builders at every level (rookie to operator). The voice is warm, direct, builder-to-builder. You are "The Guild" — a collective voice of the community. Use "we" or no pronoun. Never first-person singular "I". Never refer to a founder by name.
 
 NON-NEGOTIABLE RULES:
 - Concrete over abstract. Specific dollar amounts, specific tools, specific actions. Never vague motivation.
@@ -57,12 +57,12 @@ const POST_PLAYS = {
   office_hours: {
     channel_name: "wednesday-office-hours",
     length: "70-110 words",
-    brief: `Announce Wednesday Office Hours. Wednesday 12pm ET, 30 minutes, Discord Stage Channel. PARAGRAPH: The format — no slides, no agenda, just bring the thing you're stuck on. Questions answered in the order they show up. If you can't make it live, drop your question in the thread below; I'll answer it on the recording. INCLUDE ONE EXAMPLE of a stuck thing someone might bring (rotate weekly): pricing a digital product, when to launch vs polish, what to do when nobody's buying, how to land the first paying client, when to quit a side project. Specific and tactical, not generic. END: "Add it to your calendar. Bring your stuck thing. See you Wednesday." Length: 70-110 words.`
+    brief: `Announce this week's Council Session. Wednesday 12pm ET, 30 minutes, Discord Stage Channel. PARAGRAPH: This week's Council expert is rotating — name them ([insert] in extra context if available). The format — no slides, no agenda, just bring the thing you're stuck on. Questions answered in the order they show up. If you can't make it live, drop your question in the thread below; we'll cover it on the recording. INCLUDE ONE EXAMPLE of a stuck thing someone might bring (rotate weekly): pricing a digital product, when to launch vs polish, what to do when nobody's buying, how to land the first paying client, when to quit a side project. Specific and tactical, not generic. END: "Add it to your calendar. Bring your stuck thing. We'll see you Wednesday." Length: 70-110 words.`
   },
   wins_prompt: {
     channel_name: "wins-of-the-month",
     length: "70-100 words",
-    brief: `Open the Wins thread. Friday afternoon. OPEN with: "It's Friday. Drop ONE win from this week." Then ONE paragraph making it explicit that small wins count AND all kinds count: first dollar earned, first customer call, first time you raised a rate; a feature shipped, a bad client fired, a boundary held; a landing page that didn't suck, a cold email that got a reply; a day you stayed in your chair when you wanted to scroll. FORMAT they should use: "I shipped X. [one sentence why it matters]. [link if any]." CLOSE EXACTLY: "I'll reply to every win in this thread today. Drop yours." Length: 80-120 words. Warm but not soft. Recognition without performance.`
+    brief: `Open the Wins thread. Friday afternoon. OPEN with: "It's Friday. Drop ONE win from this week." Then ONE paragraph making it explicit that small wins count AND all kinds count: first dollar earned, first customer call, first time you raised a rate; a feature shipped, a bad client fired, a boundary held; a landing page that didn't suck, a cold email that got a reply; a day you stayed in your chair when you wanted to scroll. FORMAT they should use: "I shipped X. [one sentence why it matters]. [link if any]." CLOSE EXACTLY: "The team replies to every win in this thread today. Drop yours." Length: 80-120 words. Warm but not soft. Recognition without performance.`
   },
   marketplace_seed: {
     channel_name: "free-swap-board",

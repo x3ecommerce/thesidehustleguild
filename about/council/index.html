@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Council — How The Guild Runs</title>
+<meta name="description" content="The Guild is run by a team of operators and a rotating Council of outside experts. Here's how that works.">
+<meta property="og:title" content="The Council — The Side Hustle Guild">
+<meta property="og:description" content="The team behind The Guild and the rotating Council of outside experts.">
+<meta property="og:url" content="https://thesidehustleguild.com/about/council">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --gold:#C9A961; --gold-light:#E5C982; --navy:#1a2238; --cream:#f8f4ee; --cream-dark:#ebe5d8; --charcoal:#2a2a2a; --muted:#8a8a8a; --border:#e0dac8; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',sans-serif; background:var(--cream); color:var(--charcoal); line-height:1.65; }
+.header { background:var(--navy); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; }
+.logo { font-family:'Fraunces',serif; font-weight:600; color:var(--gold); font-size:1.1rem; text-decoration:none; }
+.nav { display:flex; gap:1.5rem; align-items:center; }
+.nav a { color:var(--cream); text-decoration:none; font-size:0.9rem; opacity:0.85; }
+.btn-cta { background:var(--gold); color:var(--navy); padding:0.5rem 1rem; border-radius:6px; font-weight:600; font-size:0.9rem; text-decoration:none; }
+
+.hero { background:var(--navy); color:var(--cream); padding:4rem 2rem 5rem; text-align:center; position:relative; }
+.hero::after { content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); width:60px; height:3px; background:var(--gold); }
+.hero-tag { display:inline-block; background:rgba(201,169,97,0.15); color:var(--gold); font-size:0.75rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:0.4rem 1rem; border-radius:20px; margin-bottom:1.25rem; }
+.hero h1 { font-family:'Fraunces',serif; font-size:3rem; font-weight:600; letter-spacing:-0.02em; margin-bottom:1rem; max-width:760px; margin-left:auto; margin-right:auto; }
+.hero .lead { font-size:1.15rem; opacity:0.85; max-width:620px; margin:0 auto; }
+
+.container { max-width:880px; margin:0 auto; padding:3rem 2rem; }
+
+.section { margin-bottom:3.5rem; }
+.section h2 { font-family:'Fraunces',serif; color:var(--navy); font-size:1.75rem; font-weight:600; margin-bottom:1.25rem; letter-spacing:-0.01em; }
+.section p { font-size:1.05rem; color:var(--charcoal); margin-bottom:1.25rem; }
+.section p strong { color:var(--navy); }
+.section ul { padding-left:1.5rem; margin-bottom:1.25rem; font-size:1.05rem; }
+.section ul li { padding:0.4rem 0; }
+
+.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; margin:1.5rem 0; }
+.team-card { background:white; border:1px solid var(--border); border-radius:10px; padding:1.25rem; }
+.team-card .role { font-family:'Fraunces',serif; color:var(--navy); font-size:1rem; font-weight:600; margin-bottom:0.25rem; }
+.team-card .agent { font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem; }
+.team-card .desc { font-size:0.88rem; color:var(--charcoal); line-height:1.5; }
+
+.council-block { background:var(--navy); color:var(--cream); border-radius:12px; padding:2rem; margin:1.5rem 0; }
+.council-block h3 { font-family:'Fraunces',serif; color:var(--gold); font-size:1.3rem; margin-bottom:0.75rem; }
+.council-block p { opacity:0.92; margin-bottom:1rem; }
+
+.pool-callout { background:white; border-left:4px solid var(--gold); padding:1.5rem 1.75rem; border-radius:0 8px 8px 0; margin:2rem 0; }
+.pool-callout h3 { font-family:'Fraunces',serif; color:var(--navy); margin-bottom:0.5rem; }
+
+.footer-cta { background:var(--cream-dark); padding:3rem 2rem; text-align:center; }
+.footer-cta h2 { font-family:'Fraunces',serif; color:var(--navy); margin-bottom:0.5rem; }
+.footer-cta p { color:var(--charcoal); margin-bottom:1.5rem; }
+.footer-cta .btn { background:var(--gold); color:var(--navy); padding:0.875rem 2rem; border-radius:8px; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="/">⚜ The Side Hustle Guild</a>
+  <nav class="nav">
+    <a href="/submissions/">Browse</a>
+    <a href="/affiliate">Affiliate</a>
+    <a class="btn-cta" href="https://whop.com/the-side-hustle-guild/">Join · $9/mo</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <span class="hero-tag">About · How The Guild Runs</span>
+  <h1>Built by a team. Powered by a Council.</h1>
+  <p class="lead">The Guild is operated by a small ops team and a rotating Council of outside experts. The community pays the community. Here's how it actually works.</p>
+</section>
+
+<div class="container">
+
+<div class="section">
+  <h2>The model in one sentence</h2>
+  <p>The Side Hustle Guild is a paid Discord community where <strong>25% of every subscription dollar becomes the monthly cash prize pool</strong>. Members submit Hustle Cards — real things they've built. A rotating Council of outside experts judges them. The top three each month split the pool.</p>
+  <p>The community pays the community. No middleman skimming. The prize-pool math is public and updated live at <a href="/submissions" style="color:var(--navy); text-decoration:underline; text-decoration-color:var(--gold);">thesidehustleguild.com/submissions</a>.</p>
+</div>
+
+<div class="pool-callout">
+  <h3>💰 How money flows</h3>
+  <p style="margin-bottom:0.75rem;">Every $1 a member pays splits like this:</p>
+  <ul style="font-size:0.95rem; margin-bottom:0;">
+    <li><strong>$0.25</strong> → monthly prize pool (paid out to top-3 contest winners)</li>
+    <li><strong>$0.30</strong> → affiliate commissions (members who refer paying members earn 30% recurring)</li>
+    <li><strong>$0.05</strong> → payment processing (Whop + Stripe)</li>
+    <li><strong>$0.40</strong> → operations (the team, the agents, the infrastructure, the Council expert fees)</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>The Ops Team</h2>
+  <p>The day-to-day of The Guild is run by a small team plus a fleet of <strong>specialized agents</strong> we built in-house. The agents handle the operational heavy lifting — content scheduling, payouts, moderation flags, health monitoring. The human team handles judgment calls, expert recruitment, sponsor partnerships, and crisis response.</p>
+
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="role">The Concierge</div>
+      <div class="agent">agent · e2-concierge</div>
+      <div class="desc">Welcomes new members. Reads every reply. Knows your profile, your stated goals, your stuck things.</div>
+    </div>
+    <div class="team-card">
+      <div class="role">The Editor</div>
+      <div class="agent">agent · c3-content-engine</div>
+      <div class="desc">Authors the daily prompts and weekly rituals. Voice locked to builder-to-builder, no-guru.</div>
+    </div>
+    <div class="team-card">
+      <div class="role">The Grader</div>
+      <div class="agent">agent · c4-grader</div>
+      <div class="desc">Quietly measures which posts land. Feeds patterns back into The Editor so content keeps improving.</div>
+    </div>
+    <div class="team-card">
+      <div class="role">The Treasurer</div>
+      <div class="agent">agent · f-series</div>
+      <div class="desc">Tracks every dollar in, every payout out. Pool math is real-time and public.</div>
+    </div>
+    <div class="team-card">
+      <div class="role">The Watchdog</div>
+      <div class="agent">agent · a1-admin + d1-doctor</div>
+      <div class="desc">Keeps the lights on. Self-heals 90% of issues silently. Escalates only when something needs human eyes.</div>
+    </div>
+    <div class="team-card">
+      <div class="role">Support Desk</div>
+      <div class="agent">agent · m1-tickets</div>
+      <div class="desc">Private ticket threads for billing, contest questions, sponsor inquiries, and anything else that needs eyes off the public channels.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>The Council</h2>
+  <p>Each month, a different outside expert joins as our Council Session host. They bring their specific framework to one Wednesday voice session. Members bring their stuck things. The Council expert delivers.</p>
+  <p>Different topics rotate: pricing, productized services, content growth, paid ads, AI workflows, hiring your first contractor, when to quit a side project. We pay the Council expert directly. Their reputation gets exposure to our audience. Members get specific tactical answers, not generic advice.</p>
+
+  <div class="council-block">
+    <h3>This month's Council expert</h3>
+    <p>Announced in #announcements on the 1st of each month. Session held Wednesday 12pm ET on Discord Stage. Recordings posted to the Insiders Tier archive within 24 hours.</p>
+    <p style="opacity:0.75; font-size:0.92rem; margin-bottom:0;">Members can book a private <strong>Council Hot Seat</strong> with the current month's expert — 60 minutes 1:1, $350. 100% of The Guild's cut goes into next month's prize pool.</p>
+  </div>
+</div>
+
+<div class="section">
+  <h2>What you're paying for</h2>
+  <p>The honest framing: <strong>The Guild is not a course, not a guru funnel, not a mastermind</strong>. It's a paid Discord where:</p>
+  <ul>
+    <li>The contest gives you a real reason to ship every month</li>
+    <li>The rituals (Monday Drop, Wednesday Council, Friday Wins, Sunday Reset) keep you in motion</li>
+    <li>The room is full of people building real things — not lurkers looking for shortcuts</li>
+    <li>The Council brings outside expertise on rotation so you're not just hearing one voice</li>
+    <li>Your Hustle Card submissions get archived publicly so other builders can learn from you</li>
+  </ul>
+  <p>You're paying $9-$19 a month for the structure and the room. The contest pool is the bonus that scales as the community grows.</p>
+</div>
+
+<div class="section">
+  <h2>Who runs The Guild</h2>
+  <p>The Guild is operated under <strong>X3 E-Commerce LLC dba The Side Hustle Guild</strong>, based in Boulder, Colorado. The ops team handles infrastructure, partnerships, payouts, and moderation. The Council is recruited monthly. The day-to-day public-facing work is done by the agent team.</p>
+  <p>We deliberately keep individual names off public surfaces. The reason: <strong>The Guild belongs to its members</strong>. The brand is the room you're paying to be in, not the personality of any one operator. That's true today, it'll be true if the ops team grows, and it'll be true a decade from now.</p>
+</div>
+
+<div class="section">
+  <h2>How to reach the team</h2>
+  <p>Three channels:</p>
+  <ul>
+    <li><strong>Public:</strong> post in <code style="background:var(--cream-dark); padding:0.15rem 0.4rem; border-radius:3px; font-size:0.92rem;">#the-exchange</code> on Discord. Faster than a ticket, more eyes.</li>
+    <li><strong>Private:</strong> open a ticket via the panel in <code style="background:var(--cream-dark); padding:0.15rem 0.4rem; border-radius:3px; font-size:0.92rem;">#support</code>. Real humans read every ticket within 24 hours.</li>
+    <li><strong>Live:</strong> Wednesday Council Sessions, 12pm ET. Bring your stuck thing.</li>
+  </ul>
+</div>
+
+</div>
+
+<div class="footer-cta">
+  <h2>Try the room.</h2>
+  <p>$9/mo founder rate, first 50 only · 7-day refund, no questions asked.</p>
+  <a class="btn" href="https://whop.com/the-side-hustle-guild/">Join The Guild →</a>
+</div>
+
+</body>
+</html>

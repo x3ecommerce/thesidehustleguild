@@ -8,14 +8,14 @@ const AGENT = { agentId: "e2_concierge", agentName: "Concierge Auto-DM", group: 
 const WELCOME_MESSAGE =
 `You're in. Welcome to the Guild.
 
-This is Joshua — I read every reply to this DM, so if you have a question, just hit me back.
+The team reads every reply to this DM — so if you have a question, just hit us back.
 
 **Your first move (60 seconds):**
 Drop into #the-exchange and post one line about what you're building. Doesn't matter if it's day 1 or year 5. The room recognizes builders, not lurkers, and the people who post in their first hour are the ones who get the most out of being here.
 
 **The rhythm to expect:**
 • **Monday** — week's theme drops in #monday-drops. Pick one thing, ship it by Friday.
-• **Wednesday 12pm ET** — Office Hours in voice. Bring your stuck thing. No slides, no agenda.
+• **Wednesday 12pm ET** — The Council Session in voice. Rotating outside experts bring their stuck-thing-busting frameworks. No slides, no agenda.
 • **Friday** — Wins thread in #wins-of-the-month. Drop yours. Small wins count.
 • **Sunday** — Reset note. Three prompts to plan the week ahead.
 
@@ -23,11 +23,11 @@ Drop into #the-exchange and post one line about what you're building. Doesn't ma
 25% of every subscription dollar becomes the monthly prize pool. Pool grows with the community. The first cycle pays out the last day of June. Submit your Hustle Card any time at thesidehustleguild.com/submit — top three split the pool.
 
 **One free thing to grab right now:**
-The Sunday Reset Planner — the same 5-minute weekly ritual we use. Print it: https://thesidehustleguild.com/sunday-reset-planner/
+The Sunday Reset Planner — the same 5-minute weekly ritual the Guild runs. Print it: https://thesidehustleguild.com/sunday-reset-planner/
 
 That's it. The room is yours. See you in #the-exchange.
 
-— J`;
+— The Guild`;
 
 export default {
   async scheduled(e, env, ctx) { ctx.waitUntil(handle(env)); },
